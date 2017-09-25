@@ -66,6 +66,7 @@ namespace Dcx.Plus.Gateway.Modules.$Product$
 			I$Product$$Item$List $item$List = $item$ListFactory.Get(ApplicationProvider.SessionContextGuid, callContext);
 			I$Product$$Item$Factory $item$Factory = BOFactoryProvider.Get<I$Product$$Item$Factory>();
 
+			$item$List.$Item$s.MonitorChanges = false;
 			foreach ($Product$$Item$ $item$Dto in $item$Dtos)
 			{
 				switch ($item$Dto.SaveFlag)
@@ -73,7 +74,10 @@ namespace Dcx.Plus.Gateway.Modules.$Product$
 					case SaveFlag.New:
 					{
 						I$Product$$Item$ $item$ = $item$Factory.Create($specialContent$, ApplicationProvider.SessionContextGuid);
+						$specialContent4$
 						$item$.CallContext = callContext;
+						$item$List.$Item$s.Add($item$);
+						$item$List.$Item$s.AddedItems.Add($item$);
 						break;
 					}
 					case SaveFlag.Delete:
@@ -87,6 +91,8 @@ namespace Dcx.Plus.Gateway.Modules.$Product$
 					}
 				}
 			}
+			$item$List.$Item$s.MonitorChanges = false;
+			$item$List.SetModified();
 
 			bool isSuccessfullySaved = $item$List.Save();
 			if (isSuccessfullySaved)
@@ -96,6 +102,7 @@ namespace Dcx.Plus.Gateway.Modules.$Product$
 					bo.Accept();
 				}
 
+				$item$List.$Item$s.Accept();
 				$item$List.Accept();
 
 				foreach (var dto in $item$Dtos.Where(t => t.SaveFlag == SaveFlag.New))
@@ -105,7 +112,7 @@ namespace Dcx.Plus.Gateway.Modules.$Product$
 					{
 						dto.LupdTimestamp = $item$.LupdTimestamp;
 						dto.LupdUser = $item$.LupdUser;
-						$FillDataTiemFromDto$
+						$specialContent3$
 						dto.SaveFlag = SaveFlag.Persistent;
 					}
 				}

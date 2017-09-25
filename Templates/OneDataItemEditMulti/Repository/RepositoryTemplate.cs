@@ -180,6 +180,7 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 			{
 				List<$Product$$Item$> $item$Dtos = new List<$Product$$Item$>();
 				
+				//Add all deleted elements
 				foreach ($Product$$Item$DataItem $item$DataItem in $item$s.DeletedItems)
 				{
 					$Product$$Item$ $item$ = _$product$DtoFactory.Create$Item$FromDataItem($item$DataItem);
@@ -187,19 +188,7 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 					$item$Dtos.Add($item$);
 				}
 
-				//Remove all existing assignments and recreate it afterwards
-				foreach ($Product$$Item$DataItem $item$DataItem in $item$s.Where(x => x.State == DataItemState.Persistent))
-				{
-					$Product$$Item$ delete$Item$ = _$product$DtoFactory.Create$Item$FromDataItem($item$DataItem);
-					delete$Item$.SaveFlag = SaveFlag.Delete;
-					$item$Dtos.Add(delete$Item$);
-
-					$Product$$Item$ create$Item$ = _$product$DtoFactory.Create$Item$FromDataItem($item$DataItem);
-					create$Item$.SaveFlag = SaveFlag.New;
-					$item$Dtos.Add(create$Item$);
-				}
-
-				//Add all new assignments
+				//Add all new elements
 				foreach ($Product$$Item$DataItem $item$DataItem in $item$s.Where(x => x.State == DataItemState.New))
 				{
 					$Product$$Item$ create$Item$ = _$product$DtoFactory.Create$Item$FromDataItem($item$DataItem);
@@ -207,12 +196,21 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 					$item$Dtos.Add(create$Item$);
 				}
 				
+				//Add all edited elements
+				foreach ($Product$$Item$DataItem $item$DataItem in $item$s.Where(x => x.State == DataItemState.Persistent && x.HasChanges == true))
+				{
+					$Product$$Item$ create$Item$ = _$product$DtoFactory.Create$Item$FromDataItem($item$DataItem);
+					create$Item$.SaveFlag = SaveFlag.Modified;
+					$item$Dtos.Add(create$Item$);
+				}
+				
 				CallResponse<IList<$Product$$Item$>> response = await _$dialog$Service.Save$Item$sAsync(callContext, $item$Dtos);
 				if (response.IsSuccess)
 				{
-					foreach ($Product$$Item$DataItem dataItem in $item$s)
+					foreach ($Product$$Item$ dto in  dto in response.Result)
 					{
-						$Product$$Item$ dto = response.Result.FirstOrDefault(x => $specialContent$);
+						$Product$$Item$DataItem dataItem = response.Result.FirstOrDefault(x => $specialContent$);
+						$specialContent2$
 						dataItem.LupdUser = dto.LupdUser;
 						dataItem.LupdTimestamp = dto.LupdTimestamp;
 						dataItem.State = DataItemState.Persistent;

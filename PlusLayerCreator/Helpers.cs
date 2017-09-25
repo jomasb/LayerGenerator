@@ -45,6 +45,25 @@ namespace PlusLayerCreator
 			return serializedConfiguration;
 		}
 
+		public static int GetMaxValue(string length)
+		{
+			if (length == string.Empty)
+			{
+				return 999999;
+			}
+
+			int value;
+			string computedString = string.Empty;
+			if (int.TryParse(length, out value))
+			{
+				for (int i = 1; i < value; i++)
+				{
+					computedString += "9";
+				}
+			}
+			return int.Parse(computedString);
+		}
+
 		public static Configuration ImportSettingsFromFile(string dialogFileName)
 		{
 			Configuration configuration = new Configuration();

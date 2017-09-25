@@ -34,7 +34,7 @@ namespace PlusLayerCreator.Configure
 		private string _templateDirectory;
 		private TemplateMode _selectedTemplateMode;
 		private ObservableCollection<PlusDataItemProperty> _dataLayout;
-		private string _inputhPath = @"C:\Users\jmaurer\Desktop\Templates\";
+		private string _inputhPath = @"C:\Projects\LayerGenerator\Templates\";
 		private string _commonPath = @"Common\";
 		private string _outputPath = @"C:\Output\";
 
@@ -100,7 +100,7 @@ namespace PlusLayerCreator.Configure
 		{
 			_dataLayout = new ObservableCollection<PlusDataItemProperty>();
 
-			GenerateTempData();
+			//GenerateTempData();
 
 			StartCommand = new DelegateCommand(StartExecuted);
 			AddCommand = new DelegateCommand(AddExecuted);
@@ -270,6 +270,8 @@ namespace PlusLayerCreator.Configure
 			Random rnd = new Random();
 			string key = string.Empty;
 			string identifier = string.Empty;
+			string readOnlyMappingDto = string.Empty;
+			string readOnlyMappingBo = string.Empty;
 			string mock = string.Empty;
 
 			foreach (PlusDataItemProperty plusDataObject in DataLayout.Where(t => t.IsKey))
@@ -282,7 +284,7 @@ namespace PlusLayerCreator.Configure
 				}
 				if (plusDataObject.Type == "int")
 				{
-					mock += Helpers.ToPascalCase(Item) + "." + plusDataObject.Name + " = " + rnd.Next(0, GetMaxValue(plusDataObject.Length))  + ",\r\n";
+					mock += Helpers.ToPascalCase(Item) + "." + plusDataObject.Name + " = " + rnd.Next(0, Helpers.GetMaxValue(plusDataObject.Length))  + ",\r\n";
 				}
 				if (plusDataObject.Type == "bool")
 				{
@@ -292,33 +294,21 @@ namespace PlusLayerCreator.Configure
 				{
 					mock += Helpers.ToPascalCase(Item) + "." + plusDataObject.Name + " = new DateTime(2016, 12, 25),\r\n";
 				}
+				if (plusDataObject.IsReadOnly)
+				{
+					readOnlyMappingDto +=
+						Helpers.ToPascalCase(Item) + "Dto." + plusDataObject.Name + " = " + Helpers.ToPascalCase(Item) + "." + plusDataObject.Name + ";\r\n";
+					readOnlyMappingBo +=
+						Helpers.ToPascalCase(Item) + "." + plusDataObject.Name + " = " + Helpers.ToPascalCase(Item) + "Dto." + plusDataObject.Name + ";\r\n";
+				}
 			}
 
 			key = key.Substring(0, key.Length - 2);
 			identifier = identifier.Substring(0, identifier.Length - 3);
 
 			CreateFile(GetInputhPath(_templateDirectory + @"Gateway\Contracts\IGatewayTemplate.cs"), OutputPath + @"Gateway\Contracts\I" + Product + DialogName + "Gateway.cs");
-			CreateFile(GetInputhPath(_templateDirectory + @"Gateway\GatewayTemplate.cs"), OutputPath + @"Gateway\" + Product + DialogName + "Gateway.cs", key, identifier);
+			CreateFile(GetInputhPath(_templateDirectory + @"Gateway\GatewayTemplate.cs"), OutputPath + @"Gateway\" + Product + DialogName + "Gateway.cs", key, identifier, readOnlyMappingDto, readOnlyMappingBo);
 			CreateFile(GetInputhPath(_templateDirectory + @"Gateway\GatewayMockTemplate.cs"), OutputPath + @"Gateway\" + Product + DialogName + "GatewayMock.cs", mock);				
-		}
-
-		private int GetMaxValue(string length)
-		{
-			if (length == string.Empty)
-			{
-				return 999999;
-			}
-
-			int value;
-			string computedString = string.Empty;
-			if (int.TryParse(length, out value))
-			{
-				for (int i = 1; i < value; i++)
-				{
-					computedString += "9";
-				}
-			}
-			return int.Parse(computedString);
 		}
 
 		private void CreateDto()
@@ -582,13 +572,19 @@ namespace PlusLayerCreator.Configure
 		private void CreateRepository()
 		{
 			string identifier = string.Empty;
+			string readOnly = string.Empty;
 			foreach (PlusDataItemProperty plusDataObject in DataLayout.Where(t => t.IsKey))
 			{
-				identifier += "x." + plusDataObject.Name + ".Equals(dataItem." + plusDataObject.Name + ") &&";
+				identifier += "x." + plusDataObject.Name + ".Equals(dto." + plusDataObject.Name + ") &&";
+				if (plusDataObject.IsReadOnly)
+				{
+					readOnly +=
+						Helpers.ToPascalCase(Item) + "Dto." + plusDataObject.Name + " = " + Helpers.ToPascalCase(Item) + "." + plusDataObject.Name + ";\r\n";
+				}
 			}
-
+			
 			CreateFile(GetInputhPath(_templateDirectory + @"Repository\Contracts\IRepositoryTemplate.cs"), OutputPath + @"Repository\Contracts\I" + Product + DialogName + "Repository.cs", string.Empty);
-			CreateFile(GetInputhPath(_templateDirectory + @"Repository\RepositoryTemplate.cs"), OutputPath + @"Repository\" + Product + DialogName + "Repository.cs", identifier);
+			CreateFile(GetInputhPath(_templateDirectory + @"Repository\RepositoryTemplate.cs"), OutputPath + @"Repository\" + Product + DialogName + "Repository.cs", identifier, readOnly);
 		}
 
 		private void CreateDataItem()
@@ -611,7 +607,7 @@ namespace PlusLayerCreator.Configure
 
 					if (plusDataObject.Length != string.Empty)
 					{
-						dataItemContent += "NumericRange(0, " + GetMaxValue(plusDataObject.Length) + ")";
+						dataItemContent += "NumericRange(0, " + Helpers.GetMaxValue(plusDataObject.Length) + ")";
 					}
 					dataItemContent += "]\r\n";
 				}
@@ -666,7 +662,7 @@ namespace PlusLayerCreator.Configure
 
 		private void CreateFile(string input, string output)
 		{
-			CreateFile(input, output, string.Empty, string.Empty);
+			CreateFile(input, output, string.Empty);
 		}
 
 		private void CreateFile(string input, string output, string specialContent)
@@ -676,10 +672,22 @@ namespace PlusLayerCreator.Configure
 
 		private void CreateFile(string input, string output, string specialContent, string specialContent2)
 		{
+			CreateFile(input, output, specialContent, specialContent2, string.Empty);
+		}
+
+		private void CreateFile(string input, string output, string specialContent, string specialContent2, string specialContent3)
+		{
+			CreateFile(input, output, specialContent, specialContent2, specialContent3, string.Empty);
+		}
+
+		private void CreateFile(string input, string output, string specialContent, string specialContent2, string specialContent3, string specialContent4)
+		{
 			string fileContent = File.ReadAllText(input);
 			fileContent = DoReplaces(fileContent);
 			fileContent = fileContent.Replace("$specialContent$", specialContent);
 			fileContent = fileContent.Replace("$specialContent2$", specialContent2);
+			fileContent = fileContent.Replace("$specialContent3$", specialContent3);
+			fileContent = fileContent.Replace("$specialContent4$", specialContent4);
 
 			FileInfo fileInfo = new FileInfo(output);
 			fileInfo.Directory.Create();
@@ -1014,7 +1022,8 @@ namespace PlusLayerCreator.Configure
 	{
 		OneDataItemReadOnly,
 		OneDataItemReadAndSave,
-		OneDataItemReadAndSaveMulti,
+		OneDataItemMulti,
+		OneDataItemEditMulti,
 		TwoDataItemsSplittedReadOnly,
 		//TwoDataItemsSplittedReadAndSave,
 		OneDataItemWithVersion
