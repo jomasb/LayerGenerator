@@ -15,17 +15,18 @@ using Dcx.Plus.UI.WPF.FW.Shell.Infrastructure.ViewModels;
 using Dcx.Plus.UI.WPF.FW.Shell.Interfaces;
 using Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Infrastructure;
 using Dcx.Plus.Localization.Modules.$Product$;
+using Dcx.Plus.UI.WPF.FW.Shell.Extensions;
 
 namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 {
 	/// <summary>
 	/// Definition of the view model for the master view.
 	/// </summary>
-	/// <seealso cref="MasterViewModelBase"/>
+	/// <seealso cref="MasterViewModelMultiEditBase"/>
 	/// <author></author>
 	/// <company>abat+ GmbH</company>
 	/// <date></date>
-	public class $Dialog$MasterViewModel : MasterViewModelBase, ILazyLoadingHandler, IFilterSourceProvider<$Product$$Item$DataItem>
+	public class $Dialog$MasterViewModel : MasterViewModelMultiEditBase, ILazyLoadingHandler, IFilterSourceProvider<$Product$$Item$DataItem>
 	{
 		#region Members
 		
@@ -57,6 +58,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 		/// <exception cref="System.NotImplementedException"></exception>
 		private void Initialize()
 		{
+			DisplayName = $Product$Localizer.Singleton.$Product$$Dialog$_lbl$Item$s.Translation;
 			CommandService.SubscribeAsyncCommand(GlobalCommandNames.SaveCommand, SaveCommandExecuted, SaveCommandCanExecute);
 			CommandService.SubscribeAsyncCommand(GlobalCommandNames.CancelCommand, CancelCommandExecuted, CancelCommandCanExecute);
 			CommandService.SubscribeAsyncCommand(GlobalCommandNames.CopyCommand, CopyCommandExecuted, CopyCommandCanExecute);
@@ -65,7 +67,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 			CommandService.SubscribeAsyncCommand(GlobalCommandNames.AddCommand, AddCommandExecuted, AddCommandCanExecute);
 			CommandService.SubscribeCommand(GlobalCommandNames.OpenSettingsDialogCommand, OpenSettingsDialogCommandExecuted);
 			
-			$Product$$Item$DataItemsList = _$product$$Dialog$Repository.Get$Item$s(CreateNewCallContext(true));
+			$Product$$Item$DataItemsList = _$product$$Dialog$Repository.Get$Item$s(CreateNewCallContext());
 			$Product$$Item$DataItemsList.RegisterLoadingHandler(this);
 			$Product$$Item$DataItemsList.Load();
 
@@ -114,48 +116,21 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 			{
 				Set(ref _selectedDataItem, value);
 
-				ResetNavigation();
 				if (_selectedDataItem != null)
 				{
 					NavigateToDetail(_selectedDataItem);
 				}
+				else
+				{
+					ResetNavigation();
+				}
+
 				RaiseCanExecuteChanged();
 			}
 		}
 		
 		#endregion Properties
 		
-		#region Overwritten Command CanExecutes
-
-		/// <summary>
-		/// Checks, if the copy command can execute.
-		/// </summary>
-		/// <returns></returns>
-		public override bool CopyCommandCanExecute()
-		{
-			return !IsInReadOnlyMode && !IsBusy;
-		}
-
-		/// <summary>
-		/// Checks, if the add command can execute.
-		/// </summary>
-		/// <returns></returns>
-		public override bool AddCommandCanExecute()
-		{
-			return !IsInReadOnlyMode && !IsBusy;
-		}
-
-		/// <summary>
-		/// Checks, if the delete command can execute.
-		/// </summary>
-		/// <returns></returns>
-		public override bool DeleteCommandCanExecute()
-		{
-			return !IsInReadOnlyMode && !IsBusy;
-		}
-
-		#endregion Overwritten Command CanExecutes
-
 		#region Methods
 
 		/// <summary>
@@ -174,6 +149,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 		{
 			if (sender is ILazyLoadingObservableCollection<$Product$$Item$DataItem>)
 			{
+				IsInitialLoadingCompleted = false;
 				On$Product$$Item$DataItemListLoaded();
 			}
 
@@ -217,6 +193,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 		public void OnRegisteredLazyCollectionException(object sender, Exception exception)
 		{
 			IsBusy = false;
+			IsInitialLoadingCompleted = false;
 			RaiseCanExecuteChanged();
 		}
 		
@@ -316,6 +293,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 		private async Task Refresh()
 		{
 			IsBusy = true;
+			IsInitialLoadingCompleted = false;
 			RaiseCanExecuteChanged();
 			$Product$$Item$DataItemsList.Reload();
 			await $Product$$Item$DataItemsList.CurrentLoadingTask;

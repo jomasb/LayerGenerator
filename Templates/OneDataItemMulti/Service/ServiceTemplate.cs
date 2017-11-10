@@ -16,8 +16,8 @@ namespace Dcx.Plus.BusinessServiceLocal.Modules.$Product$
 	/// <author></author>
 	/// <company>abat+ GmbH</company>
 	/// <date></date>
-	[ImplementationOf(typeof(I$Product$$Dialog$Service), isSingleton: true)]
-	public class $Product$$Dialog$Service : BusinessServiceLocalBase<I$Product$$Dialog$Gateway>, I$Product$$Dialog$Service
+	[ImplementationOf(typeof(I$Item$Service), isSingleton: true)]
+	public class $Item$Service : BusinessServiceLocalBase<I$Item$Gateway>, I$Item$Service
 	{
 		#region Get
 		

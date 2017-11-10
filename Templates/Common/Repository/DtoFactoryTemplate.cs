@@ -18,7 +18,7 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 		/// <summary>
 		/// Creates the $Product$$Item$ from dataItem.
 		/// </summary>
-		/// <param name="bo">The bo.</param>
+		/// <param name="dataItem">The dataItem.</param>
 		/// <returns></returns>
 		public $Product$$Item$ Create$Item$FromDataItem($Product$$Item$DataItem dataItem)
 		{

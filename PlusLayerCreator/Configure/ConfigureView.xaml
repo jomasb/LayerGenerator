@@ -96,7 +96,7 @@
 					<RowDefinition Height="*" />
 					<RowDefinition Height="*" />
 				</Grid.RowDefinitions>
-				<plus:PlusGroupBox Header="Gateway">
+				<plus:PlusGroupBox Header="Gateway" IsEnabled="{Binding ElementName=CheckBoxWithoutBO, Path=IsChecked, Converter={StaticResource InvertBoolConverter}}">
 					<StackPanel>
 						<plus:PlusCheckBox Content="Create DTO" IsChecked="{Binding IsCreateDto, Mode=TwoWay}" />
 						<plus:PlusCheckBox Content="Create DTO Factory" IsChecked="{Binding IsCreateDtoFactory, Mode=TwoWay}" />
@@ -109,6 +109,10 @@
 					Header="Business Service Local">
 					<StackPanel>
 						<plus:PlusCheckBox Content="Create Business Service Local and Interface" IsChecked="{Binding IsCreateBusinessService, Mode=TwoWay}" />
+						<plus:PlusCheckBox
+							x:Name="CheckBoxWithoutBO"
+							Content="Use Business Service without BOs"
+							IsChecked="{Binding IsUseBusinessServiceWithoutBO, Mode=TwoWay}" />
 					</StackPanel>
 				</plus:PlusGroupBox>
 				<plus:PlusGroupBox

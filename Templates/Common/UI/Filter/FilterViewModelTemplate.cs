@@ -12,7 +12,8 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Filter
 	/// <summary>
 	/// Definition of the view model for the filter view.
 	/// </summary>
-	/// <seealso cref="Dcx.Plus.UI.WPF.FW.Shell.Infrastructure.RegionViewModelBase" />
+	/// <seealso cref="RegionViewModelBase" />
+		/// <param name="$product$$Item$DataItemFilterSourceProvider">The IFilterSourceProvider for the $Product$$Item$DataItem</param>
 	/// <author></author>
 	/// <company>abat+ GmbH</company>
 	/// <date></date>
@@ -46,7 +47,6 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Filter
 	/// <summary>
 	/// Definition of the view model for $Product$$Item$DataItemFilter.
 	/// </summary>
-	/// <seealso cref="Dcx.Plus.UI.WPF.FW.Shell.Infrastructure.FilterViewModelBase<T>" />
 	/// <author></author>
 	/// <company>abat+ GmbH</company>
 	/// <date></date>

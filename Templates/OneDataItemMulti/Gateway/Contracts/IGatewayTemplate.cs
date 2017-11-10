@@ -16,7 +16,7 @@ namespace Dcx.Plus.Gateway.Modules.$Product$.Contracts
 	/// <author></author>
 	/// <company>abat+ GmbH</company>
 	/// <date></date>
-	public interface I$Product$$Dialog$Gateway : IGateway
+	public interface I$Item$Gateway : IGateway
 	{
 		#region Get
 		

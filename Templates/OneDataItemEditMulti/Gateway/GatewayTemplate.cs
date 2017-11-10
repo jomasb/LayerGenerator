@@ -1,7 +1,9 @@
 #region Usings
 
+using System;
 using Dcx.Plus.Gateway.FW.Contracts;
 using System.Collections.Generic;
+using System.Linq;
 using Dcx.Plus.Business.Modules.$Product$.Contracts;
 using Dcx.Plus.Infrastructure.Base;
 using Dcx.Plus.Infrastructure.Contracts;
@@ -21,8 +23,8 @@ namespace Dcx.Plus.Gateway.Modules.$Product$
 	/// <author></author>
 	/// <company>abat+ GmbH</company>
 	/// <date></date>
-	[ImplementationOf(typeof(I$Product$$Dialog$Gateway))]
-    public class $Product$$Dialog$Gateway : I$Product$$Dialog$Gateway
+	[ImplementationOf(typeof(I$Product$$Item$Gateway))]
+    public class $Product$$Item$Gateway : I$Product$$Item$Gateway
 	{
 		#region Properties
 		
@@ -43,7 +45,7 @@ namespace Dcx.Plus.Gateway.Modules.$Product$
             using (TraceLog.Log(this, options: TraceLogOptions.All))
             {
 				I$Product$$Item$ListFactory $item$ListFactory = BOFactoryProvider.Get<I$Product$$Item$ListFactory>();
-				I$Product$$Item$List $item$List = _$item$ListFactory.Get(ApplicationProvider.SessionContextGuid, callContext);
+				I$Product$$Item$List $item$List = $item$ListFactory.Get(ApplicationProvider.SessionContextGuid, callContext);
 				List<$Product$$Item$> $item$s = $item$List.$Item$s.Select($Product$DtoFactory.Create$Item$FromBO).ToList();
 
 				return CallResponse.FromSuccessfulResult((IList<$Product$$Item$>)$item$s);
@@ -66,10 +68,9 @@ namespace Dcx.Plus.Gateway.Modules.$Product$
 			I$Product$$Item$List $item$List = $item$ListFactory.Get(ApplicationProvider.SessionContextGuid, callContext);
 			I$Product$$Item$Factory $item$Factory = BOFactoryProvider.Get<I$Product$$Item$Factory>();
 
-			$item$List.$Item$s.MonitorChanges = false;
-			foreach ($Product$$Item$ $item$Dto in $item$Dtos)
+			foreach ($Product$$Item$ dto in $item$Dtos)
 			{
-				switch ($item$Dto.SaveFlag)
+				switch (dto.SaveFlag)
 				{
 					case SaveFlag.New:
 					{
@@ -77,7 +78,6 @@ namespace Dcx.Plus.Gateway.Modules.$Product$
 						$specialContent4$
 						$item$.CallContext = callContext;
 						$item$List.$Item$s.Add($item$);
-						$item$List.$Item$s.AddedItems.Add($item$);
 						break;
 					}
 					case SaveFlag.Modified:
@@ -86,8 +86,7 @@ namespace Dcx.Plus.Gateway.Modules.$Product$
 						if ($item$ != null)
 						{
 							$specialContent4$
-							$item$List.$Item$s.Add($item$);
-							$item$List.$Item$s.AddedItems.Add($item$);
+							$item$.SetModified();
 						}
 						break;
 					}
@@ -96,36 +95,24 @@ namespace Dcx.Plus.Gateway.Modules.$Product$
 						I$Product$$Item$ $item$ = $item$List.$Item$s.FirstOrDefault(x => $specialContent2$);
 						if ($item$ != null)
 						{
-							$item$.Delete();
+							$item$List.$Item$s.Remove($item$);
 						}
 						break;
 					}
 				}
 			}
-			$item$List.$Item$s.MonitorChanges = false;
-			$item$List.SetModified();
 
+			$item$List.SetModified();
 			bool isSuccessfullySaved = $item$List.Save();
 			if (isSuccessfullySaved)
 			{
-				foreach (var bo in $item$List.$Item$s)
+				foreach (var $item$Dto in $item$Dtos.Where(t => t.SaveFlag == SaveFlag.New))
 				{
-					bo.Accept();
-				}
-
-				$item$List.$Item$s.Accept();
-				$item$List.Accept();
-
-				foreach (var dto in $item$Dtos.Where(t => t.SaveFlag == SaveFlag.New))
-				{
-					I$Product$$Item$ $item$ = $item$List.$Item$s.FirstOrDefault(x => $specialContent2$);
-					if ($item$ != null)
-					{
-						dto.LupdTimestamp = $item$.LupdTimestamp;
-						dto.LupdUser = $item$.LupdUser;
-						$specialContent3$
-						dto.SaveFlag = SaveFlag.Persistent;
-					}
+					I$Product$$Item$ $item$ = $item$Factory.Get($specialContent$, callContext);
+					$item$Dto.LupdTimestamp = $item$.LupdTimestamp;
+					$item$Dto.LupdUser = $item$.LupdUser;
+					$specialContent3$
+					$item$Dto.SaveFlag = SaveFlag.Persistent;
 				}
 
 				return CallResponse.FromSuccessfulResult($item$Dtos);

@@ -56,7 +56,7 @@ namespace PlusLayerCreator
 			string computedString = string.Empty;
 			if (int.TryParse(length, out value))
 			{
-				for (int i = 1; i < value; i++)
+				for (int i = 0; i < value; i++)
 				{
 					computedString += "9";
 				}

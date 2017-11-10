@@ -21,7 +21,7 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 	{
 		#region Members
 		
-		private readonly I$Product$$Dialog$Service _$dialog$Service;
+		private readonly I$Product$$Dialog$Service _$item$Service;
 		private readonly $Product$DataItemFactory _$product$DataItemFactory;
 		private readonly $Product$DtoFactory _$product$DtoFactory;
 		
@@ -29,9 +29,9 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 
 		#region Construction
 		
-		public $Product$$Dialog$Repository(I$Product$$Dialog$Service $dialog$Service)
+		public $Product$$Dialog$Repository(I$Product$$Dialog$Service $item$Service)
 		{
-			_$dialog$Service = $dialog$Service;
+			_$item$Service = $item$Service;
 			_$product$DataItemFactory = new $Product$DataItemFactory();
 			_$product$DtoFactory = new $Product$DtoFactory();
 		}
@@ -46,7 +46,7 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 			{
 				IList<$Product$$Item$DataItem> $item$DataItems = new List<$Product$$Item$DataItem>();
 
-				var callResponse = await _$dialog$Service.Get$Item$sAsync(callContext).ConfigureAwait(false);
+				var callResponse = await _$item$Service.Get$Item$sAsync(callContext).ConfigureAwait(false);
 
 				if (callResponse.IsSuccess)
 				{

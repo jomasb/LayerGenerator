@@ -165,8 +165,10 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 				CallResponse<IList<$Product$$Item$>> response = await _$dialog$Service.Save$Item$sAsync(callContext, $item$s);
 				if (response.IsSuccess)
 				{
-					foreach ($Product$$Item$DataItem dataItem in siteVersion.$Item$s)
+					foreach ($Product$$Item$DataItem dataItem in $product$$Item$.$Item$s)
 					{
+						dataItem.LupdUser = dto.LupdUser;
+						dataItem.LupdTimestamp = dto.LupdTimestamp;
 						dataItem.State = DataItemState.Persistent;
 						dataItem.Accept();
 					}

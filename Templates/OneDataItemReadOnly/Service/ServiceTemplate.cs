@@ -8,8 +8,8 @@ using Dcx.Plus.Infrastructure.Contracts.Application;
 
 namespace Dcx.Plus.BusinessServiceLocal.Modules.$Product$
 {
-	[ImplementationOf(typeof(I$Product$$Dialog$Service), isSingleton: true)]
-	public class $Product$$Dialog$Service : BusinessServiceLocalBase<I$Product$$Dialog$Gateway>, I$Product$$Dialog$Service
+	[ImplementationOf(typeof(I$Item$Service), isSingleton: true)]
+	public class $Item$Service : BusinessServiceLocalBase<I$Item$Gateway>, I$Item$Service
 	{
 		#region Get
 		

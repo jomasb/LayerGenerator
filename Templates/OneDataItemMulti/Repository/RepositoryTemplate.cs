@@ -29,7 +29,7 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 	{
 		#region Members
 		
-		private readonly I$Product$$Dialog$Service _$dialog$Service;
+		private readonly I$Product$$Dialog$Service _$item$Service;
 		private readonly $Product$DataItemFactory _$product$DataItemFactory;
 		private readonly $Product$DtoFactory _$product$DtoFactory;
 		
@@ -37,9 +37,9 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 
 		#region Construction
 		
-		public $Product$$Dialog$Repository(I$Product$$Dialog$Service $dialog$Service)
+		public $Product$$Dialog$Repository(I$Product$$Dialog$Service $item$Service)
 		{
-			_$dialog$Service = $dialog$Service;
+			_$item$Service = $item$Service;
 			_$product$DataItemFactory = new $Product$DataItemFactory();
 			_$product$DtoFactory = new $Product$DtoFactory();
 		}
@@ -59,7 +59,7 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 			{
 				IList<$Product$$Item$DataItem> $item$DataItems = new List<$Product$$Item$DataItem>();
 
-				var callResponse = await _$dialog$Service.Get$Item$sAsync(callContext).ConfigureAwait(false);
+				var callResponse = await _$item$Service.Get$Item$sAsync(callContext).ConfigureAwait(false);
 
 				if (callResponse.IsSuccess)
 				{
@@ -157,10 +157,10 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 		public async Task<CallResponse<$Product$$Item$DataItem>> Clone$Item$Async(IRepositoryCallContext callContext, $Product$$Item$DataItem $item$, PlusObservableCollection<$Product$$Item$DataItem> $item$s)
 		{
 			$Product$$Item$DataItem new$Item$ = await $item$.DeepCloneData();
-
 			new$Item$.ForEachTunneling<PlusStateDataItem>(y => y.State = DataItemState.New);
-
+			new$Item$.Accept();
 			$item$s.Add($item$);
+
 			return CallResponse.FromSuccessfulResult(new$Item$);			
 		}
 		
@@ -196,16 +196,19 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 					$item$Dtos.Add(create$Item$);
 				}
 				
-				CallResponse<IList<$Product$$Item$>> response = await _$dialog$Service.Save$Item$sAsync(callContext, $item$Dtos);
+				CallResponse<IList<$Product$$Item$>> response = await _$item$Service.Save$Item$sAsync(callContext, $item$Dtos);
 				if (response.IsSuccess)
 				{
 					foreach ($Product$$Item$ dto in  dto in response.Result)
 					{
-						$Product$$Item$DataItem dataItem = response.Result.FirstOrDefault(x => $specialContent$);
-						$specialContent2$
-						dataItem.LupdUser = dto.LupdUser;
-						dataItem.LupdTimestamp = dto.LupdTimestamp;
-						dataItem.State = DataItemState.Persistent;
+						$Product$$Item$DataItem dataItem = $item$DataItems.FirstOrDefault(x => $specialContent$);
+						if (dataItem != null)
+						{
+							$specialContent2$
+							dataItem.LupdUser = dto.LupdUser;
+							dataItem.LupdTimestamp = dto.LupdTimestamp;
+							dataItem.State = DataItemState.Persistent;
+						}
 					}
 					
 					checkpointReferences.AcceptDeep();

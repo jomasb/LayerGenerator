@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dcx.Plus.BusinessServiceLocal.FW.Contracts;
@@ -13,7 +12,7 @@ namespace Dcx.Plus.BusinessServiceLocal.Modules.$Product$.Contracts
 	/// <author></author>
 	/// <company>abat+ GmbH</company>
 	/// <date></date>
-	public interface I$Product$$Dialog$Service
+	public interface I$Product$$Item$Service
 	{
 		#region Get
 		
@@ -32,7 +31,7 @@ namespace Dcx.Plus.BusinessServiceLocal.Modules.$Product$.Contracts
 		/// Saves the $Item$s asynchronous.
 		/// </summary>
 		/// <param name="serviceCallContext">The service call context.</param>
-		/// <param name="$Item$Dtos">The $Item$ dtos.</param>
+		/// <param name="$item$Dtos">The $Item$ dtos.</param>
 		/// <returns></returns>
 		Task<CallResponse<IList<$Product$$Item$>>> Save$Item$sAsync(IServiceCallContext serviceCallContext, IList<$Product$$Item$> $item$Dtos);
 		

@@ -13,8 +13,8 @@ using Dcx.Plus.Gateway.Modules.$Product$.Contracts;
 
 namespace Dcx.Plus.Gateway.Modules.$Product$
 {
-	[ImplementationOf(typeof(I$Product$$Dialog$Gateway))]
-    public class $Product$$Dialog$Gateway : I$Product$$Dialog$Gateway
+	[ImplementationOf(typeof(I$Item$Gateway))]
+    public class $Item$Gateway : I$Item$Gateway
 	{
 		#region Properties
 		

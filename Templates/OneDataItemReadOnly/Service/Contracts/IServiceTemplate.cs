@@ -7,7 +7,7 @@ using Dcx.Plus.Infrastructure.Contracts.Application;
 
 namespace Dcx.Plus.BusinessServiceLocal.Modules.$Product$.Contracts
 {
-	public interface I$Product$$Dialog$Service
+	public interface I$Item$Service
 	{
 		#region Get
 		

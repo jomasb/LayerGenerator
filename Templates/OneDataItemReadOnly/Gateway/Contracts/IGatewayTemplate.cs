@@ -10,7 +10,7 @@ using Dcx.Plus.Infrastructure.Contracts.Application;
 
 namespace Dcx.Plus.Gateway.Modules.$Product$.Contracts
 {
-	public interface I$Product$$Dialog$Gateway : IGateway
+	public interface I$Item$Gateway : IGateway
 	{
 		#region Get
 		

@@ -8,6 +8,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:plus="http://schemas.abatplus.de/xaml"
              xmlns:prism="http://prismlibrary.com/"
+			 xmlns:selection="clr-namespace:Dcx.Plus.UI.WPF.FW.Shell.Infrastructure.Selection;assembly=Dcx.Plus.UI.WPF.FW.Shell"
              d:DataContext="{d:DesignInstance master:$Dialog$MasterViewModel}"
              d:DesignHeight="300"
              d:DesignWidth="1000"
@@ -27,8 +28,13 @@
 			ItemsSource="{Binding FilterCollection}"
 			SelectedItem="{Binding SelectedDataItem}"
 			SelectionMode="Single"
-			plus:PlusSpinnerContainer.IsLoading="{Binding $Product$$Item$DataItemsList.IsLoading}">
-			<plus:PlusDataGrid.Columns>
+			plus:PlusSpinnerContainer.IsLoading="{Binding $Product$$Item$DataItemsList.IsLoading}">>
+
+		<i:Interaction.Behaviors>
+			<selection:SingleActiveItemBehavior ActiveItem="{Binding SelectedDataItem, Mode=TwoWay}" />
+		</i:Interaction.Behaviors>
+
+		<plus:PlusDataGrid.Columns>
 			<plus:PlusGridViewCheckColumn
 				Width="40"
 				CheckedIcon="{StaticResource Icon.Edit.16}"

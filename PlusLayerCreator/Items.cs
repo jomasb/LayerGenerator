@@ -82,6 +82,11 @@ namespace PlusLayerCreator
 			get;
 			set;
 		}
+		public bool IsUseBusinessServiceWithoutBO
+		{
+			get;
+			set;
+		}
 		public bool IsCreateDataItem
 		{
 			get;

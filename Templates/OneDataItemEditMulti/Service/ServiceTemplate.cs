@@ -16,8 +16,8 @@ namespace Dcx.Plus.BusinessServiceLocal.Modules.$Product$
 	/// <author></author>
 	/// <company>abat+ GmbH</company>
 	/// <date></date>
-	[ImplementationOf(typeof(I$Product$$Dialog$Service), isSingleton: true)]
-	public class $Product$$Dialog$Service : BusinessServiceLocalBase<I$Product$$Dialog$Gateway>, I$Product$$Dialog$Service
+	[ImplementationOf(typeof(I$Product$$Item$Service), isSingleton: true)]
+	public class $Product$$Item$Service : BusinessServiceLocalBase<I$Product$$Item$Gateway>, I$Product$$Item$Service
 	{
 		#region Get
 		
@@ -39,7 +39,7 @@ namespace Dcx.Plus.BusinessServiceLocal.Modules.$Product$
 		/// Saves the $Item$s asynchronous.
 		/// </summary>
 		/// <param name="serviceCallContext">The service call context.</param>
-		/// <param name="$Item$Dtos">The $Item$ dtos.</param>
+		/// <param name="$item$Dtos">The $Item$ dtos.</param>
 		/// <returns></returns>
 		public Task<CallResponse<IList<$Product$$Item$>>> Save$Item$sAsync(IServiceCallContext serviceCallContext, IList<$Product$$Item$> $item$Dtos)
 		{

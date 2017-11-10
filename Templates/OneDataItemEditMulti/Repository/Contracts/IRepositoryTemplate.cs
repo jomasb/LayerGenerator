@@ -39,9 +39,9 @@ namespace Dcx.Plus.Repository.Modules.$Product$.Contracts
 		/// Adds the new $Item$ asynchronous.
 		/// </summary>
 		/// <param name="callContext">The call context.</param>
-		/// <param name="$Item$DataItems">The $Item$ data items.</param>
+		/// <param name="$item$DataItems">The $Item$ data items.</param>
 		/// <returns></returns>
-		Task<CallResponse<$Product$$Item$DataItem>> AddNew$Item$Async(IRepositoryCallContext callContext, IObservableCollection<$Product$$Item$DataItem> $item$s);
+		Task<CallResponse<$Product$$Item$DataItem>> AddNew$Item$Async(IRepositoryCallContext callContext, IObservableCollection<$Product$$Item$DataItem> $item$DataItems);
 		
 		#endregion Add
 		
@@ -51,10 +51,10 @@ namespace Dcx.Plus.Repository.Modules.$Product$.Contracts
 		/// Deletes the $Item$ asynchronous.
 		/// </summary>
 		/// <param name="callContext">The call context.</param>
-		/// <param name="$Item$">The $Item$.</param>
-		/// <param name="$Item$s">The $Item$s.</param>
+		/// <param name="$item$">The $Item$.</param>
+		/// <param name="$item$DataItems">The $Item$DataItems.</param>
 		/// <returns></returns>
-		Task<CallResponse<bool>> Delete$Item$Async(IRepositoryCallContext callContext, $Product$$Item$DataItem $item$, PlusObservableCollection<$Product$$Item$DataItem> $item$s);
+		Task<CallResponse<bool>> Delete$Item$Async(IRepositoryCallContext callContext, $Product$$Item$DataItem $item$, PlusObservableCollection<$Product$$Item$DataItem> $item$DataItems);
 		
 		#endregion Delete
 		

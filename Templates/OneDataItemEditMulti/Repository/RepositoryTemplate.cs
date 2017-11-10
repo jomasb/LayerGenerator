@@ -29,7 +29,7 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 	{
 		#region Members
 		
-		private readonly I$Product$$Dialog$Service _$dialog$Service;
+		private readonly I$Product$$Item$Service _$product$$Item$Service;
 		private readonly $Product$DataItemFactory _$product$DataItemFactory;
 		private readonly $Product$DtoFactory _$product$DtoFactory;
 		
@@ -37,9 +37,9 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 
 		#region Construction
 		
-		public $Product$$Dialog$Repository(I$Product$$Dialog$Service $dialog$Service)
+		public $Product$$Dialog$Repository(I$Product$$Item$Service $product$$Item$Service)
 		{
-			_$dialog$Service = $dialog$Service;
+			_$product$$Item$Service = $product$$Item$Service;
 			_$product$DataItemFactory = new $Product$DataItemFactory();
 			_$product$DtoFactory = new $Product$DtoFactory();
 		}
@@ -59,7 +59,7 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 			{
 				IList<$Product$$Item$DataItem> $item$DataItems = new List<$Product$$Item$DataItem>();
 
-				var callResponse = await _$dialog$Service.Get$Item$sAsync(callContext).ConfigureAwait(false);
+				var callResponse = await _$product$$Item$Service.Get$Item$sAsync(callContext).ConfigureAwait(false);
 
 				if (callResponse.IsSuccess)
 				{
@@ -101,7 +101,7 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 		/// Adds the new $Item$ asynchronous.
 		/// </summary>
 		/// <param name="callContext">The call context.</param>
-		/// <param name="$Item$DataItems">The $Item$ data items.</param>
+		/// <param name="$item$DataItems">The $Item$ data items.</param>
 		/// <returns></returns>
 		public async Task<CallResponse<$Product$$Item$DataItem>> AddNew$Item$Async(IRepositoryCallContext callContext, IObservableCollection<$Product$$Item$DataItem> $item$DataItems)
 		{
@@ -127,14 +127,14 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 		/// Deletes the $Item$ asynchronous.
 		/// </summary>
 		/// <param name="callContext">The call context.</param>
-		/// <param name="$Item$">The $Item$.</param>
-		/// <param name="$Item$s">The $Item$s.</param>
+		/// <param name="$item$">The $Item$.</param>
+		/// <param name="$item$DataItems">The $Item$s.</param>
 		/// <returns></returns>
-		public async Task<CallResponse<bool>> Delete$Item$Async(IRepositoryCallContext callContext, $Product$$Item$DataItem $item$, PlusObservableCollection<$Product$$Item$DataItem> $item$s)
+		public async Task<CallResponse<bool>> Delete$Item$Async(IRepositoryCallContext callContext, $Product$$Item$DataItem $item$, PlusObservableCollection<$Product$$Item$DataItem> $item$DataItems)
 		{
 			try
 			{
-			    $item$s.Remove($item$);
+			    $item$DataItems.Remove($item$);
 			    return CallResponse.FromSuccessfulResult(true);
 			}
 			catch (Exception ex)
@@ -151,16 +151,16 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 		/// Clones the $Item$ asynchronous.
 		/// </summary>
 		/// <param name="callContext">The call context.</param>
-		/// <param name="$Item$">The $Item$.</param>
-		/// <param name="$Item$s">The $Item$s.</param>
+		/// <param name="$item$">The $Item$.</param>
+		/// <param name="$item$s">The $Item$s.</param>
 		/// <returns></returns>
-		public async Task<CallResponse<$Product$$Item$DataItem>> Clone$Item$Async(IRepositoryCallContext callContext, $Product$$Item$DataItem $item$, PlusObservableCollection<$Product$$Item$DataItem> $item$s)
+		public async Task<CallResponse<$Product$$Item$DataItem>> Clone$Item$Async(IRepositoryCallContext callContext, $Product$$Item$DataItem $item$, PlusObservableCollection<$Product$$Item$DataItem> $item$DataItems)
 		{
 			$Product$$Item$DataItem new$Item$ = await $item$.DeepCloneData();
-
 			new$Item$.ForEachTunneling<PlusStateDataItem>(y => y.State = DataItemState.New);
+			new$Item$.Accept();
+			$item$DataItems.Add(new$Item$);
 
-			$item$s.Add($item$);
 			return CallResponse.FromSuccessfulResult(new$Item$);			
 		}
 		
@@ -172,16 +172,16 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 		/// Saves the $Item$ asynchronous.
 		/// </summary>
 		/// <param name="callContext">The call context.</param>
-		/// <param name="$Item$s">The $Item$s.</param>
+		/// <param name="$item$DataItems">The $Item$s.</param>
 		/// <returns></returns>
-		public async Task<CallResponse<PlusObservableCollection<$Product$$Item$DataItem>>> Save$Item$Async(IRepositoryCallContext callContext, PlusObservableCollection<$Product$$Item$DataItem> $item$s)
+		public async Task<CallResponse<PlusObservableCollection<$Product$$Item$DataItem>>> Save$Item$Async(IRepositoryCallContext callContext, PlusObservableCollection<$Product$$Item$DataItem> $item$DataItems)
 		{
 			try
 			{
 				List<$Product$$Item$> $item$Dtos = new List<$Product$$Item$>();
 				
 				//Add all deleted elements
-				foreach ($Product$$Item$DataItem $item$DataItem in $item$s.DeletedItems)
+				foreach ($Product$$Item$DataItem $item$DataItem in $item$DataItems.DeletedItems)
 				{
 					$Product$$Item$ $item$ = _$product$DtoFactory.Create$Item$FromDataItem($item$DataItem);
 					$item$.SaveFlag = SaveFlag.Delete;
@@ -189,7 +189,7 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 				}
 
 				//Add all new elements
-				foreach ($Product$$Item$DataItem $item$DataItem in $item$s.Where(x => x.State == DataItemState.New))
+				foreach ($Product$$Item$DataItem $item$DataItem in $item$DataItems.Where(x => x.State == DataItemState.New))
 				{
 					$Product$$Item$ create$Item$ = _$product$DtoFactory.Create$Item$FromDataItem($item$DataItem);
 					create$Item$.SaveFlag = SaveFlag.New;
@@ -197,28 +197,31 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 				}
 				
 				//Add all edited elements
-				foreach ($Product$$Item$DataItem $item$DataItem in $item$s.Where(x => x.State == DataItemState.Persistent && x.HasChanges == true))
+				foreach ($Product$$Item$DataItem $item$DataItem in $item$DataItems.Where(x => x.State == DataItemState.Persistent && x.HasChanges))
 				{
 					$Product$$Item$ create$Item$ = _$product$DtoFactory.Create$Item$FromDataItem($item$DataItem);
 					create$Item$.SaveFlag = SaveFlag.Modified;
 					$item$Dtos.Add(create$Item$);
 				}
 				
-				CallResponse<IList<$Product$$Item$>> response = await _$dialog$Service.Save$Item$sAsync(callContext, $item$Dtos);
+				CallResponse<IList<$Product$$Item$>> response = await _$product$$Item$Service.Save$Item$sAsync(callContext, $item$Dtos);
 				if (response.IsSuccess)
 				{
-					foreach ($Product$$Item$ dto in  dto in response.Result)
+					foreach ($Product$$Item$ dto in response.Result)
 					{
-						$Product$$Item$DataItem dataItem = response.Result.FirstOrDefault(x => $specialContent$);
-						$specialContent2$
-						dataItem.LupdUser = dto.LupdUser;
-						dataItem.LupdTimestamp = dto.LupdTimestamp;
-						dataItem.State = DataItemState.Persistent;
+						$Product$$Item$DataItem dataItem = $item$DataItems.FirstOrDefault(x => $specialContent$);
+						if (dataItem != null)
+						{
+							$specialContent2$
+							dataItem.LupdUser = dto.LupdUser;
+							dataItem.LupdTimestamp = dto.LupdTimestamp;
+							dataItem.State = DataItemState.Persistent;
+						}
 					}
 					
-					checkpointReferences.AcceptDeep();
+					$item$DataItems.AcceptDeep();
 
-					return CallResponse.FromSuccessfulResult($item$s);
+					return CallResponse.FromSuccessfulResult($item$DataItems);
 				}
 
 				return CallResponse.FromFailedResult<PlusObservableCollection<$Product$$Item$DataItem>>(null);

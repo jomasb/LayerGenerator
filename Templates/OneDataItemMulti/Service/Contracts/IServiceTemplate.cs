@@ -13,7 +13,7 @@ namespace Dcx.Plus.BusinessServiceLocal.Modules.$Product$.Contracts
 	/// <author></author>
 	/// <company>abat+ GmbH</company>
 	/// <date></date>
-	public interface I$Product$$Dialog$Service
+	public interface I$Item$Service
 	{
 		#region Get
 		

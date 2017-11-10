@@ -19,7 +19,7 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 		/// <summary>
 		/// Creates the $Product$$Item$DataItem from dto.
 		/// </summary>
-		/// <param name="bo">The dto.</param>
+		/// <param name="do">The dto.</param>
 		public $Product$$Item$DataItem Create$Item$FromDto($Product$$Item$ dto)
 		{
 			return FinalCreate(new $Product$$Item$DataItem()
