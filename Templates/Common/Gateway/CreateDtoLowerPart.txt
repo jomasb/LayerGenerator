@@ -1,0 +1,6 @@
+		LupdTimestamp = bo.LupdTimestamp,
+		LupdUser = bo.LupdUser
+	};
+
+	return dto;
+}
