@@ -15,21 +15,6 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 	/// <date></date>
 	public class $Product$DtoFactory
 	{
-		/// <summary>
-		/// Creates the $Product$$Item$ from dataItem.
-		/// </summary>
-		/// <param name="dataItem">The dataItem.</param>
-		/// <returns></returns>
-		public $Product$$Item$ Create$Item$FromDataItem($Product$$Item$DataItem dataItem)
-		{
-			$Product$$Item$ dto = new $Product$$Item$()
-			{
-				$specialContent$				
-				LupdUser = dataItem.LupdUser,
-				LupdTimestamp = dataItem.LupdTimestamp,
-			};
-			
-			return dto;
-		}
+		$specialContent$			
 	}
 }

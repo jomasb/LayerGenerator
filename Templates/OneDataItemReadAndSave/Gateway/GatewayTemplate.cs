@@ -42,34 +42,31 @@ namespace Dcx.Plus.Gateway.Modules.$Product$
 		
 		#region Save
 		
-		public CallResponse<IList<$Product$$Item$>> Save$Item$s(ICallContext callContext, List<$Product$$Item$> $item$Dtos)
+		public CallResponse<$Product$$Item$> Save$Item$(ICallContext callContext, $Product$$Item$ $item$Dto)
 		{
 			I$Product$$Item$ListFactory $item$ListFactory = BOFactoryProvider.Get<I$Product$$Item$ListFactory>();
 			I$Product$$Item$List $item$List = $item$ListFactory.Get(ApplicationProvider.SessionContextGuid, callContext);
 			I$Product$$Item$Factory $item$Factory = BOFactoryProvider.Get<I$Product$$Item$Factory>();
 			
-			foreach ($Product$$Item$ $item$Dto in $item$Dtos)
+			switch ($item$.SaveFlag)
 			{
-				switch ($item$.SaveFlag)
-				{
-					case SaveFlag.New:
+				case SaveFlag.New:
+					{
+						$item$ = $item$Factory.Create(??, ApplicationProvider.SessionContextGuid);
+						$specialContent$
+						$item$.CallContext = callContext;
+						break;
+					}
+				case SaveFlag.Delete:
+					{
+						$item$ = $item$List.$Item$s.FirstOrDefault(x => x.Key.?? == input.??);
+						if ($item$ != null)
 						{
-							$item$ = $item$Factory.Create(??, ApplicationProvider.SessionContextGuid);
 							$specialContent$
-							$item$.CallContext = callContext;
-							break;
+							$item$.Delete();
 						}
-					case SaveFlag.Delete:
-						{
-							$item$ = $item$List.$Item$s.FirstOrDefault(x => x.Key.?? == input.??);
-							if ($item$ != null)
-							{
-								$specialContent$
-								$item$.Delete();
-							}
-							break;
-						}
-				}
+						break;
+					}
 			}
 			
 			bool isSuccessfullySaved = $item$List.Save();

@@ -1,14 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PlusLayerCreator
 {
 	public class PlusDataItem
 	{
+		public string Name
+		{
+			get;
+			set;
+		}
+
+		public string Translation
+		{
+			get;
+			set;
+		}
+
 		public ObservableCollection<PlusDataItemProperty> Properties
 		{
 			get;
@@ -19,6 +27,12 @@ namespace PlusLayerCreator
 	public class PlusDataItemProperty
 	{
 		public string Name
+		{
+			get;
+			set;
+		}
+
+		public string Translation
 		{
 			get;
 			set;
@@ -122,17 +136,26 @@ namespace PlusLayerCreator
 			get;
 			set;
 		}
-		public string Item
-		{
-			get;
-			set;
-		}
+
 		public string DialogName
 		{
 			get;
 			set;
 		}
-		public IList<PlusDataItemProperty> DataLayout
+
+		public string DialogTranslationDE
+		{
+			get;
+			set;
+		}
+
+		public string DialogTranslationEN
+		{
+			get;
+			set;
+		}
+
+		public IList<PlusDataItem> DataLayout
 		{
 			get;
 			set;

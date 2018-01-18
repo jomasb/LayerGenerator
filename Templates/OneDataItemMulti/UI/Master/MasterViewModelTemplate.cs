@@ -238,6 +238,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 		{
 			await $Product$$Item$DataItemsList.Rollback();
 			$Product$$Item$DataItemsList.HasAnyChanges = false;
+			ResetNavigation();
 			RaiseCanExecuteChanged();
 			BaseServices.EventAggregator.Publish(GlobalEventNames.CancelExecuted);
 		}
@@ -305,6 +306,11 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 		private void ResetNavigation()
 		{
 			BaseServices.NavigationService.Unload(RegionNames.DetailRegion);
+			
+			if (SelectedDataItem != null)
+			{
+				SelectedDataItem.PropertyChanged -= New$Product$$Item$DataItem_PropertyChanged;
+			}			
 		}
 
 		/// <summary>

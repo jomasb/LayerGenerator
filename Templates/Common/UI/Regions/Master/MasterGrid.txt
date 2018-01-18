@@ -1,0 +1,23 @@
+<plus:PlusDataGrid
+			x:Name="FilteredGridView"
+			IsSynchronizedWithCurrentItem="False"
+			ItemsSource="{Binding FilterCollection}"
+			SelectedItem="{Binding SelectedDataItem}"
+			SelectionMode="Single"
+			plus:PlusSpinnerContainer.IsLoading="{Binding $Product$$Item$DataItemsList.IsLoading}">>
+
+		<i:Interaction.Behaviors>
+			<selection:SingleActiveItemBehavior ActiveItem="{Binding SelectedDataItem, Mode=TwoWay}" />
+		</i:Interaction.Behaviors>
+
+		<plus:PlusDataGrid.Columns>
+			<plus:PlusGridViewCheckColumn
+				Width="40"
+				CheckedIcon="{StaticResource Icon.Edit.16}"
+				CheckedIconSelected="{StaticResource Icon.Edit.White.16}"
+				DataMemberBinding="{Binding HasAnyChanges}"
+				Header=""
+				IsVisibilityConfigurable="False" />
+			$specialContent$
+			</plus:PlusDataGrid.Columns>
+</plus:PlusDataGrid>

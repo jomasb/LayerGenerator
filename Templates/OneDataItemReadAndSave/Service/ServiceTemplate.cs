@@ -23,9 +23,9 @@ namespace Dcx.Plus.BusinessServiceLocal.Modules.$Product$
 		
 		#region Save
 		
-		public Task<CallResponse<IList<$Product$$Item$>>> Save$Item$sAsync(IServiceCallContext serviceCallContext, List<$Product$$Item$> $item$Dtos)
+		public Task<CallResponse<$Product$$Item$>> Save$Item$Async(IServiceCallContext serviceCallContext, $Product$$Item$ $item$Dto)
 		{
-			return GetGatewayResponseAsync(r => r.Save$Item$s(serviceCallContext, $item$Dtos), serviceCallContext);
+			return GetGatewayResponseAsync(r => r.Save$Item$(serviceCallContext, $item$Dto), serviceCallContext);
 		}
 		
 		#endregion Save

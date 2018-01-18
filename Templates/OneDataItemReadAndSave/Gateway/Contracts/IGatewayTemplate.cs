@@ -20,7 +20,7 @@ namespace Dcx.Plus.Gateway.Modules.$Product$.Contracts
 		
 		#region Save
 		
-		CallResponse<IList<$Product$$Item$>> Save$Item$s(ICallContext callContext, List<$Product$$Item$> $item$Dtos);
+		CallResponse<$Product$$Item$> Save$Item$(ICallContext callContext, $Product$$Item$ $item$Dto);
 		
 		#endregion Save
 	}

@@ -16,7 +16,25 @@ namespace PlusLayerCreator.Configure
 	{
 		#region Members
 
-		private PlusDataItemProperty _selectedItem;
+		private PlusDataItem _selectedItem;
+		private PlusDataItemProperty _selectedPropertyItem;
+		private TemplateMode _template;
+		private TemplateMode _selectedTemplateMode;
+		private ObservableCollection<PlusDataItem> _dataLayout;
+		
+		#region Settings
+		
+		private string _product;
+		//private string _item;
+		private string _dialogName;
+		private string _dialogTranslationEN;
+		private string _dialogTranslationDE;
+		private string _templateDirectory;
+
+		private string _inputhPath = @"C:\Projects\LayerGenerator\Templates\";
+		private string _commonPath = @"Common\";
+		private string _outputPath = @"C:\Output\";
+
 		private bool _isCreateDto = true;
 		private bool _isCreateDtoFactory = true;
 		private bool _isCreateGateway = true;
@@ -28,16 +46,10 @@ namespace PlusLayerCreator.Configure
 		private bool _isCreateRepository = true;
 		private bool _isCreateUi = true;
 		private bool _isCreateUiFilter = true;
-		private TemplateMode _template;
-		private string _product;
-		private string _item;
-		private string _dialogName;
-		private string _templateDirectory;
-		private TemplateMode _selectedTemplateMode;
-		private ObservableCollection<PlusDataItemProperty> _dataLayout;
-		private string _inputhPath = @"C:\Projects\LayerGenerator\Templates\";
-		private string _commonPath = @"Common\";
-		private string _outputPath = @"C:\Output\";
+
+		#endregion Settings
+
+		#region Template
 
 		private string _keyReadOnlyTemplate =
 			" IsReadOnly=\"{Binding IsNewItem, Converter={StaticResource InvertBoolConverter}}\"";
@@ -46,52 +58,24 @@ namespace PlusLayerCreator.Configure
 
 		private string _isNumericTemplate = " IsNumeric=\"True\"";
 
-		private string _filterPropertyTemplate = "public $Type$ $Name$\r\n" +
-		                                         "{\r\n" +
-		                                         "    get { return _$name$; }\r\n" +
-		                                         "    set\r\n" +
-		                                         "    {\r\n" +
-		                                         "        Set(ref _$name$, value);\r\n" +
-		                                         "        RefreshCollectionView();\r\n" +
-		                                         "    }\r\n" +
-		                                         "}\r\n\r\n";
+		private readonly string _masterGridTemplate;
+		private readonly string _filterChildViewModelTemplate;
+		private readonly string _filterPropertyTemplate;
+		private readonly string _filterComboBoxPropertyTemplate;
+		private readonly string _filterTextBoxXamlTemplate;
+		private readonly string _filterComboBoxXamlTemplate;
+		private readonly string _filterCheckBoxXamlTemplate;
+		private readonly string _filterDateTimePickerXamlTemplate;
 
-		private string _filterComboBoxPropertyTemplate = "public MultiValueSelector<string> $Name$MultiSelector\r\n" +
-		                                        "{\r\n" +
-												"    get { return _$name$MultiSelector; }\r\n" +
-		                                        "    set\r\n" +
-		                                        "    {\r\n" +
-												"        Set(ref _$name$MultiSelector, value);\r\n" +
-		                                        "    }\r\n" +
-		                                        "}\r\n\r\n";
+		private readonly string _createGatewayDtoTemplateUpperPart;
+		private readonly string _createGatewayDtoTemplateLowerPart;
 
-		private string _filterTextBoxXamlTemplate = "<plus:PlusFormRow Label=\"{localization:Localize Key=$Product$$Dialog$_lbl$Name$, Source=$Product$Localizer}\">\r\n" +
-											"    <plus:PlusTextBoxButton Text=\"{Binding $Name$, UpdateSourceTrigger=PropertyChanged, Delay=300}\" />\r\n" +
-											"</plus:PlusFormRow>\r\n\r\n";
+		private readonly string _createRepositoryDtoTemplateUpperPart;
+		private readonly string _createRepositoryDtoTemplateLowerPart;
+		private readonly string _createDataItemTemplateUpperPart;
+		private readonly string _createDataItemTemplateLowerPart;
 
-		private string _filterComboBoxXamlTemplate = "<plus:PlusFormRow Label=\"{localization:Localize Key=$Product$$Dialog$_lbl$Name$, Source=$Product$Localizer}\">\r\n" +
-											 "    <plus:PlusMultiComboBox\r\n" +
-											 "        IsSynchronizedWithCurrentItem=\"True\"\r\n" +
-											 "        ItemsSource=\"{Binding $Name$MultiSelector.Values, Mode=OneWay}\"\r\n" +
-											 "        SelectedIndex=\"0\"\r\n" +
-											 "        SelectedItemsSource=\"{Binding $Name$MultiSelector.SelectedValues}\" />\r\n" +
-											 "</plus:PlusFormRow>\r\n\r\n";
-
-		private string _filterCheckBoxXamlTemplate = "<plus:PlusFormRow>\r\n" +
-											 "    <plus:PlusCheckBox\r\n" +
-											 "        Content=\"$Name$\"\r\n" +
-											 "						IsChecked=\"{Binding $Name$, Mode=TwoWay}\"\r\n" +
-											 "						IsThreeState=\"True\" />\r\n" +
-											 "</plus:PlusFormRow>\r\n\r\n";
-
-		private string _filterDateTimePickerXamlTemplate = "<plus:PlusFormRow Label=\"{localization:Localize Key=$Product$$Dialog$_lbl$Name$, Source=$Product$Localizer}\">\r\n" +
-		                                                   "    <plus:PlusDateTimePicker\r\n" +
-		                                                   "         VerticalAlignment=\"Center\"\r\n" +
-		                                                   "         ClockHeader=\"{localization:Localize Key=PlusDateTimePicker_lblClockHeader, Source=PlusUIWPFLocalizer}\"\r\n" +
-		                                                   "         DateTimeWatermarkContent=\"{localization:Localize Key=PlusDateTimePicker_lblWatermarkContent, Source=PlusUIWPFLocalizer}\"\r\n" +
-														   "         SelectedValue=\"{Binding $Name$, UpdateSourceTrigger=PropertyChanged, Delay=300}\"\r\n" +
-		                                                   "         TodayButtonLocalization=\"{localization:Localize Key=PlusDateTimePicker_lblNowButton, Source=PlusUIWPFLocalizer}\" />\r\n" +
-		                                                   "</plus:PlusFormRow>\r\n\r\n";
+		#endregion Template
 
 		#endregion Members
 
@@ -99,20 +83,39 @@ namespace PlusLayerCreator.Configure
 
 		public ConfigureViewModel()
 		{
-			_dataLayout = new ObservableCollection<PlusDataItemProperty>();
+			_dataLayout = new ObservableCollection<PlusDataItem>();
 
 			//GenerateTempData();
 
+			_masterGridTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Master\MasterGrid.txt");
+			_filterChildViewModelTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterViewModelChildTemplate.txt");
+			_filterPropertyTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterProperty.txt");
+			_filterComboBoxPropertyTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterComboBox.txt");
+			_filterTextBoxXamlTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterTextBoxXaml.txt");
+			_filterComboBoxXamlTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterComboBoxXaml.txt");
+			_filterCheckBoxXamlTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterCheckBoxXaml.txt");
+			_filterDateTimePickerXamlTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterDateTimePickerXaml.txt");
+
+			_createDataItemTemplateUpperPart = File.ReadAllText(InputPath + _commonPath + @"Repository\CreateDataItemUpperPart.txt");
+			_createDataItemTemplateLowerPart = File.ReadAllText(InputPath + _commonPath + @"Repository\CreateDataItemLowerPart.txt");
+			_createRepositoryDtoTemplateUpperPart = File.ReadAllText(InputPath + _commonPath + @"Repository\CreateDtoUpperPart.txt");
+			_createRepositoryDtoTemplateLowerPart = File.ReadAllText(InputPath + _commonPath + @"Repository\CreateDtoLowerPart.txt");
+
+			_createGatewayDtoTemplateUpperPart = File.ReadAllText(InputPath + _commonPath + @"Gateway\CreateDtoUpperPart.txt");
+			_createGatewayDtoTemplateLowerPart = File.ReadAllText(InputPath + _commonPath + @"Gateway\CreateDtoLowerPart.txt");
+
 			StartCommand = new DelegateCommand(StartExecuted);
-			AddCommand = new DelegateCommand(AddExecuted);
-			DeleteCommand = new DelegateCommand(DeleteExecuted, DeleteCanExecute);
+			AddItemCommand = new DelegateCommand(AddItemCommandExecuted);
+			DeleteItemCommand = new DelegateCommand(DeleteItemCommandExecuted, DeleteItemCommandCanExecute);
+			AddItemPropertyCommand = new DelegateCommand(AddItemPropertyCommandExecuted, AddItemPropertyCommandCanExecute);
+			DeleteItemPropertyCommand = new DelegateCommand(DeleteItemPropertyCommandExecuted, DeleteItemPropertyCommandCanExecute);
 			ImportSettingsCommand = new DelegateCommand(ImportSettingsExecuted);
 			ExportSettingsCommand = new DelegateCommand(ExportSettingsExecuted);
 		}
 
 		#endregion Construction
 
-		#region Methods
+		#region Commands
 
 		#region Import/Export
 
@@ -132,8 +135,9 @@ namespace PlusLayerCreator.Configure
 				IsCreateUi = _isCreateUi,
 				IsCreateUiFilter = _isCreateUiFilter,
 				Product = _product,
-				Item = _item,
 				DialogName = _dialogName,
+				DialogTranslationDE = _dialogTranslationDE,
+				DialogTranslationEN = _dialogTranslationEN,
 				DataLayout = _dataLayout.ToList()
 			};
 
@@ -144,15 +148,8 @@ namespace PlusLayerCreator.Configure
 
 			if (dialog.FileName != string.Empty)
 			{
-				ExportSettingsToFile(dialog.FileName, configuration);
+				Helpers.ExportSettingsToFile(dialog.FileName, configuration);
 			}
-		}
-		
-		private void ExportSettingsToFile(string fileName, Configuration configuration)
-		{
-			FileInfo fileInfo = new FileInfo(fileName);
-			fileInfo.Directory.Create();
-			File.WriteAllText(fileInfo.FullName, Helpers.Serialize(configuration));
 		}
 
 		private void ImportSettingsExecuted()
@@ -168,14 +165,14 @@ namespace PlusLayerCreator.Configure
 				PropertyInfo[] properties = typeof(Configuration).GetProperties();
 				foreach (var property in properties)
 				{
-					if (property.PropertyType == typeof(IList<PlusDataItemProperty>))
+					if (property.PropertyType == typeof(IList<PlusDataItem>))
 					{
-						IList<PlusDataItemProperty> plusDataItemProperties =
-							property.GetValue(configuration) as IList<PlusDataItemProperty>;
+						IList<PlusDataItem> dataItems =
+							property.GetValue(configuration) as IList<PlusDataItem>;
 						DataLayout.Clear();
-						foreach (PlusDataItemProperty plusDataItemProperty in plusDataItemProperties)
+						foreach (PlusDataItem plusDataItem in dataItems)
 						{
-							DataLayout.Add(plusDataItemProperty);
+							DataLayout.Add(plusDataItem);
 						}
 					}
 					else
@@ -189,19 +186,42 @@ namespace PlusLayerCreator.Configure
 
 		#endregion Import/Export
 
-		private void DeleteExecuted()
+		private void AddItemCommandExecuted()
 		{
-			_dataLayout.Remove(SelectedItem);
+			DataLayout.Add(new PlusDataItem(){Properties = new ObservableCollection<PlusDataItemProperty>()});
 		}
 
-		private bool DeleteCanExecute()
+		private void DeleteItemCommandExecuted()
+		{
+			DataLayout.Remove(SelectedItem);
+		}
+
+		private bool DeleteItemCommandCanExecute()
 		{
 			return SelectedItem != null;
 		}
 
-		private void AddExecuted()
+		private void AddItemPropertyCommandExecuted()
 		{
-			_dataLayout.Add(new PlusDataItemProperty());
+			SelectedItem.Properties.Add(new PlusDataItemProperty());
+		}
+
+		private bool AddItemPropertyCommandCanExecute()
+		{
+			return SelectedItem != null;
+		}
+
+		private void DeleteItemPropertyCommandExecuted()
+		{
+			if (SelectedPropertyItem != null && SelectedItem != null)
+			{
+				SelectedItem.Properties.Remove(SelectedPropertyItem);
+			}
+		}
+
+		private bool DeleteItemPropertyCommandCanExecute()
+		{
+			return SelectedPropertyItem != null;
 		}
 
 		private void StartExecuted()
@@ -231,16 +251,19 @@ namespace PlusLayerCreator.Configure
 			// Business Service
 			if (IsCreateBusinessService)
 			{
-				CreateFile(GetInputhPath(_templateDirectory + @"Service\Contracts\IServiceTemplate.cs"), OutputPath + @"Service\Contracts\I" + Product + Item + "Service.cs");
-				if (IsUseBusinessServiceWithoutBO)
+				foreach (PlusDataItem dataItem in DataLayout)
 				{
-					CreateDto();
-					CreateTandem();
-					CreateFile(GetInputhPath(_templateDirectory + @"Service\ServiceNoBOTemplate.cs"), OutputPath + @"Service\" + Product + Item + "Service.cs");
-				}
-				else
-				{
-					CreateFile(GetInputhPath(_templateDirectory + @"Service\ServiceTemplate.cs"), OutputPath + @"Service\" + Product + Item + "Service.cs");
+					CreateFile(_templateDirectory + @"Service\Contracts\IServiceTemplate.cs", OutputPath + @"Service\Contracts\I" + Product + dataItem.Name + "Service.cs", null, dataItem.Name);
+					if (IsUseBusinessServiceWithoutBO)
+					{
+						CreateDto();
+						CreateTandem();
+						CreateFile(_templateDirectory + @"Service\ServiceNoBOTemplate.cs", OutputPath + @"Service\" + Product + dataItem.Name + "Service.cs", null, dataItem.Name);
+					}
+					else
+					{
+						CreateFile(_templateDirectory + @"Service\ServiceTemplate.cs", OutputPath + @"Service\" + Product + dataItem.Name + "Service.cs", null, dataItem.Name);
+					}	
 				}
 			}
 
@@ -271,24 +294,40 @@ namespace PlusLayerCreator.Configure
 			{
 				CreateUi();
 				CreateUiFilter();
-				CreateLocalization();
 			}
 
+			CreateLocalization();
+
 			MessageBox.Show("Done", "Info", MessageBoxButton.OK);
+		}
+
+		#endregion Commands
+
+		#region Methods
+
+		private void RaiseCanExecuteChanged()
+		{
+			DeleteItemCommand.RaiseCanExecuteChanged();
+			AddItemPropertyCommand.RaiseCanExecuteChanged();
+			DeleteItemPropertyCommand.RaiseCanExecuteChanged();
 		}
 
 		private void CreateTandem()
 		{
 			string converterMessageToBoContent = string.Empty;
 			string converterBoToMessageContent = string.Empty;
-			foreach (PlusDataItemProperty plusDataObject in DataLayout)
+			foreach (PlusDataItem dataItem in DataLayout)
 			{
-				converterMessageToBoContent += "serviceMessage." + plusDataObject.Name + "(checkpointReference." + plusDataObject.Name + ", i);\r\n";
-				converterBoToMessageContent += plusDataObject.Name + " = serviceMessage." + plusDataObject.Name + "(i),\r\n";
-			}
+				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
+				{
+					converterMessageToBoContent += "serviceMessage." + plusDataObject.Name + "(checkpointReference." +
+					                               plusDataObject.Name + ", i);\r\n";
+					converterBoToMessageContent += plusDataObject.Name + " = serviceMessage." + plusDataObject.Name + "(i),\r\n";
+				}
 
-			CreateFile(GetInputhPath(_templateDirectory + @"Service\Tandem\Converter.cs"), OutputPath + @"Service\Tandem\" + Product + Item + "Converter.cs", new[] { converterMessageToBoContent, converterBoToMessageContent });
-			CreateFile(GetInputhPath(_templateDirectory + @"Service\Tandem\ServerMapping.cs"), OutputPath + @"Service\Tandem\" + Product + Item + "ServerMapping.cs");
+				CreateFile(_templateDirectory + @"Service\Tandem\Converter.cs", OutputPath + @"Service\Tandem\" + Product + dataItem.Name + "Converter.cs", new[] { converterMessageToBoContent, converterBoToMessageContent }, dataItem.Name);
+				CreateFile(_templateDirectory + @"Service\Tandem\ServerMapping.cs", OutputPath + @"Service\Tandem\" + Product + dataItem.Name + "ServerMapping.cs", null, dataItem.Name);
+			}
 		}
 
 		#region Gateway
@@ -302,87 +341,108 @@ namespace PlusLayerCreator.Configure
 			string readOnlyMappingBo = string.Empty;
 			string mock = string.Empty;
 
-			foreach (PlusDataItemProperty plusDataObject in DataLayout.Where(t => t.IsKey))
+			foreach (PlusDataItem dataItem in DataLayout)
 			{
-				key += Helpers.ToPascalCase(Item) + "." + plusDataObject.Name + ", ";
-				identifier += "x.Key." + plusDataObject.Name + ".Equals(dto." + plusDataObject.Name + ") &&";
-				if (plusDataObject.Type == "string")
+				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties.Where(t => t.IsKey))
 				{
-					mock += Helpers.ToPascalCase(Item) + "." + plusDataObject.Name + " = " + plusDataObject.Name + " + i,\r\n";
+					key += Helpers.ToPascalCase(dataItem.Name) + "." + plusDataObject.Name + ", ";
+					identifier += "x.Key." + plusDataObject.Name + ".Equals(dto." + plusDataObject.Name + ") &&";
+					if (plusDataObject.Type == "string")
+					{
+						mock += Helpers.ToPascalCase(dataItem.Name) + "." + plusDataObject.Name + " = " + plusDataObject.Name + " + i,\r\n";
+					}
+					if (plusDataObject.Type == "int")
+					{
+						mock += Helpers.ToPascalCase(dataItem.Name) + "." + plusDataObject.Name + " = " +
+						        rnd.Next(1, Helpers.GetMaxValue(plusDataObject.Length)) + ",\r\n";
+					}
+					if (plusDataObject.Type == "bool")
+					{
+						mock += Helpers.ToPascalCase(dataItem.Name) + "." + plusDataObject.Name + " = true,\r\n";
+					}
+					if (plusDataObject.Type == "DateTime")
+					{
+						mock += Helpers.ToPascalCase(dataItem.Name) + "." + plusDataObject.Name + " = new DateTime(2016, 12, 25),\r\n";
+					}
+					if (plusDataObject.IsReadOnly)
+					{
+						readOnlyMappingDto +=
+							Helpers.ToPascalCase(dataItem.Name) + "Dto." + plusDataObject.Name + " = " + Helpers.ToPascalCase(dataItem.Name) + "." +
+							plusDataObject.Name + ";\r\n";
+						readOnlyMappingBo +=
+							Helpers.ToPascalCase(dataItem.Name) + "." + plusDataObject.Name + " = " + Helpers.ToPascalCase(dataItem.Name) + "Dto." +
+							plusDataObject.Name + ";\r\n";
+					}
 				}
-				if (plusDataObject.Type == "int")
-				{
-					mock += Helpers.ToPascalCase(Item) + "." + plusDataObject.Name + " = " + rnd.Next(0, Helpers.GetMaxValue(plusDataObject.Length))  + ",\r\n";
-				}
-				if (plusDataObject.Type == "bool")
-				{
-					mock += Helpers.ToPascalCase(Item) + "." + plusDataObject.Name + " = true,\r\n";
-				}
-				if (plusDataObject.Type == "DateTime")
-				{
-					mock += Helpers.ToPascalCase(Item) + "." + plusDataObject.Name + " = new DateTime(2016, 12, 25),\r\n";
-				}
-				if (plusDataObject.IsReadOnly)
-				{
-					readOnlyMappingDto +=
-						Helpers.ToPascalCase(Item) + "Dto." + plusDataObject.Name + " = " + Helpers.ToPascalCase(Item) + "." + plusDataObject.Name + ";\r\n";
-					readOnlyMappingBo +=
-						Helpers.ToPascalCase(Item) + "." + plusDataObject.Name + " = " + Helpers.ToPascalCase(Item) + "Dto." + plusDataObject.Name + ";\r\n";
-				}
-			}
 
-			if (key.Length > 0)
-			{
-				key = key.Substring(0, key.Length - 2);
-			}
+				if (key.Length > 0)
+				{
+					key = key.Substring(0, key.Length - 2);
+				}
 
-			if (identifier.Length > 0)
-			{
-				identifier = identifier.Substring(0, identifier.Length - 3);
-			}
+				if (identifier.Length > 0)
+				{
+					identifier = identifier.Substring(0, identifier.Length - 3);
+				}
 
-			CreateFile(GetInputhPath(_templateDirectory + @"Gateway\Contracts\IGatewayTemplate.cs"), OutputPath + @"Gateway\Contracts\I" + Product + Item + "Gateway.cs");
-			CreateFile(GetInputhPath(_templateDirectory + @"Gateway\GatewayTemplate.cs"), OutputPath + @"Gateway\" + Product + Item + "Gateway.cs", new []{key, identifier, readOnlyMappingDto, readOnlyMappingBo});
-			CreateFile(GetInputhPath(_templateDirectory + @"Gateway\GatewayMockTemplate.cs"), OutputPath + @"Gateway\" + Product + Item + "GatewayMock.cs", new[]{mock});				
+				CreateFile(GetInputhPath(_templateDirectory + @"Gateway\Contracts\IGatewayTemplate.cs"),
+					OutputPath + @"Gateway\Contracts\I" + Product + dataItem.Name + "Gateway.cs", null, dataItem.Name);
+				CreateFile(GetInputhPath(_templateDirectory + @"Gateway\GatewayTemplate.cs"),
+					OutputPath + @"Gateway\" + Product + dataItem.Name + "Gateway.cs",
+					new[] { key, identifier, readOnlyMappingDto, readOnlyMappingBo }, dataItem.Name);
+				CreateFile(GetInputhPath(_templateDirectory + @"Gateway\GatewayMockTemplate.cs"),
+					OutputPath + @"Gateway\" + Product + dataItem.Name + "GatewayMock.cs", new[] { mock }, dataItem.Name);
+			}
 		}
 
 		private void CreateDto()
 		{
 			string dtoContent = string.Empty;
-			foreach (PlusDataItemProperty plusDataObject in DataLayout)
+			foreach (PlusDataItem dataItem in DataLayout)
 			{
-				dtoContent += "public " + plusDataObject.Type + " " + plusDataObject.Name + " {get; set;}\r\n\r\n";
-			}
+				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
+				{
+					dtoContent += "public " + plusDataObject.Type + " " + plusDataObject.Name + " {get; set;}\r\n\r\n";
+				}
 
-			if (IsUseBusinessServiceWithoutBO)
-			{
-				CreateFile(GetInputhPath(_templateDirectory + @"Service\Dtos\DtoTemplate.cs"), OutputPath + @"Service\Dtos\" + Product + Item + ".cs", new[] { dtoContent });
-			}
-			else
-			{
-				CreateFile(GetInputhPath(_templateDirectory + @"Gateway\Dtos\DtoTemplate.cs"), OutputPath + @"Gateway\Dtos\" + Product + Item + ".cs", new[] { dtoContent });
+				if (IsUseBusinessServiceWithoutBO)
+				{
+					CreateFile(GetInputhPath(_templateDirectory + @"Service\Dtos\DtoTemplate.cs"),
+						OutputPath + @"Service\Dtos\" + Product + dataItem.Name + ".cs", new[] { dtoContent }, dataItem.Name);
+				}
+				else
+				{
+					CreateFile(GetInputhPath(_templateDirectory + @"Gateway\Dtos\DtoTemplate.cs"),
+						OutputPath + @"Gateway\Dtos\" + Product + dataItem.Name + ".cs", new[] { dtoContent }, dataItem.Name);
+				}
 			}
 		}
 
 		private void CreateDtoFactory()
 		{
-			string dtoFactoryContent = string.Empty;
-			foreach (PlusDataItemProperty plusDataObject in DataLayout)
+			string factoryContent = string.Empty;
+			foreach (PlusDataItem dataItem in DataLayout)
 			{
-				if (plusDataObject.IsKey)
+				factoryContent += DoReplaces(_createGatewayDtoTemplateUpperPart + "\r\n", dataItem.Name);
+				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
 				{
-					dtoFactoryContent += plusDataObject.Name + " = bo.Key." + plusDataObject.Name + ",\r\n";
+					if (plusDataObject.IsKey)
+					{
+						factoryContent += plusDataObject.Name + " = bo.Key." + plusDataObject.Name + ",\r\n";
+					}
+					else
+					{
+						factoryContent += plusDataObject.Name + " = bo." + plusDataObject.Name + ",\r\n";
+					}
 				}
-				else
-				{
-					dtoFactoryContent += plusDataObject.Name + " = bo." + plusDataObject.Name + ",\r\n";
-				}
+				factoryContent += DoReplaces(_createGatewayDtoTemplateLowerPart, dataItem.Name);
 			}
 
-			dtoFactoryContent += "LupdTimestamp = bo.LupdTimestamp,\r\n";
-			dtoFactoryContent += "LupdUser = bo.LupdUser";
+			string[] contentsDtoFactory = {
+				factoryContent
+			};
 
-			CreateFile(GetInputhPath(_templateDirectory + @"Gateway\DtoFactoryTemplate.cs"), OutputPath + @"Gateway\" + Product + "DtoFactory.cs", new[] { dtoFactoryContent });
+			CreateFile(GetInputhPath(_templateDirectory + @"Gateway\DtoFactoryTemplate.cs"), OutputPath + @"Gateway\" + Product + "DtoFactory.cs", contentsDtoFactory);
 		}
 
 		#endregion Gateway
@@ -391,37 +451,64 @@ namespace PlusLayerCreator.Configure
 
 		private void CreateLocalization()
 		{
-			string keyContentEn = string.Empty;
-			string keyContentOther = string.Empty;
+			string lblEn = string.Empty;
+			string lblEnOut = string.Empty;
+			string lblDe = string.Empty;
+			string lblDeOut = string.Empty;
+			string strEn = string.Empty;
+			string strEnOut = string.Empty;
+			string strDe = string.Empty;
+			string strDeOut = string.Empty;
 
-			keyContentEn += Product + DialogName + "_lblCaption=" + Product + " - " + DialogName + "\r\n";
-			keyContentOther += Product + DialogName + "_lblCaption=@@" + Product + " - " + DialogName + "\r\n";
-			keyContentEn += Product + DialogName + "_lbl" + Item + "s=" + Item + "s\r\n";
-			keyContentOther += Product + DialogName + "_lbl" + Item + "s=@@" + Product + " - " + DialogName + "\r\n";
+			lblEn += Product + DialogName + "_lblCaption=" + Product + " - " + DialogTranslationEN + "\r\n";
+			lblEnOut += Product + DialogName + "_lblCaption=@@" + Product + " - " + DialogTranslationEN + "\r\n";
+			lblDe += Product + DialogName + "_lblCaption=" + Product + " - " + DialogTranslationDE + "\r\n";
+			lblEnOut += Product + DialogName + "_lblCaption=@@" + Product + " - " + DialogTranslationDE + "\r\n";
 
-
-			foreach (PlusDataItemProperty plusDataObject in DataLayout)
+			foreach (PlusDataItem dataItem in DataLayout)
 			{
-				keyContentEn += Product + DialogName + "_lbl" + plusDataObject.Name + "=" + plusDataObject.Name + "\r\n";
-				keyContentOther += Product + DialogName + "_lbl" + plusDataObject.Name + "=@@" + plusDataObject.Name + "\r\n";
+				lblEn += Product + DialogName + "_lbl" + dataItem.Name + "s=" + dataItem.Name + "s\r\n";
+				lblEnOut += Product + DialogName + "_lbl" + dataItem.Name + "s=@@" + dataItem.Name + "s\r\n";
+				lblDe += Product + DialogName + "_lbl" + dataItem.Name + "s=" + dataItem.Translation + "en\r\n";
+				lblDeOut += Product + DialogName + "_lbl" + dataItem.Name + "s=@@" + dataItem.Translation + "en\r\n";
+
+				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
+				{
+					lblEn += Product + DialogName + "_lbl" + dataItem.Name + plusDataObject.Name + "=" + plusDataObject.Name + "\r\n";
+					lblEnOut += Product + DialogName + "_lbl" + dataItem.Name + plusDataObject.Name + "=@@" + plusDataObject.Name + "\r\n";
+					lblDe += Product + DialogName + "_lbl" + dataItem.Name + plusDataObject.Name + "=" + plusDataObject.Translation + "\r\n";
+					lblDeOut += Product + DialogName + "_lbl" + dataItem.Name + plusDataObject.Name + "=@@" + plusDataObject.Translation + "\r\n";
+				}
 			}
 
-			string[] languages = {"en", "fr", "de", "hu", "pt", "zh-CHS"};
+			string[] languages = { "en", "fr", "de", "hu", "pt", "zh-CHS" };
 
 			foreach (string language in languages)
 			{
 				string fileContent = File.ReadAllText(InputPath +_commonPath + @"Localization\localization.txt");
-				fileContent = DoReplaces(fileContent);
+				fileContent = DoReplaces(fileContent, string.Empty);
 				fileContent = fileContent.Replace("$language$", language);
 				fileContent = fileContent.Replace("$date$", DateTime.Now.ToShortDateString());
 				fileContent = fileContent.Replace("$Product$", Product);
 				if (language == "en")
 				{
-					fileContent = fileContent.Replace("$Keys$", keyContentEn);
+					fileContent = fileContent.Replace("$KeysLabel$", lblEn);
+					fileContent = fileContent.Replace("$KeysString$", strEn);
+				}
+				else if (language == "de")
+				{
+					fileContent = fileContent.Replace("$KeysLabel$", lblDe);
+					fileContent = fileContent.Replace("$KeysString$", strDe);
+				}
+				else if (language == "fr" || language == "hu")
+				{
+					fileContent = fileContent.Replace("$KeysLabel$", lblDeOut);
+					fileContent = fileContent.Replace("$KeysString$", strDeOut);
 				}
 				else
 				{
-					fileContent = fileContent.Replace("$Keys$", keyContentOther);
+					fileContent = fileContent.Replace("$KeysLabel$", lblEnOut);
+					fileContent = fileContent.Replace("$KeysString$", strEnOut);
 				}
 				string languageExtension = language == "de" ? string.Empty : "." + language;
 				FileInfo fileInfo = new FileInfo(OutputPath + @"Localization\Dcx.Plus.Localization.Modules." + Product + ".Nls" + languageExtension + ".txt");
@@ -446,173 +533,198 @@ namespace PlusLayerCreator.Configure
 
 
 			//filterMembersContent
-			foreach (PlusDataItemProperty plusDataObject in DataLayout)
+			foreach (PlusDataItem dataItem in DataLayout)
 			{
-				if (plusDataObject.IsFilterProperty)
+				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
 				{
-					string filterSuffix = plusDataObject.Type == "string" ? string.Empty : ".ToString()";
-					if (plusDataObject.Type == "string" || plusDataObject.Type == "int")
+					if (plusDataObject.IsFilterProperty)
 					{
-						if (plusDataObject.FilterPropertyType == "TextBox")
+						string filterSuffix = plusDataObject.Type == "string" ? string.Empty : ".ToString()";
+						if (plusDataObject.Type == "string" || plusDataObject.Type == "int")
 						{
-							filterMembersContent += "private string _" + Helpers.ToPascalCase(plusDataObject.Name) + ";\r\n";
-							filterPropertiesContent += _filterPropertyTemplate.Replace(plusDataObject.Type, "string");
-							filterPredicateResetContent += plusDataObject.Name + " = string.Empty;";
-							filterPredicatesContent += ".StartsWith(x => x." + plusDataObject.Name + filterSuffix + ", x => x." +
-							                           plusDataObject.Name + ")\r\n";
-							filterXamlContent += DoReplaces(_filterTextBoxXamlTemplate);
+							if (plusDataObject.FilterPropertyType == "TextBox")
+							{
+								filterMembersContent += "private string _" + Helpers.ToPascalCase(plusDataObject.Name) + ";\r\n";
+								filterPropertiesContent += _filterPropertyTemplate.Replace(plusDataObject.Type, "string");
+								filterPredicateResetContent += plusDataObject.Name + " = string.Empty;";
+								filterPredicatesContent += ".StartsWith(x => x." + plusDataObject.Name + filterSuffix + ", x => x." +
+								                           plusDataObject.Name + ")\r\n";
+								filterXamlContent += DoReplaces(_filterTextBoxXamlTemplate);
+							}
+
+							if (plusDataObject.FilterPropertyType == "ComboBox")
+							{
+								filterMembersContent += "private MultiValueSelector<string> _" +
+								                        Helpers.ToPascalCase(plusDataObject.Name) + "MultiSelector;\r\n";
+								filterPropertiesContent += _filterComboBoxPropertyTemplate;
+								filterPredicatesContent += ".IsContainedInList(x => x." + plusDataObject.Name + filterSuffix + ", x => x." +
+								                           plusDataObject.Name + "MultiSelector.SelectedValues)\r\n";
+								filterMultiSelectorsInitializeContent +=
+									plusDataObject.Name + "MultiSelector = new MultiValueSelector<string>(SourceCollection.Select(x => x." +
+									plusDataObject.Name + ".ToString()).Distinct(), RefreshCollectionView, AllValue);";
+								filterXamlContent += DoReplaces(_filterComboBoxXamlTemplate);
+							}
 						}
-						
-						if (plusDataObject.FilterPropertyType == "ComboBox")
+
+						if (plusDataObject.Type == "bool")
 						{
-							filterMembersContent += "private MultiValueSelector<string> _" +
-							                        Helpers.ToPascalCase(plusDataObject.Name) + "MultiSelector;\r\n";
-							filterPropertiesContent += _filterComboBoxPropertyTemplate;
-							filterPredicatesContent += ".IsContainedInList(x => x." + plusDataObject.Name + filterSuffix + ", x => x." +
-							                           plusDataObject.Name + "MultiSelector.SelectedValues)\r\n";
-							filterMultiSelectorsInitializeContent +=
-								plusDataObject.Name + "MultiSelector = new MultiValueSelector<string>(SourceCollection.Select(x => x." +
-								plusDataObject.Name + ".ToString()).Distinct(), RefreshCollectionView, AllValue);";
-							filterXamlContent += DoReplaces(_filterComboBoxXamlTemplate);
+							filterMembersContent += "private " + plusDataObject.Type + "? _" + Helpers.ToPascalCase(plusDataObject.Name) +
+							                        ";\r\n";
+							filterPropertiesContent += _filterPropertyTemplate;
+							filterPredicateResetContent += plusDataObject.Name + " = null;";
+							filterPredicatesContent +=
+								".IsEqual(x => x." + plusDataObject.Name + ", x => x." + plusDataObject.Name + ")\r\n";
+							filterXamlContent += DoReplaces(_filterCheckBoxXamlTemplate);
 						}
-					}
 
-					if (plusDataObject.Type == "bool")
-					{
-						filterMembersContent += "private " + plusDataObject.Type + "? _" + Helpers.ToPascalCase(plusDataObject.Name) + ";\r\n";
-						filterPropertiesContent += _filterPropertyTemplate;
-						filterPredicateResetContent += plusDataObject.Name + " = null;";
-						filterPredicatesContent += ".IsEqual(x => x." + plusDataObject.Name + ", x => x." + plusDataObject.Name + ")\r\n";
-						filterXamlContent += DoReplaces(_filterCheckBoxXamlTemplate);
-					}
+						if (plusDataObject.Type == "DateTime")
+						{
+							filterMembersContent += "private " + plusDataObject.Type + "? _" + Helpers.ToPascalCase(plusDataObject.Name) +
+							                        ";\r\n";
+							filterPropertiesContent += _filterPropertyTemplate;
+							filterPredicateResetContent += plusDataObject.Name + " = null;";
+							filterPredicatesContent +=
+								".IsEqual(x => x." + plusDataObject.Name + ", x => x." + plusDataObject.Name + ")\r\n";
+							filterXamlContent += DoReplaces(_filterDateTimePickerXamlTemplate);
+						}
 
-					if (plusDataObject.Type == "DateTime")
-					{
-						filterMembersContent += "private " + plusDataObject.Type + "? _" + Helpers.ToPascalCase(plusDataObject.Name) + ";\r\n";
-						filterPropertiesContent += _filterPropertyTemplate;
-						filterPredicateResetContent += plusDataObject.Name + " = null;";
-						filterPredicatesContent += ".IsEqual(x => x." + plusDataObject.Name + ", x => x." + plusDataObject.Name + ")\r\n";
-						filterXamlContent += DoReplaces(_filterDateTimePickerXamlTemplate);
+						filterMembersContent = filterMembersContent.Replace("$Name$", plusDataObject.Name)
+							.Replace("$name$", Helpers.ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type);
+						filterPropertiesContent = filterPropertiesContent.Replace("$Name$", plusDataObject.Name)
+							.Replace("$name$", Helpers.ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type);
+						filterPredicateResetContent = filterPredicateResetContent.Replace("$Name$", plusDataObject.Name)
+							.Replace("$name$", Helpers.ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type);
+						filterPredicatesContent = filterPredicatesContent.Replace("$Name$", plusDataObject.Name)
+							.Replace("$name$", Helpers.ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type);
+						filterXamlContent = filterXamlContent.Replace("$Name$", plusDataObject.Name)
+							.Replace("$name$", Helpers.ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type);
 					}
-
-					filterMembersContent = filterMembersContent.Replace("$Name$", plusDataObject.Name).Replace("$name$", Helpers.ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type);
-					filterPropertiesContent = filterPropertiesContent.Replace("$Name$", plusDataObject.Name).Replace("$name$", Helpers.ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type);
-					filterPredicateResetContent = filterPredicateResetContent.Replace("$Name$", plusDataObject.Name).Replace("$name$", Helpers.ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type);
-					filterPredicatesContent = filterPredicatesContent.Replace("$Name$", plusDataObject.Name).Replace("$name$", Helpers.ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type);
-					filterXamlContent = filterXamlContent.Replace("$Name$", plusDataObject.Name).Replace("$name$", Helpers.ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type);
 				}
+
+				CreateFile(GetInputhPath(_templateDirectory) + @"UI\Filter\FilterViewTemplate.xaml",
+					OutputPath + @"UI\Filter\FilterView.xaml", new[] {filterXamlContent});
+				CreateFile(GetInputhPath(_templateDirectory) + @"UI\Filter\FilterViewTemplate.xaml.cs",
+					OutputPath + @"UI\Filter\FilterView.xaml.cs");
+
+				string fileContent = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterViewModelTemplate.cs");
+				fileContent = DoReplaces(fileContent);
+				fileContent = fileContent.Replace("$filterMembers$", filterMembersContent);
+				fileContent = fileContent.Replace("$filterPredicates$", filterPredicatesContent);
+				fileContent = fileContent.Replace("$filterPredicateReset$", filterPredicateResetContent);
+				fileContent = fileContent.Replace("$filterMultiSelectorsInitialize$", filterMultiSelectorsInitializeContent);
+				fileContent = fileContent.Replace("$filterProperties$", filterPropertiesContent);
 			}
-
-			CreateFile(GetInputhPath(_templateDirectory) + @"UI\Filter\FilterViewTemplate.xaml", OutputPath + @"UI\Filter\FilterView.xaml", new[] { filterXamlContent });
-			CreateFile(GetInputhPath(_templateDirectory) + @"UI\Filter\FilterViewTemplate.xaml.cs", OutputPath + @"UI\Filter\FilterView.xaml.cs");
-
-			string fileContent = File.ReadAllText(InputPath +_commonPath + @"UI\Filter\FilterViewModelTemplate.cs");
-			fileContent = DoReplaces(fileContent);
-			fileContent = fileContent.Replace("$filterMembers$", filterMembersContent);
-			fileContent = fileContent.Replace("$filterPredicates$", filterPredicatesContent);
-			fileContent = fileContent.Replace("$filterPredicateReset$", filterPredicateResetContent);
-			fileContent = fileContent.Replace("$filterMultiSelectorsInitialize$", filterMultiSelectorsInitializeContent);
-			fileContent = fileContent.Replace("$filterProperties$", filterPropertiesContent);
-
-			FileInfo fileInfo = new FileInfo(OutputPath + @"UI\Filter\FilterViewModel.cs");
-			fileInfo.Directory.Create();
-			File.WriteAllText(fileInfo.FullName, fileContent);
 		}
 
+		/// <summary>
+		/// Creates the UI.
+		/// </summary>
 		private void CreateUi()
 		{
-			//Detail
-			string detailViewContent = string.Empty;
-			string yesNoConverterString = ", Converter={StaticResource BoolToLocalizedYesNoConverterConverter}";
-
-			detailViewContent += "<plus:PlusGroupBox Header=\"" + GetLocalizedString(Item) + "s\">";
-			detailViewContent += "    <StackPanel>";
-
-			foreach (PlusDataItemProperty plusDataObject in DataLayout)
-			{
-				detailViewContent += "        <plus:PlusFormRow Label=\"" + GetLocalizedString(plusDataObject.Name) + "\">\r\n";
-
-				if (SelectedTemplateMode == TemplateMode.OneDataItemReadOnly)
-				{
-					if (plusDataObject.Type == "bool")
-					{
-						detailViewContent += "            <plus:PlusLabel Content=\"{Binding DataItem." + plusDataObject.Name +
-						                     yesNoConverterString + "}\" />\r\n";
-					}
-					else
-					{
-						detailViewContent += "            <plus:PlusLabel Content=\"{Binding DataItem." + plusDataObject.Name +
-						                     "}\" />\r\n";
-					}
-				}
-				else
-				{
-					string addintionalInformation = string.Empty;
-					if (plusDataObject.IsKey)
-					{
-						addintionalInformation += _keyReadOnlyTemplate;
-					}
-					else if (plusDataObject.IsReadOnly)
-					{
-						addintionalInformation += _readOnlyTemplate;
-					}
-
-					if (plusDataObject.Type == "bool")
-					{
-						detailViewContent += "            <plus:PlusCheckbox " + addintionalInformation + " IsChecked=\"{Binding DataItem." + plusDataObject.Name + "}\" />\r\n";
-					}
-					else
-					{
-						if (plusDataObject.Length != string.Empty)
-						{
-							addintionalInformation += " MaxLength=\"" + plusDataObject.Length + "\"";
-						}
-						if (plusDataObject.Type == "int")
-						{
-							addintionalInformation += _isNumericTemplate;
-						}
-
-						detailViewContent += "            <plus:PlusTextBox" + addintionalInformation + " Text=\"{Binding DataItem." + plusDataObject.Name +
-							                    ", UpdateSourceTrigger=PropertyChanged}\" />\r\n";
-					}
-				}
-
-				detailViewContent += "        </plus:PlusFormRow>\r\n";
-			}
-
-			detailViewContent += "				<plus:PlusFormRow Label=\"{localization:Localize Key=Global_lblLupdTimestamp, Source=GlobalLocalizer}\">";
-			detailViewContent += "				    <plus:PlusLabel Content=\"{Binding DataItem.LupdTimestamp}\" />";
-			detailViewContent += "				</plus:PlusFormRow>";
-			detailViewContent += "				<plus:PlusFormRow Label=\"{localization:Localize Key=Global_lblLupdUser, Source=GlobalLocalizer}\">";
-			detailViewContent += "				    <plus:PlusLabel Content=\"{Binding DataItem.LupdUser}\" />";
-			detailViewContent += "				</plus:PlusFormRow>";
-
-			detailViewContent += "    </StackPanel>";
-			detailViewContent += "</plus:PlusGroupBox>";
-
-			CreateFile(GetInputhPath(_templateDirectory + @"UI\Detail\DetailViewModelTemplate.cs"), OutputPath + @"UI\Detail\DetailViewModel.cs");
-			CreateFile(GetInputhPath(_templateDirectory + @"UI\Detail\DetailViewTemplate.xaml"), OutputPath + @"UI\Detail\DetailView.xaml", new[] { detailViewContent });
-			CreateFile(GetInputhPath(_templateDirectory + @"UI\Detail\DetailViewTemplate.xaml.cs"), OutputPath + @"UI\Detail\DetailView.xaml.cs");
-
-
-			//Master
 			string masterViewContent = string.Empty;
-			foreach (PlusDataItemProperty plusDataObject in DataLayout)
+
+			foreach (PlusDataItem dataItem in DataLayout)
 			{
-				if (plusDataObject.Type == "bool")
+				//Detail
+				string detailViewContent = string.Empty;
+				string yesNoConverterString = ", Converter={StaticResource BoolToLocalizedYesNoConverterConverter}";
+
+				detailViewContent += "<plus:PlusGroupBox Header=\"" + GetLocalizedString(dataItem.Name) + "s\">";
+				detailViewContent += "    <StackPanel>";
+
+				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
 				{
-					masterViewContent += "                <plus:PlusGridViewCheckColumn Width=\"*\" DataMemberBinding=\"{Binding " +
-											plusDataObject.Name + "}\" Header=\"" + GetLocalizedString(plusDataObject.Name) + "\"/>\r\n";
+					detailViewContent += "        <plus:PlusFormRow Label=\"" + GetLocalizedString(plusDataObject.Name) + "\">\r\n";
+
+					if (SelectedTemplateMode == TemplateMode.OneDataItemReadOnly)
+					{
+						if (plusDataObject.Type == "bool")
+						{
+							detailViewContent += "            <plus:PlusLabel Content=\"{Binding DataItem." + plusDataObject.Name +
+							                     yesNoConverterString + "}\" />\r\n";
+						}
+						else
+						{
+							detailViewContent += "            <plus:PlusLabel Content=\"{Binding DataItem." + plusDataObject.Name +
+							                     "}\" />\r\n";
+						}
+					}
+					else
+					{
+						string addintionalInformation = string.Empty;
+						if (plusDataObject.IsKey)
+						{
+							addintionalInformation += _keyReadOnlyTemplate;
+						}
+						else if (plusDataObject.IsReadOnly)
+						{
+							addintionalInformation += _readOnlyTemplate;
+						}
+
+						if (plusDataObject.Type == "bool")
+						{
+							detailViewContent += "            <plus:PlusCheckbox " + addintionalInformation +
+							                     " IsChecked=\"{Binding DataItem." + plusDataObject.Name + "}\" />\r\n";
+						}
+						else
+						{
+							if (plusDataObject.Length != string.Empty)
+							{
+								addintionalInformation += " MaxLength=\"" + plusDataObject.Length + "\"";
+							}
+							if (plusDataObject.Type == "int")
+							{
+								addintionalInformation += _isNumericTemplate;
+							}
+
+							detailViewContent += "            <plus:PlusTextBox" + addintionalInformation + " Text=\"{Binding DataItem." +
+							                     plusDataObject.Name +
+							                     ", UpdateSourceTrigger=PropertyChanged}\" />\r\n";
+						}
+					}
+
+					detailViewContent += "        </plus:PlusFormRow>\r\n";
 				}
-				else
+
+				detailViewContent +=
+					"				<plus:PlusFormRow Label=\"{localization:Localize Key=Global_lblLupdTimestamp, Source=GlobalLocalizer}\">";
+				detailViewContent += "				    <plus:PlusLabel Content=\"{Binding DataItem.LupdTimestamp}\" />";
+				detailViewContent += "				</plus:PlusFormRow>";
+				detailViewContent +=
+					"				<plus:PlusFormRow Label=\"{localization:Localize Key=Global_lblLupdUser, Source=GlobalLocalizer}\">";
+				detailViewContent += "				    <plus:PlusLabel Content=\"{Binding DataItem.LupdUser}\" />";
+				detailViewContent += "				</plus:PlusFormRow>";
+
+				detailViewContent += "    </StackPanel>";
+				detailViewContent += "</plus:PlusGroupBox>";
+
+				CreateFile(GetInputhPath(_templateDirectory + @"UI\Detail\DetailViewModelTemplate.cs"),
+					OutputPath + @"UI\Detail\" + dataItem.Name + "DetailViewModel.cs", null, dataItem.Name);
+				CreateFile(GetInputhPath(_templateDirectory + @"UI\Detail\DetailViewTemplate.xaml"),
+					OutputPath + @"UI\Detail\" + dataItem.Name + "DetailView.xaml", new[] { detailViewContent }, dataItem.Name);
+				CreateFile(GetInputhPath(_templateDirectory + @"UI\Detail\DetailViewTemplate.xaml.cs"),
+					OutputPath + @"UI\Detail\" + dataItem.Name + "DetailView.xaml.cs", null, dataItem.Name);
+
+
+				//Master
+				masterViewContent += _masterGridTemplate;
+				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
 				{
-					masterViewContent += "                <plus:PlusGridViewTextColumnMinimal Width=\"*\" DataMemberBinding=\"{Binding " +
-											plusDataObject.Name + "}\" Header=\"" + GetLocalizedString(plusDataObject.Name) + "\"/>\r\n";
+					if (plusDataObject.Type == "bool")
+					{
+						masterViewContent = masterViewContent.Replace("$specialContent$", "                <plus:PlusGridViewCheckColumn Width=\"*\" DataMemberBinding=\"{Binding " +
+						                     plusDataObject.Name + "}\" Header=\"" + GetLocalizedString(plusDataObject.Name) + "\"/>\r\n");
+					}
+					else
+					{
+						masterViewContent = masterViewContent.Replace("$specialContent$", "                <plus:PlusGridViewTextColumnMinimal Width=\"*\" DataMemberBinding=\"{Binding " +
+							plusDataObject.Name + "}\" Header=\"" + GetLocalizedString(plusDataObject.Name) + "\"/>\r\n");
+					}
 				}
 			}
 			CreateFile(GetInputhPath(_templateDirectory + @"UI\Master\MasterViewModelTemplate.cs"), OutputPath + @"UI\Master\" + DialogName + @"MasterViewModel.cs");
-			CreateFile(GetInputhPath(_templateDirectory + @"UI\Master\MasterViewTemplate.xaml"), OutputPath + @"UI\Master\" + DialogName + @"MasterView.xaml", new[] { masterViewContent });
-			CreateFile(GetInputhPath(_templateDirectory + @"UI\Master\MasterViewTemplate.xaml.cs"), OutputPath + @"UI\Master\" + DialogName + @"MasterView.xaml.cs");
+			CreateFile(GetInputhPath(InputPath + _commonPath + @"UI\Regions\Master\MasterViewTemplate.xaml"), OutputPath + @"UI\Master\" + DialogName + @"MasterView.xaml", new[] { masterViewContent });
+			CreateFile(GetInputhPath(InputPath + _commonPath + @"UI\Regions\Master\MasterViewTemplate.xaml.cs"), OutputPath + @"UI\Master\" + DialogName + @"MasterView.xaml.cs");
 		}
 
 		#endregion UI
@@ -621,101 +733,136 @@ namespace PlusLayerCreator.Configure
 
 		private void CreateRepository()
 		{
+			string content = string.Empty;
 			string identifier = string.Empty;
 			string readOnly = string.Empty;
-			foreach (PlusDataItemProperty plusDataObject in DataLayout.Where(t => t.IsKey))
+
+			DirectoryInfo di = new DirectoryInfo(_templateDirectory + @"Repository");
+			foreach (FileInfo fileInfo in di.GetFiles().Where(t => t.Name.ToLower().EndsWith("part.txt")))
 			{
-				identifier += "x." + plusDataObject.Name + ".Equals(dto." + plusDataObject.Name + ") &&";
-				if (plusDataObject.IsReadOnly)
+				foreach (PlusDataItem dataItem in DataLayout)
 				{
-					readOnly +=
-						Helpers.ToPascalCase(Item) + "Dto." + plusDataObject.Name + " = " + Helpers.ToPascalCase(Item) + "." + plusDataObject.Name + ";\r\n";
+					string templateText = DoReplaces(File.ReadAllText(fileInfo.Directory + "\\" + fileInfo.Name), dataItem.Name);
+					if (fileInfo.Name.ToLower().Contains("save"))
+					{
+						foreach (PlusDataItemProperty plusDataObject in dataItem.Properties.Where(t => t.IsKey))
+						{
+							identifier += "x." + plusDataObject.Name + ".Equals(dto." + plusDataObject.Name + ") &&";
+							if (plusDataObject.IsReadOnly)
+							{
+								readOnly +=
+									Helpers.ToPascalCase(dataItem.Name) + "Dto." + plusDataObject.Name + " = " + Helpers.ToPascalCase(dataItem.Name) + "." +
+									plusDataObject.Name + ";\r\n";
+							}
+						}
+
+						content = content.Replace("$specialContent$", identifier);
+						content = content.Replace("$specialContent2$", readOnly);
+					}
+
+					content += templateText + "\r\n\r\n";
 				}
+
+				content = content.Substring(0, content.Length - 8);
 			}
-			
-			CreateFile(GetInputhPath(_templateDirectory + @"Repository\Contracts\IRepositoryTemplate.cs"), OutputPath + @"Repository\Contracts\I" + Product + DialogName + "Repository.cs");
-			CreateFile(GetInputhPath(_templateDirectory + @"Repository\RepositoryTemplate.cs"), OutputPath + @"Repository\" + Product + DialogName + "Repository.cs", new[] { identifier, readOnly });
+
+			CreateFile(GetInputhPath(_templateDirectory + @"Repository\Contracts\IRepositoryTemplate.cs"), OutputPath + @"Repository\Contracts\I" + Product + DialogName + "Repository.cs", new[] { content });
+			CreateFile(GetInputhPath(_templateDirectory + @"Repository\RepositoryTemplate.cs"), OutputPath + @"Repository\" + Product + DialogName + "Repository.cs", new[] { content });
 		}
 
 		private void CreateDataItem()
 		{
 			string dataItemContent = string.Empty;
-			foreach (PlusDataItemProperty plusDataObject in DataLayout)
+			foreach (PlusDataItem dataItem in DataLayout)
 			{
-				if (plusDataObject.IsRequired || plusDataObject.Length != string.Empty)
+				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
 				{
-					dataItemContent += "[";
-					if (plusDataObject.IsRequired)
-					{
-						dataItemContent += "Required";
-					}
-
 					if (plusDataObject.IsRequired || plusDataObject.Length != string.Empty)
 					{
-						dataItemContent += ", ";
-					}
-
-					if (plusDataObject.Length != string.Empty)
-					{
-						if (plusDataObject.Type == "int")
+						dataItemContent += "[";
+						if (plusDataObject.IsRequired)
 						{
-							dataItemContent += "NumericRange(0, " + Helpers.GetMaxValue(plusDataObject.Length) + ")";
-						}
-						if (plusDataObject.Type == "string")
-						{
-							dataItemContent += "MaxLenght(0, " + plusDataObject.Length + ")";
+							dataItemContent += "Required";
 						}
 
+						if (plusDataObject.IsRequired || plusDataObject.Length != string.Empty)
+						{
+							dataItemContent += ", ";
+						}
+
+						if (plusDataObject.Length != string.Empty)
+						{
+							if (plusDataObject.Type == "int")
+							{
+								dataItemContent += "NumericRange(0, " + Helpers.GetMaxValue(plusDataObject.Length) + ")";
+							}
+							if (plusDataObject.Type == "string")
+							{
+								dataItemContent += "MaxLenght(0, " + plusDataObject.Length + ")";
+							}
+
+						}
+						dataItemContent += "]\r\n";
 					}
-					dataItemContent += "]\r\n";
+					dataItemContent += "public " + plusDataObject.Type + " " + plusDataObject.Name + "\r\n" +
+					                   "    {get\r\n" +
+					                   "    {\r\n" +
+					                   "        return Get<" + plusDataObject.Type + ">();\r\n" +
+					                   "    }\r\n" +
+					                   "    set\r\n" +
+					                   "    {\r\n" +
+					                   "        Set<" + plusDataObject.Type + ">(value);\r\n" +
+					                   "    }}\r\n\r\n";
 				}
-				dataItemContent += "public " + plusDataObject.Type + " " + plusDataObject.Name + "\r\n" +
-				                   "    {get\r\n" +
-				                   "    {\r\n" +
-				                   "        return Get<" + plusDataObject.Type + ">();\r\n" +
-				                   "    }\r\n" +
-				                   "    set\r\n" +
-				                   "    {\r\n" +
-				                   "        Set<" + plusDataObject.Type + ">(value);\r\n" +
-				                   "    }}\r\n\r\n";
-			}
 
-			string[] contentsDataItem = {
-				dataItemContent
-			};
-			CreateFile(GetInputhPath(_templateDirectory + @"Repository\DataItems\DataItemTemplate.cs"),
-				OutputPath + @"Repository\DataItems\" + Product + Item + "DataItem.cs", contentsDataItem);
+				string[] contentsDataItem =
+				{
+					dataItemContent
+				};
+
+				CreateFile(GetInputhPath(_templateDirectory + @"Repository\DataItems\DataItemTemplate.cs"),
+					OutputPath + @"Repository\DataItems\" + Product + dataItem.Name + "DataItem.cs", contentsDataItem, dataItem.Name);
+			}
 		}
 
 		private void CreateRepositoryDtoFactory()
 		{
-			string dtoFactoryContent = string.Empty;
-			foreach (PlusDataItemProperty plusDataObject in DataLayout)
+			string factoryContent = string.Empty;
+			foreach (PlusDataItem dataItem in DataLayout)
 			{
-				dtoFactoryContent += plusDataObject.Name + " = dataItem." + plusDataObject.Name + ",\r\n";
+				factoryContent += DoReplaces(_createRepositoryDtoTemplateUpperPart + "\r\n", dataItem.Name);
+				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
+				{
+					factoryContent += plusDataObject.Name + " = dataItem." + plusDataObject.Name + ",\r\n";
+				}
+				factoryContent += DoReplaces(_createRepositoryDtoTemplateLowerPart, dataItem.Name);
 			}
 
 			string[] contentsDtoFactory = {
-				dtoFactoryContent
+				factoryContent
 			};
+
 			CreateFile(GetInputhPath(_templateDirectory + @"Repository\DtoFactoryTemplate.cs"), OutputPath + @"Repository\" + Product + "DtoFactory.cs",
 				contentsDtoFactory);
 		}
 
 		private void CreateDataItemFactory()
 		{
-			string dataItemFactoryContent = string.Empty;
-			foreach (PlusDataItemProperty plusDataObject in DataLayout)
+			string factoryContent = string.Empty;
+			foreach (PlusDataItem dataItem in DataLayout)
 			{
-				dataItemFactoryContent += plusDataObject.Name + " = dto." + plusDataObject.Name + ",\r\n";
+				factoryContent += DoReplaces(_createDataItemTemplateUpperPart + "\r\n", dataItem.Name);
+				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
+				{
+					factoryContent += plusDataObject.Name + " = dto." + plusDataObject.Name + ",\r\n";
+				}
+				factoryContent += DoReplaces(_createDataItemTemplateLowerPart, dataItem.Name);
 			}
 
-			dataItemFactoryContent += "LupdTimestamp = dto.LupdTimestamp,\r\n";
-			dataItemFactoryContent += "LupdUser = dto.LupdUser";
-
 			string[] contentsDataItemFactory = {
-				dataItemFactoryContent
+				factoryContent
 			};
+
 			CreateFile(GetInputhPath(_templateDirectory + @"Repository\DataItemFactoryTemplate.cs"),
 				OutputPath + @"Repository\" + Product + "DataItemFactory.cs", contentsDataItemFactory);
 		}
@@ -730,22 +877,24 @@ namespace PlusLayerCreator.Configure
 			       "Localizer}";
 		}
 
-		private void CreateFile(string input, string output, string[] contents = null)
+		private void CreateFile(string input, string output, string[] contents = null, string item = "")
 		{
-			int i = 1;
 			string fileContent = File.ReadAllText(input);
 
-			fileContent = DoReplaces(fileContent);
+			fileContent = DoReplaces(fileContent, item);
 
-			foreach (string content in contents)
+			if (contents != null)
 			{
-				if (i == 1)
+				for (int i = 0; i < contents.Length; i++)
 				{
-					fileContent = fileContent.Replace("$specialContent$", content);
-				}
-				else
-				{
-					fileContent = fileContent.Replace("$specialContent" + i + "$", content);
+					if (i == 0)
+					{
+						fileContent = fileContent.Replace("$specialContent$", contents[i]);
+					}
+					else
+					{
+						fileContent = fileContent.Replace("$specialContent" + i + "$", contents[i]);
+					}
 				}
 			}
 
@@ -754,12 +903,12 @@ namespace PlusLayerCreator.Configure
 			File.WriteAllText(fileInfo.FullName, fileContent);
 		}
 
-		private string DoReplaces(string input)
+		private string DoReplaces(string input, string item = "")
 		{
 			input = input.Replace("$Product$", Product);
 			input = input.Replace("$product$", Helpers.ToPascalCase(Product));
-			input = input.Replace("$Item$", Item);
-			input = input.Replace("$item$", Helpers.ToPascalCase(Item));
+			input = input.Replace("$Item$", item);
+			input = input.Replace("$item$", Helpers.ToPascalCase(item));
 			input = input.Replace("$Dialog$", DialogName);
 			input = input.Replace("$dialog$", Helpers.ToPascalCase(DialogName));
 
@@ -781,6 +930,8 @@ namespace PlusLayerCreator.Configure
 
 		#region Properties
 
+		#region Commands
+
 		public DelegateCommand StartCommand { get; set; }
 		public DelegateCommand ImportSettingsCommand { get; set; }
 		public DelegateCommand ExportSettingsCommand
@@ -788,18 +939,30 @@ namespace PlusLayerCreator.Configure
 			get;
 			set;
 		}
-		public DelegateCommand AddCommand
+		public DelegateCommand AddItemCommand
 		{
 			get;
 			set;
 		}
-		public DelegateCommand DeleteCommand
+		public DelegateCommand DeleteItemCommand
+		{
+			get;
+			set;
+		}
+		public DelegateCommand AddItemPropertyCommand
+		{
+			get;
+			set;
+		}
+		public DelegateCommand DeleteItemPropertyCommand
 		{
 			get;
 			set;
 		}
 
-		public PlusDataItemProperty SelectedItem
+		#endregion Commands
+
+		public PlusDataItem SelectedItem
 		{
 			get
 			{
@@ -807,10 +970,29 @@ namespace PlusLayerCreator.Configure
 			}
 			set
 			{
-				SetProperty(ref _selectedItem, value);
-				DeleteCommand.RaiseCanExecuteChanged();
+				if (SetProperty(ref _selectedItem, value))
+				{
+					RaiseCanExecuteChanged();
+				}
 			}
 		}
+
+		public PlusDataItemProperty SelectedPropertyItem
+		{
+			get
+			{
+				return _selectedPropertyItem;
+			}
+			set
+			{
+				if (SetProperty(ref _selectedPropertyItem, value))
+				{
+					RaiseCanExecuteChanged();
+				}
+			}
+		}
+
+		#region Settings
 
 		public bool IsCreateDto
 		{
@@ -945,6 +1127,8 @@ namespace PlusLayerCreator.Configure
 			}
 		}
 
+		#endregion Settings
+
 		public TemplateMode Template
 		{
 			get
@@ -978,7 +1162,7 @@ namespace PlusLayerCreator.Configure
 			}
 		}
 
-		public ObservableCollection<PlusDataItemProperty> DataLayout
+		public ObservableCollection<PlusDataItem> DataLayout
 		{
 			get
 			{
@@ -1002,18 +1186,6 @@ namespace PlusLayerCreator.Configure
 			}
 		}
 
-		public string Item
-		{
-			get
-			{
-				return _item;
-			}
-			set
-			{
-				SetProperty(ref _item, value);
-			}
-		}
-
 		public string DialogName
 		{
 			get
@@ -1023,6 +1195,30 @@ namespace PlusLayerCreator.Configure
 			set
 			{
 				SetProperty(ref _dialogName, value);
+			}
+		}
+
+		public string DialogTranslationDE
+		{
+			get
+			{
+				return _dialogTranslationDE;
+			}
+			set
+			{
+				SetProperty(ref _dialogTranslationDE, value);
+			}
+		}
+
+		public string DialogTranslationEN
+		{
+			get
+			{
+				return _dialogTranslationEN;
+			}
+			set
+			{
+				SetProperty(ref _dialogTranslationEN, value);
 			}
 		}
 
@@ -1057,34 +1253,41 @@ namespace PlusLayerCreator.Configure
 		private void GenerateTempData()
 		{
 			Product = "Mst";
-			Item = "Site";
+			//Item = "Site";
 			DialogName = "AdministrationOfSites";
 
-			PlusDataItemProperty plusDataItemProperty = new PlusDataItemProperty()
+			PlusDataItem dataItem = new PlusDataItem()
+			{
+				Name = "Site",
+				Translation = "Anlage",
+				Properties = new ObservableCollection<PlusDataItemProperty>()
+			};
+
+			dataItem.Properties.Add(new PlusDataItemProperty()
 			{
 				IsRequired = true,
 				Name = "Id",
+				Translation = "Id",
 				Type = "int",
 				Length = "3",
 				IsKey = true,
 				IsFilterProperty = true,
 				FilterPropertyType = "TextBox"
-			};
+			});
 
-			DataLayout.Add(plusDataItemProperty);
-
-			plusDataItemProperty = new PlusDataItemProperty()
+			dataItem.Properties.Add(new PlusDataItemProperty()
 			{
 				IsRequired = false,
 				Name = "Description",
+				Translation = "Beschreibung",
 				Type = "string",
 				Length = "20",
 				IsKey = false,
 				IsFilterProperty = true,
 				FilterPropertyType = "ComboBox"
-			};
+			});
 
-			DataLayout.Add(plusDataItemProperty);
+			DataLayout.Add(dataItem);
 		}
 
 		#endregion Temp

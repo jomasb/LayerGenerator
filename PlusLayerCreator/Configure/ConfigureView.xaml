@@ -25,8 +25,22 @@
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<Grid Background="{StaticResource Brush.Background.Medium}">
-		<StackPanel Margin="5">
-			<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<UniformGrid Rows="1">
+			<plus:PlusButton Command="{Binding StartCommand}" Content="Start" />
+			<plus:PlusButton Command="{Binding ImportSettingsCommand}" Content="Import" />
+			<plus:PlusButton Command="{Binding ExportSettingsCommand}" Content="Export" />
+		</UniformGrid>
+		<Grid Grid.Row="1" Margin="5">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<Grid Grid.Row="0">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*" />
 					<ColumnDefinition Width="10" />
@@ -72,21 +86,24 @@
 						<DockPanel Margin="0 5 0 0" LastChildFill="True">
 							<plus:PlusLabel
 								MinWidth="70"
-								Content="Item"
-								DockPanel.Dock="Left" />
-							<plus:PlusTextBox DockPanel.Dock="Left" Text="{Binding Item}" />
-						</DockPanel>
-						<DockPanel Margin="0 5 0 0" LastChildFill="True">
-							<plus:PlusLabel
-								MinWidth="70"
 								Content="Dialog"
 								DockPanel.Dock="Left" />
 							<plus:PlusTextBox DockPanel.Dock="Left" Text="{Binding DialogName}" />
 						</DockPanel>
+						<DockPanel Margin="0 5 0 0" LastChildFill="True">
+							<plus:PlusLabel
+								MinWidth="70"
+								Content="Translation EN/DE"
+								DockPanel.Dock="Left" />
+							<UniformGrid DockPanel.Dock="Left" Rows="1">
+								<plus:PlusTextBox Text="{Binding DialogTranslationEN}" />
+								<plus:PlusTextBox Text="{Binding DialogTranslationDE}" />
+							</UniformGrid>
+						</DockPanel>
 					</StackPanel>
 				</plus:PlusGroupBox>
 			</Grid>
-			<Grid>
+			<Grid Grid.Row="1">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*" />
 					<ColumnDefinition Width="10" />
@@ -136,58 +153,77 @@
 					</StackPanel>
 				</plus:PlusGroupBox>
 			</Grid>
+			<Grid Grid.Row="2">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
 
-			<plus:PlusGroupBox Height="210" Header="Data Layout">
-				<plus:PlusGroupBox.AdditionalHeaderContent>
-					<DockPanel>
-						<plus:PlusButton
-							HorizontalAlignment="Center"
-							Command="{Binding AddCommand}"
-							Content="Add" />
-						<plus:PlusButton
-							HorizontalAlignment="Center"
-							Command="{Binding DeleteCommand}"
-							Content="Delete" />
-					</DockPanel>
-				</plus:PlusGroupBox.AdditionalHeaderContent>
-				<plus:PlusGridView
-					AutoGenerateColumns="False"
-					ColumnWidth="*"
-					IsReadOnly="False"
-					ItemsSource="{Binding DataLayout, Mode=TwoWay}"
-					SelectedItem="{Binding SelectedItem}">
-					<plus:PlusGridView.Columns>
-						<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Name}" Header="Name" />
-						<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Type}" Header="Type" />
-						<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Length}" Header="Length" />
-						<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsReadOnly}" Header="ReadOnly" />
-						<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsRequired}" Header="Required" />
-						<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsKey}" Header="IsKey" />
-						<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsFilterProperty}" Header="IsFilterProperty" />
-						<plus:PlusGridViewTextColumn DataMemberBinding="{Binding FilterPropertyType}" Header="FilterPropertyType" />
-					</plus:PlusGridView.Columns>
-				</plus:PlusGridView>
-			</plus:PlusGroupBox>
-			<StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-				<plus:PlusButton
-					Width="100"
-					Margin="10"
-					HorizontalAlignment="Center"
-					Command="{Binding StartCommand}"
-					Content="Start" />
-				<plus:PlusButton
-					Width="100"
-					Margin="10"
-					HorizontalAlignment="Center"
-					Command="{Binding ImportSettingsCommand}"
-					Content="Import" />
-				<plus:PlusButton
-					Width="100"
-					Margin="10"
-					HorizontalAlignment="Center"
-					Command="{Binding ExportSettingsCommand}"
-					Content="Export" />
-			</StackPanel>
-		</StackPanel>
+				<plus:PlusExpandableHeader Header="DataItems">
+					<plus:PlusExpandableHeader.HeaderAdditionalContent>
+						<StackPanel Orientation="Horizontal">
+							<plus:PlusButton
+								Command="{Binding AddItemCommand}"
+								Icon="{StaticResource Icon.New.White.16}"
+								Style="{StaticResource ExpandableHeader.Small.Button}" />
+							<plus:PlusButton
+								Command="{Binding DeleteItemCommand}"
+								Icon="{StaticResource Icon.Delete.White.16}"
+								Style="{StaticResource ExpandableHeader.Small.Button}" />
+						</StackPanel>
+					</plus:PlusExpandableHeader.HeaderAdditionalContent>
+					<plus:PlusGridView
+						AutoGenerateColumns="False"
+						ColumnWidth="*"
+						IsReadOnly="False"
+						ItemsSource="{Binding DataLayout, Mode=TwoWay}"
+						SelectedItem="{Binding SelectedItem}">
+						<plus:PlusGridView.Columns>
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Name}" Header="Name" />
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Translation}" Header="Translation" />
+						</plus:PlusGridView.Columns>
+					</plus:PlusGridView>
+				</plus:PlusExpandableHeader>
+
+				<GridSplitter Grid.Row="1" />
+
+				<plus:PlusExpandableHeader
+					Grid.Row="2"
+					Header="Properties"
+					Style="{StaticResource ExpandableHeader.Detail}">
+					<plus:PlusExpandableHeader.HeaderAdditionalContent>
+						<StackPanel Orientation="Horizontal">
+							<plus:PlusButton
+								Command="{Binding AddItemPropertyCommand}"
+								Icon="{StaticResource Icon.New.White.16}"
+								Style="{StaticResource ExpandableHeader.Small.Button}" />
+							<plus:PlusButton
+								Command="{Binding DeleteItemPropertyCommand}"
+								Icon="{StaticResource Icon.Delete.White.16}"
+								Style="{StaticResource ExpandableHeader.Small.Button}" />
+						</StackPanel>
+					</plus:PlusExpandableHeader.HeaderAdditionalContent>
+					<plus:PlusGridView
+						AutoGenerateColumns="False"
+						ColumnWidth="*"
+						IsReadOnly="False"
+						ItemsSource="{Binding SelectedItem.Properties, Mode=TwoWay}"
+						SelectedItem="{Binding SelectedPropertyItem}">
+						<plus:PlusGridView.Columns>
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Name}" Header="Name" />
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Translation}" Header="Translation" />
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Type}" Header="Type" />
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Length}" Header="Length" />
+							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsReadOnly}" Header="ReadOnly" />
+							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsRequired}" Header="Required" />
+							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsKey}" Header="IsKey" />
+							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsFilterProperty}" Header="IsFilterProperty" />
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding FilterPropertyType}" Header="FilterPropertyType" />
+						</plus:PlusGridView.Columns>
+					</plus:PlusGridView>
+				</plus:PlusExpandableHeader>
+			</Grid>
+		</Grid>
 	</Grid>
 </UserControl>

@@ -102,6 +102,9 @@ namespace Dcx.Plus.Gateway.Modules.$Product$
 					$specialContent3$
 					$item$Dto.SaveFlag = SaveFlag.Persistent;
 				}
+				
+				$item$List.$Item$s.Accept();
+				$item$List.Accept();
 
 				return CallResponse.FromSuccessfulResult($item$Dtos);
 			}

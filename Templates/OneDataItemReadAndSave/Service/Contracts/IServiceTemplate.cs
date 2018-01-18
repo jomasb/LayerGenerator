@@ -17,7 +17,7 @@ namespace Dcx.Plus.BusinessServiceLocal.Modules.$Product$.Contracts
 		
 		#region Save
 		
-		Task<CallResponse<IList<$Product$$Item$>>> Save$Item$sAsync(IServiceCallContext serviceCallContext, List<$Product$$Item$> $item$Dtos);
+		Task<CallResponse<$Product$$Item$>> Save$Item$Async(IServiceCallContext serviceCallContext, $Product$$Item$ $item$Dto);
 		
 		#endregion Save
 	}
