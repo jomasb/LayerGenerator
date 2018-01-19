@@ -7,6 +7,9 @@ namespace PlusLayerCreator
 {
 	public static class Helpers
 	{
+		public static string Product;
+		public static string DialogName;
+
 		public static string FilterChildViewModelTemplate;
 		public static string FilterPropertyTemplate;
 		public static string FilterComboBoxPropertyTemplate;
@@ -53,22 +56,22 @@ namespace PlusLayerCreator
 			return int.Parse(computedString);
 		}
 
-		public static string DoReplaces(string input, string product = "", string dialogName = "", string item = "")
+		public static string DoReplaces(string input, string item = "")
 		{
-			input = input.Replace("$Product$", product);
-			input = input.Replace("$product$", ToPascalCase(product));
+			input = input.Replace("$Product$", Product);
+			input = input.Replace("$product$", ToPascalCase(Product));
 			input = input.Replace("$Item$", item);
 			input = input.Replace("$item$", ToPascalCase(item));
-			input = input.Replace("$Dialog$", dialogName);
-			input = input.Replace("$dialog$", ToPascalCase(dialogName));
+			input = input.Replace("$Dialog$", DialogName);
+			input = input.Replace("$dialog$", ToPascalCase(DialogName));
 
 			return input;
 		}
 
-		public static string DoReplaces2(string input, string product = "", string name = "", string item = "", string type = "")
+		public static string DoReplaces2(string input, string name = "", string item = "", string type = "")
 		{
-			input = input.Replace("$Product$", product);
-			input = input.Replace("$product$", ToPascalCase(product));
+			input = input.Replace("$Product$", Product);
+			input = input.Replace("$product$", ToPascalCase(Product));
 			input = input.Replace("$Item$", item);
 			input = input.Replace("$item$", ToPascalCase(item));
 			input = input.Replace("$Name$", name);
