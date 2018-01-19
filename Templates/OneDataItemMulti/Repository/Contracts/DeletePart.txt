@@ -1,8 +1,0 @@
-/// <summary>
-/// Deletes the $Item$ asynchronous.
-/// </summary>
-/// <param name="callContext">The call context.</param>
-/// <param name="$item$">The $Item$.</param>
-/// <param name="$item$DataItems">The $Item$DataItems.</param>
-/// <returns></returns>
-Task<CallResponse<bool>> Delete$Item$Async(IRepositoryCallContext callContext, $Product$$Item$DataItem $item$, PlusObservableCollection<$Product$$Item$DataItem> $item$DataItems);

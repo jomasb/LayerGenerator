@@ -8,6 +8,6 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Infrastructure
 	/// <date></date>
 	public class ViewNames
 	{
-		$specialContent$
+		$specialContent1$
 	}
 }

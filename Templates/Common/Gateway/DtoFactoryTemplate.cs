@@ -11,6 +11,6 @@ namespace Dcx.Plus.Gateway.Modules.$Product$
 	/// <date></date>
 	internal class $Product$DtoFactory
 	{
-		$specialContent$
+		$specialContent1$
 	}
 }

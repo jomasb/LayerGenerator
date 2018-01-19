@@ -92,6 +92,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.Wpf.6.2.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
       <Private>True</Private>
@@ -153,7 +154,10 @@
     <Compile Include="Infrastructure\Bootstrapper.cs" />
     <Compile Include="Infrastructure\Module.cs" />
     <Compile Include="Infrastructure\RegionNames.cs" />
-    <Compile Include="Items.cs" />
+    <Compile Include="Items\Configuration.cs" />
+    <Compile Include="Items\PlusDataItem.cs" />
+    <Compile Include="Items\PlusDataItemProperty.cs" />
+    <Compile Include="Items\TemplateMode.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

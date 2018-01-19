@@ -13,14 +13,10 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Filter
 	/// Definition of the view model for the filter view.
 	/// </summary>
 	/// <seealso cref="RegionViewModelBase" />
-		/// <param name="$product$$Item$DataItemFilterSourceProvider">The IFilterSourceProvider for the $Product$$Item$DataItem</param>
 	/// <author></author>
 	/// <company>abat+ GmbH</company>
 	/// <date></date>
-	public class FilterViewModel : FilterRegionViewModelBase
-	{
-		$specialContent$
-	}
+	$specialContent1$
 	
 	$specialContent2$
 }

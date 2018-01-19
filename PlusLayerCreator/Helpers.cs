@@ -1,17 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Reflection;
+﻿using System.IO;
+using System.Runtime.Serialization.Json;
 using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Win32;
+using PlusLayerCreator.Items;
 
 namespace PlusLayerCreator
 {
 	public static class Helpers
 	{
+		public static string FilterChildViewModelTemplate;
+		public static string FilterPropertyTemplate;
+		public static string FilterComboBoxPropertyTemplate;
+		public static string FilterTextBoxXamlTemplate;
+		public static string FilterComboBoxXamlTemplate;
+		public static string FilterCheckBoxXamlTemplate;
+		public static string FilterDateTimePickerXamlTemplate;
+
+		public static T DeserializeJSon<T>(string jsonString)
+		{
+			DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(T));
+			MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(jsonString));
+			T obj = (T)ser.ReadObject(stream);
+			return obj;
+		}
+
 		public static string ToPascalCase(string input)
 		{
 			if (string.IsNullOrEmpty(input))
@@ -22,56 +33,7 @@ namespace PlusLayerCreator
 			return input[0].ToString().ToLower() + input.Substring(1, input.Length - 1);
 		}
 
-		public static string Serialize(Configuration configuration)
-		{
-			string serializedConfiguration = string.Empty;
-			serializedConfiguration += "[Settings]\r\n";
-			PropertyInfo[] properties = typeof(Configuration).GetProperties();
-			foreach (PropertyInfo property in properties)
-			{
-				if (property.PropertyType == typeof(IList<PlusDataItem>))
-				{
-					IList<PlusDataItem> dataItems = property.GetValue(configuration) as IList<PlusDataItem>;
-					serializedConfiguration += "\r\n[DataItems]\r\n";
-					foreach (var plusDataItem in dataItems)
-					{
-						PropertyInfo[] innerItems = typeof(PlusDataItem).GetProperties();
-						foreach (PropertyInfo innerItem in innerItems)
-						{
-							//serializedConfiguration += "{";
-							if (innerItem.PropertyType == typeof(ObservableCollection<PlusDataItemProperty>))
-							{
-								ObservableCollection<PlusDataItemProperty> dataItemProperties = innerItem.GetValue(plusDataItem) as ObservableCollection<PlusDataItemProperty>;
-								serializedConfiguration += "\r\n";
-								foreach (var plusDataItemProperty in dataItemProperties)
-								{
-									serializedConfiguration += "{DataItem=" + plusDataItem.Name + ";";
-									PropertyInfo[] innerProperties = typeof(PlusDataItemProperty).GetProperties();
-									foreach (var innerProperty in innerProperties)
-									{
-										serializedConfiguration += innerProperty.Name + "=" + innerProperty.GetValue(plusDataItemProperty) + ";";
-									}
-									serializedConfiguration = serializedConfiguration.Substring(0, serializedConfiguration.Length - 1);
-									serializedConfiguration += "}\r\n";
-								}
-							}
-							else
-							{
-								serializedConfiguration += innerItem.Name + "=" + innerItem.GetValue(plusDataItem) + ";";
-							}
-							//serializedConfiguration += "}";
-						}
-						serializedConfiguration = serializedConfiguration.Substring(0, serializedConfiguration.Length - 1) + "\r\n";
-					}
-				}
-				else
-				{
-					serializedConfiguration += property.Name + "=" + property.GetValue(configuration) + "\r\n";
-				}
-			}
-			return serializedConfiguration;
-		}
-
+		
 		public static int GetMaxValue(string length)
 		{
 			if (length == string.Empty)
@@ -91,121 +53,123 @@ namespace PlusLayerCreator
 			return int.Parse(computedString);
 		}
 
-		public static Configuration ImportSettingsFromFile(string dialogFileName)
+		public static string DoReplaces(string input, string product = "", string dialogName = "", string item = "")
 		{
-			Char delimiter = ';';
-			Char innerDelimiter = '=';
+			input = input.Replace("$Product$", product);
+			input = input.Replace("$product$", ToPascalCase(product));
+			input = input.Replace("$Item$", item);
+			input = input.Replace("$item$", ToPascalCase(item));
+			input = input.Replace("$Dialog$", dialogName);
+			input = input.Replace("$dialog$", ToPascalCase(dialogName));
 
-			Configuration configuration = new Configuration();
-			configuration.DataLayout = new List<PlusDataItem>();
-			var lines = File.ReadAllLines(dialogFileName);
-			foreach (var line in lines)
+			return input;
+		}
+
+		public static string DoReplaces2(string input, string product = "", string name = "", string item = "", string type = "")
+		{
+			input = input.Replace("$Product$", product);
+			input = input.Replace("$product$", ToPascalCase(product));
+			input = input.Replace("$Item$", item);
+			input = input.Replace("$item$", ToPascalCase(item));
+			input = input.Replace("$Name$", name);
+			input = input.Replace("$name$", ToPascalCase(name));
+			input = input.Replace("$Type$", type);
+			input = input.Replace("$type$", ToPascalCase(type));
+
+			return input;
+		}
+
+		public static void CreateFile(string input, string output, string[] contents = null, string item = "")
+		{
+			string fileContent = File.ReadAllText(input);
+
+			fileContent = DoReplaces(fileContent, item);
+
+			if (contents != null)
 			{
-				if (line.Length == 0 || line.StartsWith("["))
+				for (int i = 0; i < contents.Length; i++)
 				{
-					continue;
-				}
-
-				if (line.StartsWith("{"))
-				{
-					int counter = 0;
-					String[] substrings = line.Replace("{", "").Replace("}", "").Split(delimiter);
-					PlusDataItem dataItem = null;
-					PlusDataItemProperty propertyDataItem = new PlusDataItemProperty();
-					foreach (string substring in substrings)
-					{
-						if (counter == 0)
-						{
-							String[] innerSubstrings = substring.Split(innerDelimiter);
-							dataItem = configuration.DataLayout.FirstOrDefault(t => t.Name == innerSubstrings[1]);
-							if (dataItem.Properties == null)
-							{
-								dataItem.Properties = new ObservableCollection<PlusDataItemProperty>();
-							}
-						}
-						else
-						{
-							String[] innerSubstrings = substring.Split(innerDelimiter);
-
-							PropertyInfo pinfo = typeof(PlusDataItemProperty).GetProperty(innerSubstrings[0]);
-							if (pinfo != null)
-							{
-								if (pinfo.PropertyType == typeof(bool))
-								{
-									pinfo.SetValue(propertyDataItem, bool.Parse(innerSubstrings[1]));
-								}
-								if (pinfo.PropertyType == typeof(string))
-								{
-									pinfo.SetValue(propertyDataItem, innerSubstrings[1]);
-								}
-							}
-						}
-						counter++;
-					}
-					dataItem.Properties.Add(propertyDataItem);
-					continue;
-				}
-
-
-				if (line.Contains(";"))
-				{
-					//muliple elements (PlusDataItemProperties)
-					PlusDataItem dataItem = new PlusDataItem();
-					
-					String[] substrings = line.Split(delimiter);
-
-					foreach (string substring in substrings)
-					{
-						String[] innerSubstrings = substring.Split(innerDelimiter);
-
-						if (innerSubstrings[0] != string.Empty)
-						{
-							PropertyInfo pinfo = typeof(PlusDataItem).GetProperty(innerSubstrings[0]);
-							if (pinfo != null)
-							{
-								if (pinfo.PropertyType == typeof(bool))
-								{
-									pinfo.SetValue(dataItem, bool.Parse(innerSubstrings[1]));
-								}
-								if (pinfo.PropertyType == typeof(string))
-								{
-									pinfo.SetValue(dataItem, innerSubstrings[1]);
-								}
-							}
-						}
-					}
-
-					configuration.DataLayout.Add(dataItem);
-				}
-				else
-				{
-					//single elements
-					Char singleDelimiter = '=';
-					String[] substrings = line.Split(singleDelimiter);
-
-					PropertyInfo pinfo = typeof(Configuration).GetProperty(substrings[0]);
-					if (pinfo != null)
-					{
-						if (pinfo.PropertyType == typeof(bool))
-						{
-							pinfo.SetValue(configuration, bool.Parse(substrings[1]));
-						}
-						if (pinfo.PropertyType == typeof(string))
-						{
-							pinfo.SetValue(configuration, substrings[1]);
-						}
-					}
+					fileContent = fileContent.Replace("$specialContent" + (i + 1) + "$", contents[i]);
 				}
 			}
 
-			return configuration;
+			FileInfo fileInfo = new FileInfo(output);
+			fileInfo.Directory.Create();
+			File.WriteAllText(fileInfo.FullName, fileContent);
 		}
 
-		public static void ExportSettingsToFile(string fileName, Configuration configuration)
+		public static void CreateFilterContents(PlusDataItemProperty plusDataObject, out string filterMembersContent, out string filterPropertiesContent, out string filterPredicateResetContent,
+			out string filterPredicatesContent, out string filterXamlContent, out string filterMultiSelectorsInitializeContent)
 		{
-			FileInfo fileInfo = new FileInfo(fileName);
-			fileInfo.Directory.Create();
-			File.WriteAllText(fileInfo.FullName, Helpers.Serialize(configuration));
+			filterMembersContent = string.Empty;
+			filterPropertiesContent = string.Empty;
+			filterPredicateResetContent = string.Empty;
+			filterPredicatesContent = string.Empty;
+			filterXamlContent = string.Empty;
+			filterMultiSelectorsInitializeContent = string.Empty;
+
+			string filterSuffix = plusDataObject.Type == "string" ? string.Empty : ".ToString()";
+			if (plusDataObject.Type == "string" || plusDataObject.Type == "int")
+			{
+				if (plusDataObject.FilterPropertyType == "TextBox")
+				{
+					filterMembersContent = "private string _" + ToPascalCase(plusDataObject.Name) + ";\r\n";
+					filterPropertiesContent = FilterPropertyTemplate.Replace(plusDataObject.Type, "string");
+					filterPredicateResetContent = plusDataObject.Name + " = string.Empty;\r\n";
+					filterPredicatesContent = ".StartsWith(x => x." + plusDataObject.Name + filterSuffix + ", x => x." +
+											   plusDataObject.Name + ")\r\n";
+					filterXamlContent = DoReplaces(FilterTextBoxXamlTemplate);
+				}
+
+				if (plusDataObject.FilterPropertyType == "ComboBox")
+				{
+					filterMembersContent = "private MultiValueSelector<string> _" +
+											ToPascalCase(plusDataObject.Name) + "MultiSelector;\r\n";
+					filterPropertiesContent = FilterComboBoxPropertyTemplate;
+					filterPredicatesContent = ".IsContainedInList(x => x." + plusDataObject.Name + filterSuffix + ", x => x." +
+											   plusDataObject.Name + "MultiSelector.SelectedValues)\r\n";
+					filterMultiSelectorsInitializeContent =
+						plusDataObject.Name + "MultiSelector = new MultiValueSelector<string>(SourceCollection.Select(x => x." +
+						plusDataObject.Name + ".ToString()).Distinct(), RefreshCollectionView, AllValue);";
+					filterXamlContent = DoReplaces(FilterComboBoxXamlTemplate);
+				}
+			}
+
+			if (plusDataObject.Type == "bool")
+			{
+				filterMembersContent = "private " + plusDataObject.Type + "? _" + ToPascalCase(plusDataObject.Name) +
+										";\r\n";
+				filterPropertiesContent = FilterPropertyTemplate;
+				filterPredicateResetContent = plusDataObject.Name + " = null;\r\n";
+				filterPredicatesContent =
+					".IsEqual(x => x." + plusDataObject.Name + ", x => x." + plusDataObject.Name + ")\r\n";
+				filterXamlContent = DoReplaces(FilterCheckBoxXamlTemplate);
+			}
+
+			if (plusDataObject.Type == "DateTime")
+			{
+				filterMembersContent = "private " + plusDataObject.Type + "? _" + ToPascalCase(plusDataObject.Name) +
+										";\r\n";
+				filterPropertiesContent = FilterPropertyTemplate;
+				filterPredicateResetContent = plusDataObject.Name + " = null;\r\n";
+				filterPredicatesContent =
+					".IsEqual(x => x." + plusDataObject.Name + ", x => x." + plusDataObject.Name + ")\r\n";
+				filterXamlContent = DoReplaces(FilterDateTimePickerXamlTemplate);
+			}
+
+			filterMembersContent = filterMembersContent.Replace("$Name$", plusDataObject.Name)
+				                       .Replace("$name$", ToPascalCase(plusDataObject.Name))
+				                       .Replace("$Type$", plusDataObject.Type) + "\r\n";
+			filterPropertiesContent = filterPropertiesContent.Replace("$Name$", plusDataObject.Name)
+				.Replace("$name$", ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type) + "\r\n";
+			filterPredicateResetContent = filterPredicateResetContent.Replace("$Name$", plusDataObject.Name)
+				.Replace("$name$", ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type) + "\r\n";
+			filterPredicatesContent = filterPredicatesContent.Replace("$Name$", plusDataObject.Name)
+				.Replace("$name$", ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type) + "\r\n";
+			filterXamlContent = filterXamlContent.Replace("$Name$", plusDataObject.Name)
+				.Replace("$name$", ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type);
+			filterMultiSelectorsInitializeContent = filterMultiSelectorsInitializeContent.Replace("$Name$", plusDataObject.Name)
+				.Replace("$name$", ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type) + "\r\n";
 		}
 	}
 }

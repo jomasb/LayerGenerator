@@ -69,7 +69,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$
 				ApplicationMenuView>());
 
 			// DynamicViews
-			$specialContent$
+			$specialContent1$
 
 		}
 	}

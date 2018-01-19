@@ -14,6 +14,6 @@ namespace Dcx.Plus.BusinessServiceLocal.Modules.$Product$.Contracts.DTOs
 	/// <date></date>
 	public class $Product$$Item$ : SaveDtoBase
 	{
-		$specialContent$
+		$specialContent1$
 	}
 }

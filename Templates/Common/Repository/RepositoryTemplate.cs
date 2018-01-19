@@ -46,6 +46,6 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 		
 		#endregion Construction
 		
-		$specialContent$
+		$specialContent1$
 	}
 }

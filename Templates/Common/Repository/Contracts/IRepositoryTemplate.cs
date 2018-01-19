@@ -15,6 +15,6 @@ namespace Dcx.Plus.Repository.Modules.$Product$.Contracts
 	/// <date></date>
 	public interface I$Product$$Dialog$Repository
 	{
-		$specialContent$
+		$specialContent1$
 	}
 }

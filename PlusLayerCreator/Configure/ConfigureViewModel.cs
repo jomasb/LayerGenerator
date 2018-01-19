@@ -4,9 +4,11 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Windows;
 using Microsoft.Win32;
+using PlusLayerCreator.Items;
 using Prism.Commands;
 using Prism.Mvvm;
 
@@ -19,7 +21,6 @@ namespace PlusLayerCreator.Configure
 		private PlusDataItem _selectedItem;
 		private PlusDataItemProperty _selectedPropertyItem;
 		private TemplateMode _template;
-		private TemplateMode _selectedTemplateMode;
 		private ObservableCollection<PlusDataItem> _dataLayout;
 		
 		#region Settings
@@ -59,14 +60,7 @@ namespace PlusLayerCreator.Configure
 		private string _isNumericTemplate = " IsNumeric=\"True\"";
 
 		private readonly string _masterGridTemplate;
-		private readonly string _filterChildViewModelTemplate;
-		private readonly string _filterPropertyTemplate;
-		private readonly string _filterComboBoxPropertyTemplate;
-		private readonly string _filterTextBoxXamlTemplate;
-		private readonly string _filterComboBoxXamlTemplate;
-		private readonly string _filterCheckBoxXamlTemplate;
-		private readonly string _filterDateTimePickerXamlTemplate;
-
+		
 		private readonly string _createGatewayDtoTemplateUpperPart;
 		private readonly string _createGatewayDtoTemplateLowerPart;
 
@@ -88,13 +82,13 @@ namespace PlusLayerCreator.Configure
 			//GenerateTempData();
 
 			_masterGridTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Master\MasterGrid.txt");
-			_filterChildViewModelTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterViewModelChildTemplate.txt");
-			_filterPropertyTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterProperty.txt");
-			_filterComboBoxPropertyTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterComboBox.txt");
-			_filterTextBoxXamlTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterTextBoxXaml.txt");
-			_filterComboBoxXamlTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterComboBoxXaml.txt");
-			_filterCheckBoxXamlTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterCheckBoxXaml.txt");
-			_filterDateTimePickerXamlTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterDateTimePickerXaml.txt");
+			Helpers.FilterChildViewModelTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterViewModelChildTemplate.txt");
+			Helpers.FilterPropertyTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterProperty.txt");
+			Helpers.FilterComboBoxPropertyTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterComboBox.txt");
+			Helpers.FilterTextBoxXamlTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterTextBoxXaml.txt");
+			Helpers.FilterComboBoxXamlTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterComboBoxXaml.txt");
+			Helpers.FilterCheckBoxXamlTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterCheckBoxXaml.txt");
+			Helpers.FilterDateTimePickerXamlTemplate = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterDateTimePickerXaml.txt");
 
 			_createDataItemTemplateUpperPart = File.ReadAllText(InputPath + _commonPath + @"Repository\CreateDataItemUpperPart.txt");
 			_createDataItemTemplateLowerPart = File.ReadAllText(InputPath + _commonPath + @"Repository\CreateDataItemLowerPart.txt");
@@ -123,6 +117,9 @@ namespace PlusLayerCreator.Configure
 		{
 			Configuration configuration = new Configuration()
 			{
+				Template = Template,
+				InputPath = InputPath,
+				OutputPath = OutputPath,
 				IsCreateDto = _isCreateDto,
 				IsCreateDtoFactory = _isCreateDtoFactory,
 				IsCreateGateway = _isCreateGateway,
@@ -143,12 +140,14 @@ namespace PlusLayerCreator.Configure
 
 			SaveFileDialog dialog = new SaveFileDialog();
 			dialog.Title = "Export settings";
-			dialog.Filter = "Config files (*.cfg)|*.cfg";
+			dialog.Filter = "Config files (*.json)|*.json";
 			dialog.ShowDialog();
 
 			if (dialog.FileName != string.Empty)
 			{
-				Helpers.ExportSettingsToFile(dialog.FileName, configuration);
+				FileStream stream1 = new FileStream(dialog.FileName, FileMode.Create);
+				DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(Configuration));
+				ser.WriteObject(stream1, configuration);
 			}
 		}
 
@@ -156,12 +155,15 @@ namespace PlusLayerCreator.Configure
 		{
 			OpenFileDialog dialog = new OpenFileDialog();
 			dialog.Title = "Import settings";
-			dialog.Filter = "Config files (*.cfg)|*.cfg";
+			dialog.Filter = "Config files (*.json)|*.json";
 			dialog.ShowDialog();
 
 			if (dialog.FileName != string.Empty)
 			{
-				Configuration configuration = Helpers.ImportSettingsFromFile(dialog.FileName);
+				DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(Configuration));
+				FileStream stream = new FileStream(dialog.FileName, FileMode.Open);
+				Configuration configuration = ser.ReadObject(stream) as Configuration;
+				stream.Close();
 				PropertyInfo[] properties = typeof(Configuration).GetProperties();
 				foreach (var property in properties)
 				{
@@ -178,7 +180,7 @@ namespace PlusLayerCreator.Configure
 					else
 					{
 						PropertyInfo propertyInfo = this.GetType().GetProperty(property.Name);
-						propertyInfo.SetValue(this, property.GetValue(configuration));
+						propertyInfo.SetValue(this, property.GetValue(configuration));	
 					}
 				}
 			}
@@ -226,7 +228,7 @@ namespace PlusLayerCreator.Configure
 
 		private void StartExecuted()
 		{
-			_templateDirectory = InputPath + SelectedTemplateMode + "\\";
+			_templateDirectory = InputPath + Template + "\\";
 
 			// Gateway
 			if (!IsUseBusinessServiceWithoutBO)
@@ -253,16 +255,16 @@ namespace PlusLayerCreator.Configure
 			{
 				foreach (PlusDataItem dataItem in DataLayout)
 				{
-					CreateFile(_templateDirectory + @"Service\Contracts\IServiceTemplate.cs", OutputPath + @"Service\Contracts\I" + Product + dataItem.Name + "Service.cs", null, dataItem.Name);
+					Helpers.CreateFile(_templateDirectory + @"Service\Contracts\IServiceTemplate.cs", OutputPath + @"Service\Contracts\I" + Product + dataItem.Name + "Service.cs", null, dataItem.Name);
 					if (IsUseBusinessServiceWithoutBO)
 					{
 						CreateDto();
 						CreateTandem();
-						CreateFile(_templateDirectory + @"Service\ServiceNoBOTemplate.cs", OutputPath + @"Service\" + Product + dataItem.Name + "Service.cs", null, dataItem.Name);
+						Helpers.CreateFile(_templateDirectory + @"Service\ServiceNoBOTemplate.cs", OutputPath + @"Service\" + Product + dataItem.Name + "Service.cs", null, dataItem.Name);
 					}
 					else
 					{
-						CreateFile(_templateDirectory + @"Service\ServiceTemplate.cs", OutputPath + @"Service\" + Product + dataItem.Name + "Service.cs", null, dataItem.Name);
+						Helpers.CreateFile(_templateDirectory + @"Service\ServiceTemplate.cs", OutputPath + @"Service\" + Product + dataItem.Name + "Service.cs", null, dataItem.Name);
 					}	
 				}
 			}
@@ -325,8 +327,8 @@ namespace PlusLayerCreator.Configure
 					converterBoToMessageContent += plusDataObject.Name + " = serviceMessage." + plusDataObject.Name + "(i),\r\n";
 				}
 
-				CreateFile(_templateDirectory + @"Service\Tandem\Converter.cs", OutputPath + @"Service\Tandem\" + Product + dataItem.Name + "Converter.cs", new[] { converterMessageToBoContent, converterBoToMessageContent }, dataItem.Name);
-				CreateFile(_templateDirectory + @"Service\Tandem\ServerMapping.cs", OutputPath + @"Service\Tandem\" + Product + dataItem.Name + "ServerMapping.cs", null, dataItem.Name);
+				Helpers.CreateFile(_templateDirectory + @"Service\Tandem\Converter.cs", OutputPath + @"Service\Tandem\" + Product + dataItem.Name + "Converter.cs", new[] { converterMessageToBoContent, converterBoToMessageContent }, dataItem.Name);
+				Helpers.CreateFile(_templateDirectory + @"Service\Tandem\ServerMapping.cs", OutputPath + @"Service\Tandem\" + Product + dataItem.Name + "ServerMapping.cs", null, dataItem.Name);
 			}
 		}
 
@@ -385,12 +387,12 @@ namespace PlusLayerCreator.Configure
 					identifier = identifier.Substring(0, identifier.Length - 3);
 				}
 
-				CreateFile(GetInputhPath(_templateDirectory + @"Gateway\Contracts\IGatewayTemplate.cs"),
+				Helpers.CreateFile(GetInputhPath(_templateDirectory + @"Gateway\Contracts\IGatewayTemplate.cs"),
 					OutputPath + @"Gateway\Contracts\I" + Product + dataItem.Name + "Gateway.cs", null, dataItem.Name);
-				CreateFile(GetInputhPath(_templateDirectory + @"Gateway\GatewayTemplate.cs"),
+				Helpers.CreateFile(GetInputhPath(_templateDirectory + @"Gateway\GatewayTemplate.cs"),
 					OutputPath + @"Gateway\" + Product + dataItem.Name + "Gateway.cs",
 					new[] { key, identifier, readOnlyMappingDto, readOnlyMappingBo }, dataItem.Name);
-				CreateFile(GetInputhPath(_templateDirectory + @"Gateway\GatewayMockTemplate.cs"),
+				Helpers.CreateFile(GetInputhPath(_templateDirectory + @"Gateway\GatewayMockTemplate.cs"),
 					OutputPath + @"Gateway\" + Product + dataItem.Name + "GatewayMock.cs", new[] { mock }, dataItem.Name);
 			}
 		}
@@ -407,12 +409,12 @@ namespace PlusLayerCreator.Configure
 
 				if (IsUseBusinessServiceWithoutBO)
 				{
-					CreateFile(GetInputhPath(_templateDirectory + @"Service\Dtos\DtoTemplate.cs"),
+					Helpers.CreateFile(GetInputhPath(_templateDirectory + @"Service\Dtos\DtoTemplate.cs"),
 						OutputPath + @"Service\Dtos\" + Product + dataItem.Name + ".cs", new[] { dtoContent }, dataItem.Name);
 				}
 				else
 				{
-					CreateFile(GetInputhPath(_templateDirectory + @"Gateway\Dtos\DtoTemplate.cs"),
+					Helpers.CreateFile(GetInputhPath(_templateDirectory + @"Gateway\Dtos\DtoTemplate.cs"),
 						OutputPath + @"Gateway\Dtos\" + Product + dataItem.Name + ".cs", new[] { dtoContent }, dataItem.Name);
 				}
 			}
@@ -442,7 +444,7 @@ namespace PlusLayerCreator.Configure
 				factoryContent
 			};
 
-			CreateFile(GetInputhPath(_templateDirectory + @"Gateway\DtoFactoryTemplate.cs"), OutputPath + @"Gateway\" + Product + "DtoFactory.cs", contentsDtoFactory);
+			Helpers.CreateFile(GetInputhPath(_templateDirectory + @"Gateway\DtoFactoryTemplate.cs"), OutputPath + @"Gateway\" + Product + "DtoFactory.cs", contentsDtoFactory);
 		}
 
 		#endregion Gateway
@@ -524,96 +526,77 @@ namespace PlusLayerCreator.Configure
 
 		private void CreateUiFilter()
 		{
-			string filterXamlContent = string.Empty;
-			string filterMembersContent = string.Empty;
-			string filterPredicatesContent = string.Empty;
-			string filterPredicateResetContent = string.Empty;
-			string filterMultiSelectorsInitializeContent = string.Empty;
-			string filterPropertiesContent = string.Empty;
+			string filterViewModelTemplate1 = "public FilterViewModel(IViewModelBaseServices baseServices,\r\n";
+			string filterViewModelTemplate2 = ": base(baseServices)\r\n" +
+												"{\r\n" +
+												"DisplayName = GlobalLocalizer.Singleton.Global_lblFilter.Translation;\r\n";
+			string filterViewModelTemplate3 = "}";
 
+			string filterViewModelConstructionContent = string.Empty;
+			string filterViewModelInitializationContent = string.Empty;
+
+			string filterViewContent = string.Empty;
+			string filterChildViewModelContent = string.Empty;
 
 			//filterMembersContent
 			foreach (PlusDataItem dataItem in DataLayout)
 			{
+				string filterMembersContent = string.Empty;
+				string filterPredicatesContent = string.Empty;
+				string filterPredicateResetContent = string.Empty;
+				string filterMultiSelectorsInitializeContent = string.Empty;
+				string filterPropertiesContent = string.Empty;
+
 				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
 				{
 					if (plusDataObject.IsFilterProperty)
 					{
-						string filterSuffix = plusDataObject.Type == "string" ? string.Empty : ".ToString()";
-						if (plusDataObject.Type == "string" || plusDataObject.Type == "int")
-						{
-							if (plusDataObject.FilterPropertyType == "TextBox")
-							{
-								filterMembersContent += "private string _" + Helpers.ToPascalCase(plusDataObject.Name) + ";\r\n";
-								filterPropertiesContent += _filterPropertyTemplate.Replace(plusDataObject.Type, "string");
-								filterPredicateResetContent += plusDataObject.Name + " = string.Empty;";
-								filterPredicatesContent += ".StartsWith(x => x." + plusDataObject.Name + filterSuffix + ", x => x." +
-								                           plusDataObject.Name + ")\r\n";
-								filterXamlContent += DoReplaces(_filterTextBoxXamlTemplate);
-							}
+						string propertyFilterXamlContent;
+						string propertyFilterMembersContent;
+						string propertyFilterPredicatesContent;
+						string propertyFilterPredicateResetContent;
+						string propertyFilterMultiSelectorsInitializeContent;
+						string propertyFilterPropertiesContent;
 
-							if (plusDataObject.FilterPropertyType == "ComboBox")
-							{
-								filterMembersContent += "private MultiValueSelector<string> _" +
-								                        Helpers.ToPascalCase(plusDataObject.Name) + "MultiSelector;\r\n";
-								filterPropertiesContent += _filterComboBoxPropertyTemplate;
-								filterPredicatesContent += ".IsContainedInList(x => x." + plusDataObject.Name + filterSuffix + ", x => x." +
-								                           plusDataObject.Name + "MultiSelector.SelectedValues)\r\n";
-								filterMultiSelectorsInitializeContent +=
-									plusDataObject.Name + "MultiSelector = new MultiValueSelector<string>(SourceCollection.Select(x => x." +
-									plusDataObject.Name + ".ToString()).Distinct(), RefreshCollectionView, AllValue);";
-								filterXamlContent += DoReplaces(_filterComboBoxXamlTemplate);
-							}
-						}
+						Helpers.CreateFilterContents(plusDataObject, out propertyFilterMembersContent,
+							out propertyFilterPropertiesContent, out propertyFilterPredicateResetContent,
+							out propertyFilterPredicatesContent, out propertyFilterXamlContent,
+							out propertyFilterMultiSelectorsInitializeContent);
 
-						if (plusDataObject.Type == "bool")
-						{
-							filterMembersContent += "private " + plusDataObject.Type + "? _" + Helpers.ToPascalCase(plusDataObject.Name) +
-							                        ";\r\n";
-							filterPropertiesContent += _filterPropertyTemplate;
-							filterPredicateResetContent += plusDataObject.Name + " = null;";
-							filterPredicatesContent +=
-								".IsEqual(x => x." + plusDataObject.Name + ", x => x." + plusDataObject.Name + ")\r\n";
-							filterXamlContent += DoReplaces(_filterCheckBoxXamlTemplate);
-						}
-
-						if (plusDataObject.Type == "DateTime")
-						{
-							filterMembersContent += "private " + plusDataObject.Type + "? _" + Helpers.ToPascalCase(plusDataObject.Name) +
-							                        ";\r\n";
-							filterPropertiesContent += _filterPropertyTemplate;
-							filterPredicateResetContent += plusDataObject.Name + " = null;";
-							filterPredicatesContent +=
-								".IsEqual(x => x." + plusDataObject.Name + ", x => x." + plusDataObject.Name + ")\r\n";
-							filterXamlContent += DoReplaces(_filterDateTimePickerXamlTemplate);
-						}
-
-						filterMembersContent = filterMembersContent.Replace("$Name$", plusDataObject.Name)
-							.Replace("$name$", Helpers.ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type);
-						filterPropertiesContent = filterPropertiesContent.Replace("$Name$", plusDataObject.Name)
-							.Replace("$name$", Helpers.ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type);
-						filterPredicateResetContent = filterPredicateResetContent.Replace("$Name$", plusDataObject.Name)
-							.Replace("$name$", Helpers.ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type);
-						filterPredicatesContent = filterPredicatesContent.Replace("$Name$", plusDataObject.Name)
-							.Replace("$name$", Helpers.ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type);
-						filterXamlContent = filterXamlContent.Replace("$Name$", plusDataObject.Name)
-							.Replace("$name$", Helpers.ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type);
+						filterMembersContent += Helpers.DoReplaces2(propertyFilterMembersContent, Product, plusDataObject.Name, dataItem.Name, plusDataObject.Type);
+						filterPredicatesContent += Helpers.DoReplaces2(propertyFilterPredicatesContent, Product, plusDataObject.Name, dataItem.Name, plusDataObject.Type);
+						filterPredicateResetContent += Helpers.DoReplaces2(propertyFilterPredicateResetContent, Product, plusDataObject.Name, dataItem.Name, plusDataObject.Type);
+						filterMultiSelectorsInitializeContent += Helpers.DoReplaces2(propertyFilterMultiSelectorsInitializeContent, Product, plusDataObject.Name, dataItem.Name, plusDataObject.Type);
+						filterPropertiesContent += Helpers.DoReplaces2(propertyFilterPropertiesContent, Product, plusDataObject.Name, dataItem.Name, plusDataObject.Type);
+						filterViewContent += Helpers.DoReplaces2(propertyFilterXamlContent, Product, plusDataObject.Name, dataItem.Name, plusDataObject.Type);
 					}
 				}
 
-				CreateFile(GetInputhPath(_templateDirectory) + @"UI\Filter\FilterViewTemplate.xaml",
-					OutputPath + @"UI\Filter\FilterView.xaml", new[] {filterXamlContent});
-				CreateFile(GetInputhPath(_templateDirectory) + @"UI\Filter\FilterViewTemplate.xaml.cs",
-					OutputPath + @"UI\Filter\FilterView.xaml.cs");
+				string childViewModel = Helpers.FilterChildViewModelTemplate;
+				childViewModel = DoReplaces(childViewModel, dataItem.Name);
+				childViewModel = childViewModel.Replace("$filterMembers$", filterMembersContent);
+				childViewModel = childViewModel.Replace("$filterPredicates$", filterPredicatesContent);
+				childViewModel = childViewModel.Replace("$filterPredicateReset$", filterPredicateResetContent);
+				childViewModel = childViewModel.Replace("$filterMultiSelectorsInitialize$", filterMultiSelectorsInitializeContent);
+				childViewModel = childViewModel.Replace("$filterProperties$", filterPropertiesContent);
+				filterChildViewModelContent += childViewModel;
 
-				string fileContent = File.ReadAllText(InputPath + _commonPath + @"UI\Regions\Filter\FilterViewModelTemplate.cs");
-				fileContent = DoReplaces(fileContent);
-				fileContent = fileContent.Replace("$filterMembers$", filterMembersContent);
-				fileContent = fileContent.Replace("$filterPredicates$", filterPredicatesContent);
-				fileContent = fileContent.Replace("$filterPredicateReset$", filterPredicateResetContent);
-				fileContent = fileContent.Replace("$filterMultiSelectorsInitialize$", filterMultiSelectorsInitializeContent);
-				fileContent = fileContent.Replace("$filterProperties$", filterPropertiesContent);
+				filterViewModelConstructionContent += "IFilterSourceProvider<" + Product + dataItem.Name + "DataItem> " + Helpers.ToPascalCase(Product) + dataItem.Name +"DataItemFilterSourceProvider)\r\n";
+				filterViewModelInitializationContent += Product + dataItem.Name + "DataItemFilterViewModel = new " + Product +
+				                                        dataItem.Name + "DataItemFilterViewModel(" + Helpers.ToPascalCase(Product) +
+				                                        dataItem.Name + "DataItemFilterSourceProvider);\r\n";
 			}
+
+			var filterViewModelContent = filterViewModelTemplate1 + filterViewModelConstructionContent + filterViewModelTemplate2 +
+			                                filterViewModelInitializationContent + filterViewModelTemplate3;
+
+			Helpers.CreateFile(GetInputhPath(_templateDirectory) + @"UI\Regions\Filter\FilterViewTemplate.xaml",
+				OutputPath + @"UI\Regions\Filter\FilterView.xaml", new[] { filterViewContent });
+			Helpers.CreateFile(GetInputhPath(_templateDirectory) + @"UI\Regions\Filter\FilterViewTemplate.xaml.cs",
+				OutputPath + @"UI\Regions\Filter\FilterView.xaml.cs");
+
+			Helpers.CreateFile(GetInputhPath(_templateDirectory) + @"UI\Regions\Filter\FilterViewModelTemplate.cs",
+				OutputPath + @"UI\Regions\Filter\FilterViewModel.cs", new[] { filterViewModelContent, filterChildViewModelContent });
 		}
 
 		/// <summary>
@@ -636,7 +619,7 @@ namespace PlusLayerCreator.Configure
 				{
 					detailViewContent += "        <plus:PlusFormRow Label=\"" + GetLocalizedString(plusDataObject.Name) + "\">\r\n";
 
-					if (SelectedTemplateMode == TemplateMode.OneDataItemReadOnly)
+					if (Template == TemplateMode.ReadOnly)
 					{
 						if (plusDataObject.Type == "bool")
 						{
@@ -698,33 +681,37 @@ namespace PlusLayerCreator.Configure
 				detailViewContent += "    </StackPanel>";
 				detailViewContent += "</plus:PlusGroupBox>";
 
-				CreateFile(GetInputhPath(_templateDirectory + @"UI\Detail\DetailViewModelTemplate.cs"),
-					OutputPath + @"UI\Detail\" + dataItem.Name + "DetailViewModel.cs", null, dataItem.Name);
-				CreateFile(GetInputhPath(_templateDirectory + @"UI\Detail\DetailViewTemplate.xaml"),
-					OutputPath + @"UI\Detail\" + dataItem.Name + "DetailView.xaml", new[] { detailViewContent }, dataItem.Name);
-				CreateFile(GetInputhPath(_templateDirectory + @"UI\Detail\DetailViewTemplate.xaml.cs"),
-					OutputPath + @"UI\Detail\" + dataItem.Name + "DetailView.xaml.cs", null, dataItem.Name);
+				Helpers.CreateFile(GetInputhPath(_templateDirectory + @"UI\Regions\Detail\DetailViewModelTemplate.cs"),
+					OutputPath + @"UI\Regions\Detail\" + dataItem.Name + "DetailViewModel.cs", null, dataItem.Name);
+				Helpers.CreateFile(GetInputhPath(_templateDirectory + @"UI\Regions\Detail\DetailViewTemplate.xaml"),
+					OutputPath + @"UI\Regions\Detail\" + dataItem.Name + "DetailView.xaml", new[] { detailViewContent }, dataItem.Name);
+				Helpers.CreateFile(GetInputhPath(_templateDirectory + @"UI\Regions\Detail\DetailViewTemplate.xaml.cs"),
+					OutputPath + @"UI\Regions\Detail\" + dataItem.Name + "DetailView.xaml.cs", null, dataItem.Name);
 
 
 				//Master
-				masterViewContent += _masterGridTemplate;
+				
+				string gridContent = _masterGridTemplate;
+				string columnsContent = string.Empty;
 				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
 				{
 					if (plusDataObject.Type == "bool")
 					{
-						masterViewContent = masterViewContent.Replace("$specialContent$", "                <plus:PlusGridViewCheckColumn Width=\"*\" DataMemberBinding=\"{Binding " +
-						                     plusDataObject.Name + "}\" Header=\"" + GetLocalizedString(plusDataObject.Name) + "\"/>\r\n");
+						columnsContent += "                <plus:PlusGridViewCheckColumn Width=\"*\" DataMemberBinding=\"{Binding " +
+						                     plusDataObject.Name + "}\" Header=\"" + GetLocalizedString(plusDataObject.Name) + "\"/>\r\n";
 					}
 					else
 					{
-						masterViewContent = masterViewContent.Replace("$specialContent$", "                <plus:PlusGridViewTextColumnMinimal Width=\"*\" DataMemberBinding=\"{Binding " +
-							plusDataObject.Name + "}\" Header=\"" + GetLocalizedString(plusDataObject.Name) + "\"/>\r\n");
+						columnsContent += "                <plus:PlusGridViewTextColumnMinimal Width=\"*\" DataMemberBinding=\"{Binding " +
+							plusDataObject.Name + "}\" Header=\"" + GetLocalizedString(plusDataObject.Name) + "\"/>\r\n";
 					}
 				}
+
+				masterViewContent += gridContent.Replace("$specialContent1$", columnsContent);
 			}
-			CreateFile(GetInputhPath(_templateDirectory + @"UI\Master\MasterViewModelTemplate.cs"), OutputPath + @"UI\Master\" + DialogName + @"MasterViewModel.cs");
-			CreateFile(GetInputhPath(InputPath + _commonPath + @"UI\Regions\Master\MasterViewTemplate.xaml"), OutputPath + @"UI\Master\" + DialogName + @"MasterView.xaml", new[] { masterViewContent });
-			CreateFile(GetInputhPath(InputPath + _commonPath + @"UI\Regions\Master\MasterViewTemplate.xaml.cs"), OutputPath + @"UI\Master\" + DialogName + @"MasterView.xaml.cs");
+			Helpers.CreateFile(GetInputhPath(_templateDirectory + @"UI\Regions\Master\MasterViewModelTemplate.cs"), OutputPath + @"UI\Regions\Master\" + DialogName + @"MasterViewModel.cs");
+			Helpers.CreateFile(GetInputhPath(InputPath + _commonPath + @"UI\Regions\Master\MasterViewTemplate.xaml"), OutputPath + @"UI\Regions\Master\" + DialogName + @"MasterView.xaml", new[] { masterViewContent });
+			Helpers.CreateFile(GetInputhPath(InputPath + _commonPath + @"UI\Regions\Master\MasterViewTemplate.xaml.cs"), OutputPath + @"UI\Regions\Master\" + DialogName + @"MasterView.xaml.cs");
 		}
 
 		#endregion UI
@@ -766,8 +753,8 @@ namespace PlusLayerCreator.Configure
 				content = content.Substring(0, content.Length - 8);
 			}
 
-			CreateFile(GetInputhPath(_templateDirectory + @"Repository\Contracts\IRepositoryTemplate.cs"), OutputPath + @"Repository\Contracts\I" + Product + DialogName + "Repository.cs", new[] { content });
-			CreateFile(GetInputhPath(_templateDirectory + @"Repository\RepositoryTemplate.cs"), OutputPath + @"Repository\" + Product + DialogName + "Repository.cs", new[] { content });
+			Helpers.CreateFile(GetInputhPath(_templateDirectory + @"Repository\Contracts\IRepositoryTemplate.cs"), OutputPath + @"Repository\Contracts\I" + Product + DialogName + "Repository.cs", new[] { content });
+			Helpers.CreateFile(GetInputhPath(_templateDirectory + @"Repository\RepositoryTemplate.cs"), OutputPath + @"Repository\" + Product + DialogName + "Repository.cs", new[] { content });
 		}
 
 		private void CreateDataItem()
@@ -820,7 +807,7 @@ namespace PlusLayerCreator.Configure
 					dataItemContent
 				};
 
-				CreateFile(GetInputhPath(_templateDirectory + @"Repository\DataItems\DataItemTemplate.cs"),
+				Helpers.CreateFile(GetInputhPath(_templateDirectory + @"Repository\DataItems\DataItemTemplate.cs"),
 					OutputPath + @"Repository\DataItems\" + Product + dataItem.Name + "DataItem.cs", contentsDataItem, dataItem.Name);
 			}
 		}
@@ -842,7 +829,7 @@ namespace PlusLayerCreator.Configure
 				factoryContent
 			};
 
-			CreateFile(GetInputhPath(_templateDirectory + @"Repository\DtoFactoryTemplate.cs"), OutputPath + @"Repository\" + Product + "DtoFactory.cs",
+			Helpers.CreateFile(GetInputhPath(_templateDirectory + @"Repository\DtoFactoryTemplate.cs"), OutputPath + @"Repository\" + Product + "DtoFactory.cs",
 				contentsDtoFactory);
 		}
 
@@ -863,7 +850,7 @@ namespace PlusLayerCreator.Configure
 				factoryContent
 			};
 
-			CreateFile(GetInputhPath(_templateDirectory + @"Repository\DataItemFactoryTemplate.cs"),
+			Helpers.CreateFile(GetInputhPath(_templateDirectory + @"Repository\DataItemFactoryTemplate.cs"),
 				OutputPath + @"Repository\" + Product + "DataItemFactory.cs", contentsDataItemFactory);
 		}
 
@@ -877,42 +864,11 @@ namespace PlusLayerCreator.Configure
 			       "Localizer}";
 		}
 
-		private void CreateFile(string input, string output, string[] contents = null, string item = "")
-		{
-			string fileContent = File.ReadAllText(input);
-
-			fileContent = DoReplaces(fileContent, item);
-
-			if (contents != null)
-			{
-				for (int i = 0; i < contents.Length; i++)
-				{
-					if (i == 0)
-					{
-						fileContent = fileContent.Replace("$specialContent$", contents[i]);
-					}
-					else
-					{
-						fileContent = fileContent.Replace("$specialContent" + i + "$", contents[i]);
-					}
-				}
-			}
-
-			FileInfo fileInfo = new FileInfo(output);
-			fileInfo.Directory.Create();
-			File.WriteAllText(fileInfo.FullName, fileContent);
-		}
+		
 
 		private string DoReplaces(string input, string item = "")
 		{
-			input = input.Replace("$Product$", Product);
-			input = input.Replace("$product$", Helpers.ToPascalCase(Product));
-			input = input.Replace("$Item$", item);
-			input = input.Replace("$item$", Helpers.ToPascalCase(item));
-			input = input.Replace("$Dialog$", DialogName);
-			input = input.Replace("$dialog$", Helpers.ToPascalCase(DialogName));
-
-			return input;
+			return Helpers.DoReplaces(input, Product, DialogName, item);
 		}
 
 		private string GetInputhPath(string path)
@@ -921,7 +877,7 @@ namespace PlusLayerCreator.Configure
 			{
 				return path;
 			}
-			return path.Replace(SelectedTemplateMode.ToString(), "Common");
+			return path.Replace(Template.ToString(), "Common");
 		}
 
 		#endregion Helpers
@@ -1141,18 +1097,6 @@ namespace PlusLayerCreator.Configure
 			}
 		}
 
-		public TemplateMode SelectedTemplateMode
-		{
-			get
-			{
-				return _selectedTemplateMode;
-			}
-			set
-			{
-				SetProperty(ref _selectedTemplateMode, value);
-			}
-		}
-
 		public IEnumerable<TemplateMode> TemplateModes
 		{
 			get
@@ -1291,16 +1235,5 @@ namespace PlusLayerCreator.Configure
 		}
 
 		#endregion Temp
-	}
-
-	public enum TemplateMode
-	{
-		OneDataItemReadOnly,
-		OneDataItemReadAndSave,
-		OneDataItemMulti,
-		OneDataItemEditMulti,
-		TwoDataItemsSplittedReadOnly,
-		//TwoDataItemsSplittedReadAndSave,
-		OneDataItemWithVersion
 	}
 }

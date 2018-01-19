@@ -15,6 +15,6 @@ namespace Dcx.Plus.Repository.Modules.$Product$
 	/// <date></date>
 	public class $Product$DtoFactory
 	{
-		$specialContent$			
+		$specialContent1$			
 	}
 }

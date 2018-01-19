@@ -22,7 +22,7 @@
     </UserControl.Resources>
 
 	<plus:PlusFormPanel>
-		$specialContent$
+		$specialContent1$
 	</plus:PlusFormPanel>
 
 </UserControl>

@@ -12,6 +12,6 @@ namespace Dcx.Plus.Repository.Modules.$Product$.Contracts.DataItems
 	/// <date></date>
 	public class $Product$$Item$DataItem : PlusDataItemBase
 	{
-		$specialContent$
+		$specialContent1$
 	}
 }

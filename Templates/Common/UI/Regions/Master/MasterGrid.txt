@@ -18,6 +18,6 @@
 				DataMemberBinding="{Binding HasAnyChanges}"
 				Header=""
 				IsVisibilityConfigurable="False" />
-			$specialContent$
-			</plus:PlusDataGrid.Columns>
+		$specialContent1$
+		</plus:PlusDataGrid.Columns>
 </plus:PlusDataGrid>
