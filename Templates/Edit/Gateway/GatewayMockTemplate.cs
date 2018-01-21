@@ -46,19 +46,16 @@ namespace Dcx.Plus.Gateway.Modules.$Product$
 		
 		#region Save
 		
-		public CallResponse<IList<$Product$$Item$>> Save$Item$s(ICallContext callContext, IList<$Product$$Item$> $item$Dtos)
+		public CallResponse<$Product$$Item$> Save$Item$(ICallContext callContext, $Product$$Item$ $item$Dto)
 		{
-			IList<$Product$$Item$> new$Product$$Item$Dtos = new List<$Product$$Item$>();
-
-			foreach (var dto in $item$Dtos.Where(t => t.SaveFlag == SaveFlag.New || t.SaveFlag == SaveFlag.Modified))
+			if ($item$Dto.SaveFlag == SaveFlag.New || $item$Dto.SaveFlag == SaveFlag.Modified)
 			{
-				dto.LupdTimestamp =  DateTime.Now;
-				dto.LupdUser = dto.SaveFlag.ToString();
-				dto.SaveFlag = SaveFlag.Persistent;
-				new$Product$$Item$Dtos.Add(dto);
+				$item$Dto.LupdTimestamp =  DateTime.Now;
+				$item$Dto.LupdUser = $item$Dto.SaveFlag.ToString();
+				$item$Dto.SaveFlag = SaveFlag.Persistent;
 			}
 
-			return CallResponse.FromSuccessfulResult(new$Product$$Item$Dtos);
+			return CallResponse.FromSuccessfulResult($item$Dto);
 		}
 		
 		#endregion Save

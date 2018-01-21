@@ -1,63 +1,39 @@
 /// <summary>
-/// Saves the $Item$ asynchronous.
+/// Saves the $Item$s asynchronous.
 /// </summary>
 /// <param name="callContext">The call context.</param>
-/// <param name="$item$s">The $Item$s.</param>
+/// <param name="$item$">The $Item$.</param>
 /// <returns></returns>
-public async Task<CallResponse<PlusObservableCollection<$Product$$Item$DataItem>>> Save$Item$Async(IRepositoryCallContext callContext, PlusObservableCollection<$Product$$Item$DataItem> $item$DataItems)
+public async Task<CallResponse<$Product$$Item$DataItem>> Save$Item$Async(IRepositoryCallContext callContext, $Product$$Item$DataItem $item$DataItem)
 {
 	try
 	{
-		List<$Product$$Item$> $item$Dtos = new List<$Product$$Item$>();
+		$Product$$Item$ $item$Dto = _$product$DtoFactory.Create$Item$FromDataItem($item$DataItem);
+		$item$Dto.SaveFlag = SaveFlag.New;
 		
-		//Add all deleted elements
-		foreach ($Product$$Item$DataItem $item$DataItem in $item$DataItems.DeletedItems)
-		{
-			$Product$$Item$ $item$ = _$product$DtoFactory.Create$Item$FromDataItem($item$DataItem);
-			$item$.SaveFlag = SaveFlag.Delete;
-			$item$Dtos.Add($item$);
-		}
-
-		//Add all new elements
-		foreach ($Product$$Item$DataItem $item$DataItem in $item$DataItems.Where(x => x.State == DataItemState.New))
-		{
-			$Product$$Item$ create$Item$ = _$product$DtoFactory.Create$Item$FromDataItem($item$DataItem);
-			create$Item$.SaveFlag = SaveFlag.New;
-			$item$Dtos.Add(create$Item$);
-		}
 		
-		//Add all edited elements
-		foreach ($Product$$Item$DataItem $item$DataItem in $item$DataItems.Where(x => x.State == DataItemState.Persistent && x.HasChanges))
-		{
-			$Product$$Item$ create$Item$ = _$product$DtoFactory.Create$Item$FromDataItem($item$DataItem);
-			create$Item$.SaveFlag = SaveFlag.Modified;
-			$item$Dtos.Add(create$Item$);
-		}
-		
-		CallResponse<IList<$Product$$Item$>> response = await _$product$$Item$Service.Save$Item$sAsync(callContext, $item$Dtos);
+		CallResponse<$Product$$Item$> response = await _$product$$Item$Service.Save$Item$Async(callContext, $item$Dto);
 		if (response.IsSuccess)
 		{
-			foreach ($Product$$Item$ dto in response.Result)
+			dto = response.Result;
+			$Product$$Item$DataItem dataItem = $item$DataItems.FirstOrDefault(x => $specialContent1$);
+			if (dataItem != null)
 			{
-				$Product$$Item$DataItem dataItem = $item$DataItems.FirstOrDefault(x => $specialContent1$);
-				if (dataItem != null)
-				{
-					$specialContent2$
-					dataItem.LupdUser = dto.LupdUser;
-					dataItem.LupdTimestamp = dto.LupdTimestamp;
-					dataItem.State = DataItemState.Persistent;
-				}
+				$specialContent2$
+				dataItem.LupdUser = dto.LupdUser;
+				dataItem.LupdTimestamp = dto.LupdTimestamp;
+				dataItem.State = DataItemState.Persistent;
 			}
 			
-			$item$DataItems.AcceptDeep();
+			$item$DataItem.AcceptDeep();
 
-			return CallResponse.FromSuccessfulResult($item$DataItems);
+			return CallResponse.FromSuccessfulResult($item$DataItem);
 		}
 
-		return CallResponse.FromFailedResult<PlusObservableCollection<$Product$$Item$DataItem>>(null);
+		return CallResponse.FromFailedResult<$Product$$Item$DataItem>(null);
 	}
 	catch (Exception ex)
 	{
-		return CallResponse.FromException<PlusObservableCollection<$Product$$Item$DataItem>>(ex);
+		return CallResponse.FromException<$Product$$Item$DataItem>(ex);
 	}
 }

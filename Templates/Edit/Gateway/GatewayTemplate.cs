@@ -57,48 +57,47 @@ namespace Dcx.Plus.Gateway.Modules.$Product$
 		#region Save
 		
 		/// <summary>
-		/// Saves the $Product$$Item$s.
+		/// Saves the $Product$$Item$.
 		/// </summary>
 		/// <param name="callContext">The call context.</param>
-		/// <param name="$item$Dtos">The $Product$$Item$ dtos.</param>
+		/// <param name="$item$Dto">The $Product$$Item$ dto.</param>
 		/// <returns></returns>
-		public CallResponse<IList<$Product$$Item$>> Save$Item$s(ICallContext callContext, IList<$Product$$Item$> $item$Dtos)
+		public CallResponse<$Product$$Item$> Save$Item$(ICallContext callContext, $Product$$Item$ $item$Dto)
 		{
 			I$Product$$Item$ListFactory $item$ListFactory = BOFactoryProvider.Get<I$Product$$Item$ListFactory>();
 			I$Product$$Item$List $item$List = $item$ListFactory.Get(ApplicationProvider.SessionContextGuid, callContext);
 			I$Product$$Item$Factory $item$Factory = BOFactoryProvider.Get<I$Product$$Item$Factory>();
 
-			foreach ($Product$$Item$ dto in $item$Dtos)
+			var dto = $item$Dto;
+			
+			switch (dto.SaveFlag)
 			{
-				switch (dto.SaveFlag)
+				case SaveFlag.New:
 				{
-					case SaveFlag.New:
+					I$Product$$Item$ $item$ = $item$Factory.Create($specialContent1$, ApplicationProvider.SessionContextGuid);
+					$specialContent4$
+					$item$.CallContext = callContext;
+					$item$List.$Item$s.Add($item$);
+					break;
+				}
+				case SaveFlag.Modified:
+				{
+					I$Product$$Item$ $item$ = $item$List.$Item$s.FirstOrDefault(x => $specialContent2$);
+					if ($item$ != null)
 					{
-						I$Product$$Item$ $item$ = $item$Factory.Create($specialContent1$, ApplicationProvider.SessionContextGuid);
 						$specialContent4$
-						$item$.CallContext = callContext;
-						$item$List.$Item$s.Add($item$);
-						break;
+						$item$.SetModified();
 					}
-					case SaveFlag.Modified:
+					break;
+				}
+				case SaveFlag.Delete:
+				{
+					I$Product$$Item$ $item$ = $item$List.$Item$s.FirstOrDefault(x => $specialContent2$);
+					if ($item$ != null)
 					{
-						I$Product$$Item$ $item$ = $item$List.$Item$s.FirstOrDefault(x => $specialContent2$);
-						if ($item$ != null)
-						{
-							$specialContent4$
-							$item$.SetModified();
-						}
-						break;
+						$item$List.$Item$s.Remove($item$);
 					}
-					case SaveFlag.Delete:
-					{
-						I$Product$$Item$ $item$ = $item$List.$Item$s.FirstOrDefault(x => $specialContent2$);
-						if ($item$ != null)
-						{
-							$item$List.$Item$s.Remove($item$);
-						}
-						break;
-					}
+					break;
 				}
 			}
 
@@ -106,7 +105,7 @@ namespace Dcx.Plus.Gateway.Modules.$Product$
 			bool isSuccessfullySaved = $item$List.Save();
 			if (isSuccessfullySaved)
 			{
-				foreach (var $item$Dto in $item$Dtos.Where(t => t.SaveFlag == SaveFlag.New))
+				if ($item$Dto.SaveFlag == SaveFlag.New || $item$Dto.SaveFlag == SaveFlag.Modified)
 				{
 					I$Product$$Item$ $item$ = $item$Factory.Get($specialContent1$, callContext);
 					$item$Dto.LupdTimestamp = $item$.LupdTimestamp;
@@ -118,10 +117,10 @@ namespace Dcx.Plus.Gateway.Modules.$Product$
 				$item$List.$Item$s.Accept();
 				$item$List.Accept();
 
-				return CallResponse.FromSuccessfulResult($item$Dtos);
+				return CallResponse.FromSuccessfulResult($item$Dto);
 			}
 
-			return CallResponse.FromFailedResult<IList<$Product$$Item$>>(null);
+			return CallResponse.FromFailedResult<$Product$$Item$>(null);
 		}
 		
 		#endregion Save

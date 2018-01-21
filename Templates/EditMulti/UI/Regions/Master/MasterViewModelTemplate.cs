@@ -26,7 +26,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 	/// <author></author>
 	/// <company>abat+ GmbH</company>
 	/// <date></date>
-	public class $Dialog$MasterViewModel : MasterViewModelMultiEditBase, ILazyLoadingHandler, IFilterSourceProvider<$Product$$Item$DataItem>
+	public class $Dialog$MasterViewModel : MasterViewModelBase, ILazyLoadingHandler, IFilterSourceProvider<$Product$$Item$DataItem>
 	{
 		#region Members
 		
@@ -272,7 +272,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 			IsBusy = true;
 			RaiseCanExecuteChanged();
 
-			CallResponse<PlusObservableCollection<$Product$$Item$DataItem>> response = await _$product$$Dialog$Repository.Save$Item$Async(CreateNewCallContext(true), $Product$$Item$DataItemsList);
+			CallResponse<PlusObservableCollection<$Product$$Item$DataItem>> response = await _$product$$Dialog$Repository.Save$Item$sAsync(CreateNewCallContext(true), $Product$$Item$DataItemsList);
 			if (response.IsSuccess)
 			{
 			}

@@ -9,8 +9,16 @@ public async Task<CallResponse<bool>> Delete$Item$Async(IRepositoryCallContext c
 {
 	try
 	{
-		$item$DataItems.Remove($item$);
-		return CallResponse.FromSuccessfulResult(true);
+		$Product$$Item$ $dto$ = _$product$DtoFactory.Create$Item$FromDataItem($item$);
+		$dto$.SaveFlag = SaveFlag.Delete;
+		CallResponse<$Product$$Item$> response = await _$product$$Item$Service.Save$Item$Async(callContext, dto);
+		if (response.IsSuccess)
+		{
+			$item$DataItems.Remove($item$);
+			return CallResponse.FromSuccessfulResult(true);
+		}
+		
+		return CallResponse.FromFailedResult<bool>(false);
 	}
 	catch (Exception ex)
 	{

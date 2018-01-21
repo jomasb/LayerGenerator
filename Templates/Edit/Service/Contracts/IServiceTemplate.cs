@@ -28,12 +28,12 @@ namespace Dcx.Plus.BusinessServiceLocal.Modules.$Product$.Contracts
 		#region Save
 		
 		/// <summary>
-		/// Saves the $Item$s asynchronous.
+		/// Saves the $Item$ asynchronous.
 		/// </summary>
 		/// <param name="serviceCallContext">The service call context.</param>
-		/// <param name="$item$Dtos">The $Item$ dtos.</param>
+		/// <param name="$item$Dto">The $Item$ dto.</param>
 		/// <returns></returns>
-		Task<CallResponse<IList<$Product$$Item$>>> Save$Item$sAsync(IServiceCallContext serviceCallContext, IList<$Product$$Item$> $item$Dtos);
+		Task<CallResponse<$Product$$Item$>> Save$Item$Async(IServiceCallContext serviceCallContext, $Product$$Item$ $item$Dto);
 		
 		#endregion Save
 	}

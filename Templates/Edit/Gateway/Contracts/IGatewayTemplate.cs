@@ -32,12 +32,12 @@ namespace Dcx.Plus.Gateway.Modules.$Product$.Contracts
 		#region Save
 		
 		/// <summary>
-		/// Saves the $Product$$Item$s.
+		/// Saves the $Product$$Item$.
 		/// </summary>
 		/// <param name="callContext">The call context.</param>
-		/// <param name="$item$Dtos">The $Product$$Item$ dtos.</param>
+		/// <param name="$item$Dto">The $Product$$Item$ dto.</param>
 		/// <returns></returns>
-		CallResponse<IList<$Product$$Item$>> Save$Item$s(ICallContext callContext, IList<$Product$$Item$> $item$Dtos);
+		CallResponse<$Product$$Item$> Save$Item$(ICallContext callContext,$Product$$Item$ $item$Dto);
 		
 		#endregion Save
 	}

@@ -4,4 +4,4 @@
 /// <param name="callContext">The call context.</param>
 /// <param name="$item$s">The $Item$s.</param>
 /// <returns></returns>
-Task<CallResponse<PlusObservableCollection<$Product$$Item$DataItem>>> Save$Item$Async(IRepositoryCallContext callContext, PlusObservableCollection<$Product$$Item$DataItem> $item$s);
+Task<CallResponse<$Product$$Item$DataItem>> Save$Item$Async(IRepositoryCallContext callContext, $Product$$Item$DataItem $item$DataItem);
