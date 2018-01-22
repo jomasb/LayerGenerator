@@ -26,6 +26,18 @@ namespace PlusLayerCreator
 			return obj;
 		}
 
+		public static string GetLocaliatzionExtension(string input)
+		{
+			if (input.EndsWith("e"))
+			{
+				return "n";
+			}
+			else
+			{
+				return "en";
+			}
+		}
+
 		public static string ToPascalCase(string input)
 		{
 			if (string.IsNullOrEmpty(input))
@@ -82,12 +94,8 @@ namespace PlusLayerCreator
 			return input;
 		}
 
-		public static void CreateFile(string input, string output, string[] contents = null, string item = "")
+		public static string ReplaceSpecialContent(string fileContent, string[] contents = null)
 		{
-			string fileContent = File.ReadAllText(input);
-
-			fileContent = DoReplaces(fileContent, item);
-
 			if (contents != null)
 			{
 				for (int i = 0; i < contents.Length; i++)
@@ -96,8 +104,21 @@ namespace PlusLayerCreator
 				}
 			}
 
+			return fileContent;
+		}
+
+		public static void CreateFile(string input, string output, string[] contents = null, string item = "")
+		{
+			string fileContent = File.ReadAllText(input);
+
+			fileContent = DoReplaces(fileContent, item);
+			fileContent = ReplaceSpecialContent(fileContent, contents);
+
 			FileInfo fileInfo = new FileInfo(output);
-			fileInfo.Directory.Create();
+			if (fileInfo.Directory != null)
+			{
+				fileInfo.Directory.Create();
+			}
 			File.WriteAllText(fileInfo.FullName, fileContent);
 		}
 

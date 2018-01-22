@@ -1,0 +1,51 @@
+﻿<UserControl
+	x:Class="Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.$Dialog$View"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:plus="http://schemas.abatplus.de/xaml">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<plus:PlusDesignTimeResourceDictionary Source="pack://application:,,,/Dcx.Plus.UI.WPF.FW.Controls;component/Themes/Generic.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+
+	<plus:PlusAdministrationWindowRegionHost HasMetaRegion="False" IsBusy="{Binding IsBusy}">
+		<plus:PlusAdministrationWindowRegionHost.MenuRegion>
+			<ContentControl />
+		</plus:PlusAdministrationWindowRegionHost.MenuRegion>
+
+		<plus:PlusAdministrationWindowRegionHost.ToolBarRegion>
+			<ContentControl />
+		</plus:PlusAdministrationWindowRegionHost.ToolBarRegion>
+
+		<!--  FilterRegion  -->
+		<plus:PlusAdministrationWindowRegionHost.FilterRegion>
+			<plus:PlusExpandableHeader Background="{StaticResource Brush.Background.Dark}" />
+		</plus:PlusAdministrationWindowRegionHost.FilterRegion>
+
+		<!--  MasterRegion  -->
+		<plus:PlusAdministrationWindowRegionHost.MasterRegion>
+			<plus:PlusExpandableHeader Background="{StaticResource Brush.Background.Medium}">
+
+				<plus:PlusExpandableHeader.HeaderAdditionalContent>
+					<plus:PlusButton
+						Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type plus:PlusExpandableHeader}}, Path=Content.DataContext.OpenSettingsDialogCommand}"
+						Icon="{StaticResource Icon.Menu.Settings.White.30}"
+						Style="{StaticResource ExpandableHeader.Button}" />
+				</plus:PlusExpandableHeader.HeaderAdditionalContent>
+			</plus:PlusExpandableHeader>
+		</plus:PlusAdministrationWindowRegionHost.MasterRegion>
+
+		<!--  DetailRegion  -->
+		<plus:PlusAdministrationWindowRegionHost.DetailsRegion>
+			<plus:PlusExpandableHeader Background="{StaticResource Brush.White}" />
+		</plus:PlusAdministrationWindowRegionHost.DetailsRegion>
+
+		<!--  StatusBarRegion  -->
+		<plus:PlusAdministrationWindowRegionHost.StatusBarRegion>
+			<ContentControl />
+		</plus:PlusAdministrationWindowRegionHost.StatusBarRegion>
+	</plus:PlusAdministrationWindowRegionHost>
+</UserControl>

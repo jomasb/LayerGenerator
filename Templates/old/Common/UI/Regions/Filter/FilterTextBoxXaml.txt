@@ -1,0 +1,3 @@
+<plus:PlusFormRow Label="{localization:Localize Key=$Product$$Dialog$_lbl$Name$, Source=$Product$Localizer}">
+	<plus:PlusTextBoxButton Text="{Binding $Name$, UpdateSourceTrigger=PropertyChanged, Delay=300}" />
+</plus:PlusFormRow>"

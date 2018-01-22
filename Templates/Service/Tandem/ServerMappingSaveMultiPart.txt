@@ -1,0 +1,27 @@
+/// <summary>
+/// Saves the $item$ list.
+/// </summary>
+/// <param name="dataProvider">The data provider.</param>
+/// <param name="arguments">The arguments.</param>
+/// <param name="transaction">The transaction.</param>
+/// <returns></returns>
+[BackendCommand("Save$Item$List")]
+public bool Save$Item$List(I$Product$$Item$Service dataProvider, IDictionary<string, object> arguments, ITransaction transaction)
+{
+	bool isSuccessful = true;
+
+	IList<$Product$$Item$> $item$sToSave = arguments["$Item$sToSave"] as IList<$Product$$Item$>;
+
+	int maxTimes = <YourServer>Req1.RefTab_MaxTimes;
+	int numberOfRequests = $item$sToSave.Count / maxTimes + ($item$sToSave.Count % maxTimes > 0 ? 1 : 0);
+
+	//set the offset 
+	arguments["$Item$sToSaveOffset"] = 0;
+
+	for (int i = 0; i < numberOfRequests; i++)
+	{
+		isSuccessful &= AddBackendCallsToTransaction<$Product$$Item$Converter>(dataProvider, transaction, arguments, AcceptionBackendCallback, <YourServer>.Singleton.AddTransactionMR);
+	}
+
+	return isSuccessful;
+}

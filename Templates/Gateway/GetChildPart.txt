@@ -1,0 +1,17 @@
+/// <summary>
+/// Gets the Product$$Item$s.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="parentDto">The parent dto</param>
+/// <returns></returns>
+public CallResponse<IList<$Product$$Item$>> Get$Item$s(ICallContext callContext, $specialContent1$ parentDto)
+{
+	using (TraceLog.Log(this, options: TraceLogOptions.All))
+	{
+		I$Product$$Item$ListFactory $item$ListFactory = BOFactoryProvider.Get<I$Product$$Item$ListFactory>();
+		I$Product$$Item$List $item$List = $item$ListFactory.Get(ApplicationProvider.SessionContextGuid, callContext);
+		List<$Product$$Item$> $item$s = $item$List.$Item$s.Select($Product$DtoFactory.Create$Item$FromBO).ToList();
+
+		return CallResponse.FromSuccessfulResult((IList<$Product$$Item$>)$item$s);
+	}
+}

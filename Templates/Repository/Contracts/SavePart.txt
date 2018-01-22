@@ -1,0 +1,7 @@
+/// <summary>
+/// Saves the $Item$ asynchronous.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="$item$DataItem">The $item$DataItem.</param>
+/// <returns></returns>
+Task<CallResponse<$Product$$Item$DataItem>> Save$Item$Async(IRepositoryCallContext callContext, $Product$$Item$DataItem $item$DataItem);

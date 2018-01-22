@@ -34,13 +34,6 @@ namespace PlusLayerCreator.Items
 		}
 
 		[DataMember]
-		public bool IsReadOnlyOnEdit
-		{
-			get;
-			set;
-		}
-
-		[DataMember]
 		public bool IsReadOnly
 		{
 			get;

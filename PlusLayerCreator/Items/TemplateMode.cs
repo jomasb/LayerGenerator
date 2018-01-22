@@ -5,8 +5,8 @@ namespace PlusLayerCreator.Items
 	[DataContract]
 	public enum TemplateMode
 	{
-		ReadOnly,
-		Edit,
-		EditMulti
+		One,
+		MasterDetail,
+		Two
 	}
 }

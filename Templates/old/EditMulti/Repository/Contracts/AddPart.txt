@@ -1,0 +1,7 @@
+/// <summary>
+/// Adds the new $Item$ asynchronous.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="$item$DataItems">The $Item$ data items.</param>
+/// <returns></returns>
+Task<CallResponse<$Product$$Item$DataItem>> AddNew$Item$Async(IRepositoryCallContext callContext, IObservableCollection<$Product$$Item$DataItem> $item$DataItems);

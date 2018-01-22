@@ -1,0 +1,36 @@
+/// <summary>
+/// Saves the $Item$s asynchronous.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="$item$DataItem">The $item$DataItem.</param>
+/// <returns></returns>
+public async Task<CallResponse<$Product$$Item$DataItem>> Save$Item$Async(IRepositoryCallContext callContext, $Product$$Item$DataItem $item$DataItem)
+{
+	try
+	{
+		$Product$$Item$ $item$Dto = _$product$DtoFactory.Create$Item$FromDataItem($item$DataItem);
+		$item$Dto.SaveFlag = SaveFlag.New;
+		
+		
+		CallResponse<$Product$$Item$> response = await _$product$$Item$Service.Save$Item$Async(callContext, $item$Dto);
+		if (response.IsSuccess)
+		{
+			var dto = response.Result;
+			var dataItem = $item$DataItem;
+			$specialContent2$
+			dataItem.LupdUser = dto.LupdUser;
+			dataItem.LupdTimestamp = dto.LupdTimestamp;
+			dataItem.State = DataItemState.Persistent;
+			
+			dataItem.AcceptDeep();
+
+			return CallResponse.FromSuccessfulResult(dataItem);
+		}
+
+		return CallResponse.FromFailedResult<$Product$$Item$DataItem>(null);
+	}
+	catch (Exception ex)
+	{
+		return CallResponse.FromException<$Product$$Item$DataItem>(ex);
+	}
+}

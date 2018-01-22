@@ -1,0 +1,6 @@
+/// <summary>
+/// Gets the $Product$$Item$s.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <returns></returns>
+CallResponse<IList<$Product$$Item$>> Get$Item$s(ICallContext callContext);

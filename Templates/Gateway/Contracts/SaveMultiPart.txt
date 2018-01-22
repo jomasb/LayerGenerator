@@ -1,0 +1,7 @@
+/// <summary>
+/// Saves the $Product$$Item$s.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="$item$Dtos">The $Product$$Item$ dtos.</param>
+/// <returns></returns>
+CallResponse<IList<$Product$$Item$>> Save$Item$s(ICallContext callContext, IList<$Product$$Item$> $item$Dtos);

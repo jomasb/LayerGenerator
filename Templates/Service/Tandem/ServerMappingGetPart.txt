@@ -1,0 +1,12 @@
+/// <summary>
+/// Reads the $item$ list.
+/// </summary>
+/// <param name="dataProvider">The data provider.</param>
+/// <param name="arguments">The arguments.</param>
+/// <param name="transaction">The transaction.</param>
+/// <returns></returns>
+[BackendCommand("Get$Item$List")]
+public bool Read$Item$List(I$Product$$Item$Service dataProvider, IDictionary<string, object> arguments, ITransaction transaction)
+{
+	return CallBackend<$Product$$Item$Converter>(dataProvider, arguments, <YourServer>.Singleton.AddTransactionRD);
+}

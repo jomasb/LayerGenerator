@@ -1,0 +1,31 @@
+/// <summary>
+/// Gets the $item$s asynchronous.
+/// </summary>
+/// <param name="serviceCallContext">The service call context.</param>
+/// <returns></returns>
+public Task<CallResponse<IList<$Product$$Item$>>> Get$Item$sAsync(IServiceCallContext serviceCallContext, $specialContent1$ parentDto)
+{
+	ServiceCallContext = serviceCallContext;
+	return GetDataTandemResponseAsync(() => Get$Item$s(serviceCallContext, parentDto), serviceCallContext);
+}
+
+/// <summary>
+/// Gets the $item$s.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <returns></returns>
+private CallResponse<IList<$Product$$Item$>> Get$Item$s(IServiceCallContext callContext, $specialContent1$ parentDto)
+{
+	using (TraceLog.Log(this, options: TraceLogOptions.All))
+	{		
+		$Product$$Item$s.Clear();
+
+		IDictionary<string, object> arguments = new Dictionary<string, object>();
+		if (!DataAdapter.Execute<I$Product$$Item$Service>(this, "Get$Item$List", ref arguments))
+		{
+			return CallResponse.FromFailedResult($Product$$Item$s);
+		}
+		
+		return CallResponse.FromSuccessfulResult($Product$$Item$s);
+	}
+}

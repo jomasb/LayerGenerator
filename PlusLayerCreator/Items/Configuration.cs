@@ -56,7 +56,7 @@ namespace PlusLayerCreator.Items
 		}
 
 		[DataMember]
-		public bool IsUseBusinessServiceWithoutBO
+		public bool IsUseBusinessServiceWithoutBo
 		{
 			get;
 			set;
@@ -119,14 +119,14 @@ namespace PlusLayerCreator.Items
 		}
 
 		[DataMember]
-		public string DialogTranslationDE
+		public string DialogTranslationGerman
 		{
 			get;
 			set;
 		}
 
 		[DataMember]
-		public string DialogTranslationEN
+		public string DialogTranslationEnglish
 		{
 			get;
 			set;

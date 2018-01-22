@@ -1,0 +1,16 @@
+/// <summary>
+/// Clones the $Item$ asynchronous.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="$item$">The $item$.</param>
+/// <param name="$item$DataItems">The $item$s.</param>
+/// <returns></returns>
+public async Task<CallResponse<$Product$$Item$DataItem>> Clone$Item$Async(IRepositoryCallContext callContext, $Product$$Item$DataItem $item$, PlusObservableCollection<$Product$$Item$DataItem> $item$DataItems)
+{
+	$Product$$Item$DataItem new$Item$ = await $item$.DeepCloneData();
+	new$Item$.ForEachTunneling<PlusStateDataItem>(y => y.State = DataItemState.New);
+	new$Item$.Accept();
+	$item$DataItems.Add(new$Item$);
+
+	return CallResponse.FromSuccessfulResult(new$Item$);			
+}

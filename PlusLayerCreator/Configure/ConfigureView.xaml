@@ -89,8 +89,8 @@
 							                Content="Translation EN/DE"
 							                DockPanel.Dock="Left" />
 							<UniformGrid DockPanel.Dock="Left" Rows="1">
-								<plus:PlusTextBox Text="{Binding DialogTranslationEN}" />
-								<plus:PlusTextBox Text="{Binding DialogTranslationDE}" />
+								<plus:PlusTextBox Text="{Binding DialogTranslationEnglish}" />
+								<plus:PlusTextBox Text="{Binding DialogTranslationGerman}" />
 							</UniformGrid>
 						</DockPanel>
 					</StackPanel>
@@ -130,7 +130,7 @@
 						<plus:PlusCheckBox Content="Create Business Service Local and Interface" IsChecked="{Binding IsCreateBusinessService, Mode=TwoWay}" />
 						<plus:PlusCheckBox x:Name="CheckBoxWithoutBO"
 						                   Content="Use Business Service without BOs"
-						                   IsChecked="{Binding IsUseBusinessServiceWithoutBO,
+						                   IsChecked="{Binding IsUseBusinessServiceWithoutBo,
 						                                       Mode=TwoWay}" />
 					</StackPanel>
 				</plus:PlusGroupBox>
@@ -170,6 +170,13 @@
 						<plus:PlusGridView.Columns>
 							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Name}" Header="Name" />
 							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Translation}" Header="Translation" />
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Parent}" Header="Parent" />
+							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding CanRead}" Header="CanRead" />
+							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding CanEdit}" Header="CanEdit" />
+							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding CanEditMultiple}" Header="CanEditMultiple" />
+							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding CanDelete}" Header="CanDelete" />
+							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding CanClone}" Header="CanClone" />
+							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding CanSort}" Header="CanSort" />
 						</plus:PlusGridView.Columns>
 					</plus:PlusGridView>
 				</plus:PlusExpandableHeader>
@@ -199,8 +206,7 @@
 							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Name}" Header="Name" />
 							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Translation}" Header="Translation" />
 							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Type}" Header="Type" />
-							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Length}" Header="Length" />
-							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsReadOnlyOnEdit}" Header="ReadOnlyOnEdit" />
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Lenght}" Header="Lenght" />
 							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsReadOnly}" Header="ReadOnly" />
 							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsRequired}" Header="Required" />
 							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsKey}" Header="IsKey" />

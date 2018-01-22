@@ -1,0 +1,7 @@
+/// <summary>
+/// Saves the $Item$ asynchronous.
+/// </summary>
+/// <param name="serviceCallContext">The service call context.</param>
+/// <param name="$item$Dto">The $Item$ dto.</param>
+/// <returns></returns>
+Task<CallResponse<$Product$$Item$>> Save$Item$Async(IServiceCallContext serviceCallContext, $Product$$Item$ $item$Dto);

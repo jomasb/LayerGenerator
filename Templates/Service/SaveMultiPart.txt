@@ -1,0 +1,10 @@
+/// <summary>
+/// Saves the $Item$s asynchronous.
+/// </summary>
+/// <param name="serviceCallContext">The service call context.</param>
+/// <param name="$item$Dtos">The $Item$ dtos.</param>
+/// <returns></returns>
+public Task<CallResponse<IList<$Product$$Item$>>> Save$Item$sAsync(IServiceCallContext serviceCallContext, IList<$Product$$Item$> $item$Dtos)
+{
+	return GetGatewayResponseAsync(r => r.Save$Item$s(serviceCallContext, $item$Dtos), serviceCallContext);
+}

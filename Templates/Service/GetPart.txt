@@ -1,0 +1,9 @@
+/// <summary>
+/// Gets the $Item$s asynchronous.
+/// </summary>
+/// <param name="serviceCallContext">The service call context.</param>
+/// <returns></returns>
+public Task<CallResponse<IList<$Product$$Item$>>> Get$Item$sAsync(IServiceCallContext serviceCallContext)
+{
+	return GetGatewayResponseAsync(r => r.Get$Item$s(serviceCallContext), serviceCallContext);
+}

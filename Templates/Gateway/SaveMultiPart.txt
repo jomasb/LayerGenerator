@@ -1,0 +1,67 @@
+/// <summary>
+/// Saves the $Product$$Item$s.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="$item$Dtos">The $Product$$Item$ dtos.</param>
+/// <returns></returns>
+public CallResponse<IList<$Product$$Item$>> Save$Item$s(ICallContext callContext, IList<$Product$$Item$> $item$Dtos)
+{
+	I$Product$$Item$ListFactory $item$ListFactory = BOFactoryProvider.Get<I$Product$$Item$ListFactory>();
+	I$Product$$Item$List $item$List = $item$ListFactory.Get(ApplicationProvider.SessionContextGuid, callContext);
+	I$Product$$Item$Factory $item$Factory = BOFactoryProvider.Get<I$Product$$Item$Factory>();
+
+	foreach ($Product$$Item$ dto in $item$Dtos)
+	{
+		switch (dto.SaveFlag)
+		{
+			case SaveFlag.New:
+			{
+				I$Product$$Item$ $item$ = $item$Factory.Create($specialContent1$, ApplicationProvider.SessionContextGuid);
+				$specialContent4$
+				$item$.CallContext = callContext;
+				$item$List.$Item$s.Add($item$);
+				break;
+			}
+			case SaveFlag.Modified:
+			{
+				I$Product$$Item$ $item$ = $item$List.$Item$s.FirstOrDefault(x => $specialContent2$);
+				if ($item$ != null)
+				{
+					$specialContent4$
+					$item$.SetModified();
+				}
+				break;
+			}
+			case SaveFlag.Delete:
+			{
+				I$Product$$Item$ $item$ = $item$List.$Item$s.FirstOrDefault(x => $specialContent2$);
+				if ($item$ != null)
+				{
+					$item$List.$Item$s.Remove($item$);
+				}
+				break;
+			}
+		}
+	}
+
+	$item$List.SetModified();
+	bool isSuccessfullySaved = $item$List.Save();
+	if (isSuccessfullySaved)
+	{
+		foreach (var $item$Dto in $item$Dtos.Where(t => t.SaveFlag == SaveFlag.New))
+		{
+			I$Product$$Item$ $item$ = $item$Factory.Get($specialContent1$, callContext);
+			$item$Dto.LupdTimestamp = $item$.LupdTimestamp;
+			$item$Dto.LupdUser = $item$.LupdUser;
+			$specialContent3$
+			$item$Dto.SaveFlag = SaveFlag.Persistent;
+		}
+		
+		$item$List.$Item$s.Accept();
+		$item$List.Accept();
+
+		return CallResponse.FromSuccessfulResult($item$Dtos);
+	}
+
+	return CallResponse.FromFailedResult<IList<$Product$$Item$>>(null);
+}
