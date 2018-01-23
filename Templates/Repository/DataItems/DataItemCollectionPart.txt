@@ -1,0 +1,11 @@
+public PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem> $Item$s
+{
+	get
+	{
+		return Get<PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem>>();
+	}
+	set
+	{
+		Set(value);
+	}
+}

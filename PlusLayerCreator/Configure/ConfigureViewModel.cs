@@ -857,10 +857,27 @@ namespace PlusLayerCreator.Configure
 				masterViewContent += gridContent.Replace("$specialContent1$", columnsContent);
 			}
 
-			string masterViewModelPath = InputPath + @"UI\Regions\Master\MasterViewModelTemplate.cs";
-			if (DataLayout.Count == 1 && DataLayout.Any(t => t.CanEditMultiple))
+			string masterViewModelPath = string.Empty;
+
+			switch (Template)
 			{
-				masterViewModelPath = InputPath + @"UI\Regions\Master\MasterViewModelMultiTemplate.cs";
+				case TemplateMode.One:
+				{
+					if (DataLayout.Count == 1 && DataLayout.Any(t => t.CanEditMultiple))
+					{
+						masterViewModelPath = InputPath + @"UI\Regions\Master\MasterViewModelMultiTemplate.cs";
+					}
+					else
+					{
+						masterViewModelPath = InputPath + @"UI\Regions\Master\MasterViewModelTemplate.cs";
+					}
+					break;
+				}
+				case TemplateMode.MasterDetail:
+				{
+					masterViewModelPath = InputPath + @"UI\Regions\Master\MasterViewModelMasterDetailTemplate.cs";
+					break;
+				}
 			}
 
 			Helpers.CreateFile(masterViewModelPath, OutputPath + @"UI\Regions\Master\" + DialogName + @"MasterViewModel.cs");
@@ -1067,15 +1084,15 @@ namespace PlusLayerCreator.Configure
 					                   "    {\r\n" +
 					                   "        Set<" + plusDataObject.Type + ">(value);\r\n" +
 					                   "    }}\r\n\r\n";
+
+					foreach (PlusDataItem childDataItem in DataLayout.Where(t => t.Parent == dataItem.Name))
+					{
+						dataItemContent += Helpers.DoReplaces(File.ReadAllText(InputPath + @"Repository\DataItems\DataItemCollectionPart.cs"), childDataItem.Name) + "\r\n";
+					}
 				}
 
-				string[] contentsDataItem =
-				{
-					dataItemContent
-				};
-
 				Helpers.CreateFile(InputPath + @"Repository\DataItems\DataItemTemplate.cs",
-					OutputPath + @"Repository\DataItems\" + Product + dataItem.Name + "DataItem.cs", contentsDataItem, dataItem.Name);
+					OutputPath + @"Repository\DataItems\" + Product + dataItem.Name + "DataItem.cs", new[] { dataItemContent }, dataItem.Name);
 			}
 		}
 
