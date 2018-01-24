@@ -146,10 +146,15 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configure\BusinessServiceLocalPart.cs" />
     <Compile Include="Configure\ConfigureView.xaml.cs">
       <DependentUpon>ConfigureView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Configure\ConfigureViewModel.cs" />
+    <Compile Include="Configure\GatewayPart.cs" />
+    <Compile Include="Configure\LocalizationPart.cs" />
+    <Compile Include="Configure\RepositoryPart.cs" />
+    <Compile Include="Configure\UiPart.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Infrastructure\Bootstrapper.cs" />
     <Compile Include="Infrastructure\Module.cs" />

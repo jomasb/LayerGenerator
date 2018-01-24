@@ -26,7 +26,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 	/// <author></author>
 	/// <company>abat+ GmbH</company>
 	/// <date></date>
-	public class $Dialog$MasterViewModel : MasterViewModelBase, ILazyLoadingHandler, IFilterSourceProvider<$Product$$Item$DataItem>
+	public class $Dialog$MasterViewModel : MasterViewModelMultiEditBase, ILazyLoadingHandler, IFilterSourceProvider<$Product$$Item$DataItem>
 	{
 		#region Members
 		
@@ -153,7 +153,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 				On$Product$$Item$DataItemListLoaded();
 			}
 
-			IsBusy = false;
+			IsGlobalBusy = false;
 			RaiseCanExecuteChanged();
 		}
 		
@@ -192,7 +192,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 		/// <param name="exception">The exception.</param>
 		public void OnRegisteredLazyCollectionException(object sender, Exception exception)
 		{
-			IsBusy = false;
+			IsGlobalBusy = false;
 			IsInitialLoadingCompleted = false;
 			RaiseCanExecuteChanged();
 		}
@@ -203,7 +203,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 		
 		private async Task AddCommandExecuted()
 		{
-			IsBusy = true;
+			IsGlobalBusy = true;
 			CallResponse<$Product$$Item$DataItem> response = await _$product$$Dialog$Repository.AddNew$Item$Async(CreateNewCallContext(true), $Product$$Item$DataItemsList);
 			if (response.IsSuccess)
 			{
@@ -213,12 +213,12 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 				new$Product$$Item$DataItem.PropertyChanged += New$Product$$Item$DataItem_PropertyChanged;
 				RaiseCanExecuteChanged();
 			}
-			IsBusy = false;
+			IsGlobalBusy = false;
 		}
 				
 		private async Task CopyCommandExecuted()
 		{
-			IsBusy = true;
+			IsGlobalBusy = true;
 			if (SelectedDataItem != null)
 			{
 				CallResponse<$Product$$Item$DataItem> response = await _$product$$Dialog$Repository.Clone$Item$Async(CreateNewCallContext(true), SelectedDataItem, $Product$$Item$DataItemsList);
@@ -231,14 +231,13 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 					RaiseCanExecuteChanged();
 				}
 			}
-			IsBusy = false;
+			IsGlobalBusy = false;
 		}
 		
 		private async Task CancelCommandExecuted()
 		{
 			await $Product$$Item$DataItemsList.Rollback();
 			$Product$$Item$DataItemsList.HasAnyChanges = false;
-			ResetNavigation();
 			RaiseCanExecuteChanged();
 			BaseServices.EventAggregator.Publish(GlobalEventNames.CancelExecuted);
 		}
@@ -247,7 +246,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 		{
 			if (ShowDeletingMessage() == NlsMessageResult.YES)
 			{
-				IsBusy = true;
+				IsGlobalBusy = true;
 				CallResponse<bool> response = await _$product$$Dialog$Repository.Delete$Item$Async(CreateNewCallContext(true), SelectedDataItem, $Product$$Item$DataItemsList);
 				if (response.IsSuccess)
 				{
@@ -263,20 +262,20 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 				}
 
 				RaiseCanExecuteChanged();
-				IsBusy = false;
+				IsGlobalBusy = false;
 			}
 		}
 		
 		private async Task<bool> SaveCommandExecuted()
 		{
-			IsBusy = true;
+			IsGlobalBusy = true;
 			RaiseCanExecuteChanged();
 
 			CallResponse<PlusObservableCollection<$Product$$Item$DataItem>> response = await _$product$$Dialog$Repository.Save$Item$sAsync(CreateNewCallContext(true), $Product$$Item$DataItemsList);
 			if (response.IsSuccess)
 			{
 			}
-			IsBusy = false;
+			IsGlobalBusy = false;
 			RaiseCanExecuteChanged();
 			
 			return response.IsSuccess;
