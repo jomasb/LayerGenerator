@@ -8,7 +8,7 @@ using Dcx.Plus.Localization;
 using Dcx.Plus.Repository.FW.Collections;
 using Dcx.Plus.Repository.FW.Contracts;
 using Dcx.Plus.Repository.Modules.$Product$.Contracts;
-using Dcx.Plus.Repository.Modules.$Product$.Contracts.DataItems;
+using Dcx.Plus.Repository.Modules.$Product$.DataItems;
 using Dcx.Plus.UI.WPF.FW.Shell.Infrastructure;
 using Dcx.Plus.UI.WPF.FW.Shell.Infrastructure.Filter;
 using Dcx.Plus.UI.WPF.FW.Shell.Infrastructure.ViewModels;

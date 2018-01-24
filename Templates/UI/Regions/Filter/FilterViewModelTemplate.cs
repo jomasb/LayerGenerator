@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Dcx.Plus.Localization;
-using Dcx.Plus.Repository.Modules.$Product$.Contracts.DataItems;
+using Dcx.Plus.Repository.Modules.$Product$.DataItems;
 using Dcx.Plus.UI.WPF.FW.Shell.Infrastructure;
 using Dcx.Plus.UI.WPF.FW.Shell.Infrastructure.Filter;
 using Dcx.Plus.UI.WPF.FW.Shell.Infrastructure.ViewModels;

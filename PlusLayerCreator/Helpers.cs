@@ -32,6 +32,10 @@ namespace PlusLayerCreator
 			{
 				return "n";
 			}
+			else if (input.EndsWith("er"))
+			{
+				return "";
+			}
 			else
 			{
 				return "en";

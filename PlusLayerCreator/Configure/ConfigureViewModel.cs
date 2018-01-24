@@ -587,7 +587,7 @@ namespace PlusLayerCreator.Configure
 			lblEn += Product + DialogName + "_lblCaption=" + Product + " - " + DialogTranslationEnglish + "\r\n";
 			lblEnOut += Product + DialogName + "_lblCaption=@@" + Product + " - " + DialogTranslationEnglish + "\r\n";
 			lblDe += Product + DialogName + "_lblCaption=" + Product + " - " + DialogTranslationGerman + "\r\n";
-			lblEnOut += Product + DialogName + "_lblCaption=@@" + Product + " - " + DialogTranslationGerman + "\r\n";
+			lblDeOut += Product + DialogName + "_lblCaption=@@" + Product + " - " + DialogTranslationGerman + "\r\n";
 
 			foreach (PlusDataItem dataItem in DataLayout)
 			{
@@ -727,15 +727,18 @@ namespace PlusLayerCreator.Configure
 		private void CreateUiInfrastructure()
 		{
 			string moduleContent = string.Empty;
+			string moduleContent2 = string.Empty;
 			string viewNamesContent = "public static readonly string " + DialogName + "MasterView = \"" + DialogName + "MasterView\";\r\n";
 
 			foreach (PlusDataItem dataItem in DataLayout)
 			{
 				moduleContent += "_container.RegisterType<object, " + dataItem.Name + "DetailView>(ViewNames." + dataItem.Name + "DetailView);\r\n";
-				viewNamesContent += "public static readonly string " + dataItem.Name + "MasterView = \"" + dataItem.Name + "DetailView);\r\n";
+				moduleContent2 += "_container.RegisterType<IFilterSourceProvider<" + Product + dataItem.Name + "DataItem>, " +
+								  DialogName + "MasterViewModel>(new ContainerControlledLifetimeManager());\r\n";
+				viewNamesContent += "public static readonly string " + dataItem.Name + "DetailView = \"" + dataItem.Name + "DetailView\";\r\n";
 			}
-			
-			Helpers.CreateFile(InputPath + @"UI\ModuleTemplate.cs", OutputPath + @"UI\" + DialogName + @"Module.cs", new[] { moduleContent });
+
+			Helpers.CreateFile(InputPath + @"UI\ModuleTemplate.cs", OutputPath + @"UI\" + DialogName + @"Module.cs", new[] { moduleContent, moduleContent2 });
 			Helpers.CreateFile(InputPath + @"UI\ViewTemplate.xaml", OutputPath + @"UI\" + DialogName + @"View.xaml");
 			Helpers.CreateFile(InputPath + @"UI\WindowTemplate.xaml", OutputPath + @"UI\" + DialogName + @"Window.xaml");
 
@@ -974,30 +977,33 @@ namespace PlusLayerCreator.Configure
 					interfaceContent += Helpers.DoReplaces(File.ReadAllText(InputPath + @"Repository\Contracts\SortPart.txt"), dataItem.Name) + "\r\n\r\n";
 					repositoryContent += Helpers.DoReplaces(File.ReadAllText(InputPath + @"Repository\SortPart.txt"), dataItem.Name) + "\r\n\r\n";
 				}
-
-				if (dataItem.CanEdit && !dataItem.CanEditMultiple)
+				if (dataItem.CanEdit)
 				{
-					if (string.IsNullOrEmpty(dataItem.Parent))
+					interfaceContent += Helpers.DoReplaces(File.ReadAllText(InputPath + @"Repository\Contracts\AddPart.txt"), dataItem.Name) + "\r\n\r\n";
+					repositoryContent += Helpers.DoReplaces(File.ReadAllText(InputPath + @"Repository\AddPart.txt"), dataItem.Name) + "\r\n\r\n";
+
+					if (!dataItem.CanEditMultiple)
 					{
-						interfaceContent += Helpers.DoReplaces(File.ReadAllText(InputPath + @"Repository\Contracts\SavePart.txt"), dataItem.Name) + "\r\n\r\n";
-						string content = Helpers.DoReplaces(File.ReadAllText(InputPath + @"Repository\SavePart.txt"), dataItem.Name) +
-						                 "\r\n\r\n";
-						content = Helpers.ReplaceSpecialContent(content, new[] { identifier, readOnly });
-						repositoryContent += content;
+						if (string.IsNullOrEmpty(dataItem.Parent))
+						{
+							interfaceContent += Helpers.DoReplaces(File.ReadAllText(InputPath + @"Repository\Contracts\SavePart.txt"), dataItem.Name) + "\r\n\r\n";
+							string content = Helpers.DoReplaces(File.ReadAllText(InputPath + @"Repository\SavePart.txt"), dataItem.Name) + "\r\n\r\n";
+							content = Helpers.ReplaceSpecialContent(content, new[] { identifier, readOnly });
+							repositoryContent += content;
+						}
+					}
+					if (dataItem.CanEditMultiple)
+					{
+						if (string.IsNullOrEmpty(dataItem.Parent))
+						{
+							interfaceContent += Helpers.DoReplaces(File.ReadAllText(InputPath + @"Repository\Contracts\SaveMultiPart.txt"), dataItem.Name) + "\r\n\r\n";
+							string content = Helpers.DoReplaces(File.ReadAllText(InputPath + @"Repository\SaveMultiPart.txt"), dataItem.Name) + "\r\n\r\n";
+							content = Helpers.ReplaceSpecialContent(content, new[] { identifier, readOnly });
+							repositoryContent += content;
+						}
 					}
 				}
-				if (dataItem.CanEdit && dataItem.CanEditMultiple)
-				{
-					if (string.IsNullOrEmpty(dataItem.Parent))
-					{
-						interfaceContent += Helpers.DoReplaces(File.ReadAllText(InputPath + @"Repository\Contracts\SaveMultiPart.txt"), dataItem.Name) + "\r\n\r\n";
-						string content =
-							Helpers.DoReplaces(File.ReadAllText(InputPath + @"Repository\SaveMultiPart.txt"), dataItem.Name) + "\r\n\r\n";
-						content = Helpers.ReplaceSpecialContent(content, new[] { identifier, readOnly });
-						repositoryContent += content;
-					}
-				}
-
+				
 				interfaceContent += "#endregion " + dataItem.Name + "\r\n\r\n";
 				repositoryContent += "#endregion " + dataItem.Name + "\r\n\r\n";
 			}
@@ -1087,7 +1093,7 @@ namespace PlusLayerCreator.Configure
 
 					foreach (PlusDataItem childDataItem in DataLayout.Where(t => t.Parent == dataItem.Name))
 					{
-						dataItemContent += Helpers.DoReplaces(File.ReadAllText(InputPath + @"Repository\DataItems\DataItemCollectionPart.cs"), childDataItem.Name) + "\r\n";
+						dataItemContent += Helpers.DoReplaces(File.ReadAllText(InputPath + @"Repository\DataItems\DataItemCollectionPart.txt"), childDataItem.Name) + "\r\n";
 					}
 				}
 

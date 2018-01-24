@@ -4,17 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dcx.Plus.Localization;
-using Dcx.Plus.Repository.Modules.$Product$.Contracts.DataItems;
+using Dcx.Plus.Repository.Modules.$Product$.DataItems;
 using Dcx.Plus.UI.WPF.FW.Shell.Infrastructure;
 using Dcx.Plus.UI.WPF.FW.Shell.Interfaces;
 
 namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Detail
 {
 	/// <summary>
-	/// Definition of the view model for the detail view.
+	/// Definition of the view model for the $item$ detail view.
 	/// </summary>
 	/// <seealso cref="Dcx.Plus.UI.WPF.FW.Shell.Infrastructure.RegionViewModel{$Product$$Item$DataItem}" />
-    public class DetailViewModel : RegionViewModel<$Product$$Item$DataItem> 
+    public class $Item$DetailViewModel : RegionViewModel<$Product$$Item$DataItem> 
     {
 		#region Members
 
@@ -25,10 +25,10 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Detail
 		#region Construction
 		
 		/// <summary>
-		/// Initializes a new instance of the <see cref="DetailViewModel"/> class.
+		/// Initializes a new instance of the <see cref="$Item$DetailViewModel"/> class.
 		/// </summary>
 		/// <param name="baseServices">The base services.</param>
-	    public DetailViewModel(IViewModelBaseServices baseServices): base(baseServices)
+	    public $Item$DetailViewModel(IViewModelBaseServices baseServices): base(baseServices)
         {
             DisplayName = GlobalLocalizer.Singleton.Global_strDetails.Translation;
         }

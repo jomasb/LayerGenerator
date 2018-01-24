@@ -13,7 +13,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Infrastructure
 	/// <author></author>
 	/// <company>abat+ GmbH</company>
 	/// <date></date>
-	public class Bootstrapper : Bootstrapper<$Dialog$, AdministrationOfCheckpointSystemsModule>
+	public class Bootstrapper : Bootstrapper<$Dialog$Window, $Dialog$Module>
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Bootstrapper"/> class.

@@ -10,7 +10,6 @@ using Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Filter;
 using Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master;
 using Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.StatusBar;
 using Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.ToolBar;
-using Dcx.Plus.UI.WPF.Modules.$Product$.Windows.AdminOfGeometries.Regions.Master;
 using Microsoft.Practices.Unity;
 using Prism.Modularity;
 using Prism.Regions;
@@ -50,7 +49,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$
 
 			//RegisterTypes
 			_container.RegisterInstance($dialog$Repository, new ContainerControlledLifetimeManager());
-			_container.RegisterType<IFilterSourceProvider<$Product$$Item$DataItem>, $Dialog$MasterViewModel>(new ContainerControlledLifetimeManager());
+			$specialContent2$
 
 			// StaticViews
 			_regionManager.RegisterViewWithRegion(RegionNames.MasterRegion,
