@@ -16,7 +16,10 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Filter
 	/// <author></author>
 	/// <company>abat+ GmbH</company>
 	/// <date></date>
-	$specialContent1$
+	public class FilterViewModel : FilterRegionViewModelBase
+	{
+		$specialContent1$
+	}
 	
 	$specialContent2$
 }

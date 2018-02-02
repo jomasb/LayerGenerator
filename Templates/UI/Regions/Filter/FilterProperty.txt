@@ -6,4 +6,4 @@ public $Type$ $Name$
 		Set(ref _$name$, value);
 		RefreshCollectionView();
 	}
-};
+}

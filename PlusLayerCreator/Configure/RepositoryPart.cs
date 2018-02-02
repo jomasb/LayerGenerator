@@ -183,6 +183,26 @@ namespace PlusLayerCreator.Configure
 			{
 				string dataItemContent = string.Empty;
 
+				if (string.IsNullOrEmpty(dataItem.Parent))
+				{
+					foreach (PlusDataItem preFilterDataItem in _configuration.DataLayout.Where(t => t.IsPreFilterItem && t.Properties.Any(z => z.Name == "Id")))
+					{
+						var pp = preFilterDataItem.Properties.FirstOrDefault(t => t.Name == "Id");
+						if (pp != null)
+						{
+							dataItemContent += "public " + pp.Type + " " + pp.Name + "\r\n" +
+							                   "    {get\r\n" +
+							                   "    {\r\n" +
+											   "        return Get<" + pp.Type + ">();\r\n" +
+							                   "    }\r\n" +
+							                   "    set\r\n" +
+							                   "    {\r\n" +
+											   "        Set<" + pp.Type + ">(value);\r\n" +
+							                   "    }}\r\n\r\n";
+						}
+					}
+				}
+
 				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
 				{
 					if (plusDataObject.IsRequired || plusDataObject.Length != string.Empty)
@@ -198,7 +218,7 @@ namespace PlusLayerCreator.Configure
 							dataItemContent += ", ";
 						}
 
-						if (plusDataObject.Length != string.Empty)
+						if (!string.IsNullOrEmpty(plusDataObject.Length))
 						{
 							if (plusDataObject.Type == "int")
 							{

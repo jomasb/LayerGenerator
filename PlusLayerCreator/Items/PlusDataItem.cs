@@ -28,6 +28,9 @@ namespace PlusLayerCreator.Items
 		}
 
 		[DataMember]
+		public bool IsPreFilterItem { get; set; }
+
+		[DataMember]
 		public bool CanRead { get; set; }
 
 		[DataMember]

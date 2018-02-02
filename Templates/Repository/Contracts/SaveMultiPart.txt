@@ -2,6 +2,6 @@
 /// Saves the $Item$s asynchronous.
 /// </summary>
 /// <param name="callContext">The call context.</param>
-/// <param name="$item$s">The $Item$s.</param>
+/// <param name="$item$DataItems">The $Item$s.</param>
 /// <returns></returns>
-Task<CallResponse<PlusObservableCollection<$Product$$Item$DataItem>>> Save$Items$Async(IRepositoryCallContext callContext, PlusObservableCollection<$Product$$Item$DataItem> $item$DataItems);
+Task<CallResponse<PlusObservableCollection<$Product$$Item$DataItem>>> Save$Item$sAsync(IRepositoryCallContext callContext, PlusObservableCollection<$Product$$Item$DataItem> $item$DataItems);
