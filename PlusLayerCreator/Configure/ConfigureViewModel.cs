@@ -257,6 +257,7 @@ namespace PlusLayerCreator.Configure
 			if (IsCreateUi)
 			{
 				uiPart.CreateUiInfrastructure();
+				uiPart.CreateUiToolbar();
 				uiPart.CreateUi();
 				uiPart.CreateUiFilter();
 			}

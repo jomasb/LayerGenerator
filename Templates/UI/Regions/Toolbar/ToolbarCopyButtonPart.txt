@@ -1,0 +1,4 @@
+<plus:PlusButton
+	Command="{Binding CopyCommand}"
+	Content="{localization:Localize Key=Global_btnCopy, Source=GlobalLocalizer}"
+	Icon="{StaticResource Icon.Copy.Dark.20}" />

@@ -5,4 +5,4 @@
 		DateTimeWatermarkContent="{localization:Localize Key=PlusDateTimePicker_lblWatermarkContent, Source=PlusUIWPFLocalizer}"
 		SelectedValue="{Binding $Name$, UpdateSourceTrigger=PropertyChanged, Delay=300}"
 		TodayButtonLocalization="{localization:Localize Key=PlusDateTimePicker_lblNowButton, Source=PlusUIWPFLocalizer}" />
-</plus:PlusFormRow>"
+</plus:PlusFormRow>

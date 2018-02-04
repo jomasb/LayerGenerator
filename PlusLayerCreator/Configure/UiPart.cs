@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using PlusLayerCreator.Items;
 
@@ -11,24 +12,26 @@ namespace PlusLayerCreator.Configure
 			" IsReadOnly=\"{Binding IsNewItem, Converter={StaticResource InvertBoolConverter}}\"";
 		private string _readOnlyTemplate = " IsReadOnly=\"True\"";
 		private string _isNumericTemplate = " IsNumeric=\"True\"";
-		private string _masterGridTemplate;
+		private readonly string _masterGridTemplate;
+	    private readonly string _masterGridMultiTemplate;
 
-		public UiPart(Configuration configuration)
+        public UiPart(Configuration configuration)
 		{
 			_configuration = configuration;
-			_masterGridTemplate = File.ReadAllText(configuration.InputPath + @"UI\Regions\Master\MasterGrid.txt");
-			
-		}
+			_masterGridTemplate = File.ReadAllText(configuration.InputPath + @"UI\Regions\Master\MasterGridPart.txt");
+		    _masterGridMultiTemplate = File.ReadAllText(configuration.InputPath + @"UI\Regions\Master\MasterGridMultiPart.txt");
+        }
 
 		public void CreateUiFilter()
 		{
 			string filterViewModelTemplate1 = "public FilterViewModel(IViewModelBaseServices baseServices";
-			string filterViewModelTemplate2 = ": base(baseServices)\r\n" +
+			string filterViewModelTemplate2 = "): base(baseServices)\r\n" +
 												"{\r\n" +
 												"DisplayName = GlobalLocalizer.Singleton.Global_lblFilter.Translation;\r\n";
 			string filterViewModelTemplate3 = "}";
+		    string filterChildViewModelsContent = string.Empty;
 
-			string filterViewModelConstructionContent = string.Empty;
+            string filterViewModelConstructionContent = string.Empty;
 			string filterViewModelInitializationContent = string.Empty;
 
 			string filterViewContent = string.Empty;
@@ -43,7 +46,9 @@ namespace PlusLayerCreator.Configure
 				string filterMultiSelectorsInitializeContent = string.Empty;
 				string filterPropertiesContent = string.Empty;
 
-				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
+			    filterChildViewModelsContent += "\r\npublic " + _configuration.Product + dataItem.Name + "DataItemFilterViewModel " + _configuration.Product + dataItem.Name + "DataItemFilterViewModel { get; set; }";
+			    filterViewContent += "<StackPanel DataContext=\"{Binding " + _configuration.Product + dataItem.Name + "DataItemFilterViewModel}\">\r\n";
+                foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
 				{
 					if (plusDataObject.IsFilterProperty)
 					{
@@ -59,18 +64,18 @@ namespace PlusLayerCreator.Configure
 							out propertyFilterPredicatesContent, out propertyFilterXamlContent,
 							out propertyFilterMultiSelectorsInitializeContent);
 
-						string type = plusDataObject.Type == "bool" ? "bool" : "string";
-
 						filterMembersContent += Helpers.DoReplaces2(propertyFilterMembersContent, plusDataObject.Name, dataItem.Name, plusDataObject.Type);
 						filterPredicatesContent += Helpers.DoReplaces2(propertyFilterPredicatesContent, plusDataObject.Name, dataItem.Name, plusDataObject.Type);
 						filterPredicateResetContent += Helpers.DoReplaces2(propertyFilterPredicateResetContent, plusDataObject.Name, dataItem.Name, plusDataObject.Type);
 						filterMultiSelectorsInitializeContent += Helpers.DoReplaces2(propertyFilterMultiSelectorsInitializeContent, plusDataObject.Name, dataItem.Name, plusDataObject.Type);
-						filterPropertiesContent += Helpers.DoReplaces2(propertyFilterPropertiesContent, plusDataObject.Name, dataItem.Name, type);
+						filterPropertiesContent += Helpers.DoReplaces2(propertyFilterPropertiesContent, plusDataObject.Name, dataItem.Name);
 						filterViewContent += Helpers.DoReplaces2(propertyFilterXamlContent, plusDataObject.Name, dataItem.Name, plusDataObject.Type);
 					}
 				}
 
-				string childViewModel = Helpers.FilterChildViewModelTemplate;
+			    filterViewContent += "</StackPanel>\r\n";
+
+                string childViewModel = Helpers.FilterChildViewModelTemplate;
 				childViewModel = Helpers.DoReplaces(childViewModel, dataItem.Name);
 				childViewModel = childViewModel.Replace("$filterMembers$", filterMembersContent);
 				childViewModel = childViewModel.Replace("$filterPredicates$", filterPredicatesContent);
@@ -86,7 +91,7 @@ namespace PlusLayerCreator.Configure
 			}
 
 			var filterViewModelContent = filterViewModelTemplate1 + filterViewModelConstructionContent + filterViewModelTemplate2 +
-											filterViewModelInitializationContent + filterViewModelTemplate3;
+											filterViewModelInitializationContent + filterViewModelTemplate3 + filterChildViewModelsContent;
 
 			Helpers.CreateFile(_configuration.InputPath + @"UI\Regions\Filter\FilterViewTemplate.xaml",
 				_configuration.OutputPath + @"UI\Regions\Filter\FilterView.xaml", new[] { filterViewContent });
@@ -122,10 +127,49 @@ namespace PlusLayerCreator.Configure
 			Helpers.CreateFile(_configuration.InputPath + @"UI\Infrastructure\ViewNamesTemplate.cs", _configuration.OutputPath + @"UI\Infrastructure\ViewNames.cs", new[] { viewNamesContent });
 		}
 
-		/// <summary>
-		/// Creates the UI.
-		/// </summary>
-		public void CreateUi()
+	    public void CreateUiToolbar()
+	    {
+	        string toolbarViewContent = string.Empty;
+	        foreach (PlusDataItem dataItem in _configuration.DataLayout.Where(t => string.IsNullOrEmpty(t.Parent) && t.IsPreFilterItem == false))
+	        {
+	            if (dataItem.CanRead)
+	            {
+	                toolbarViewContent +=
+	                    File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarRefreshButtonPart.txt") + "\r\n";
+	            }
+	            if (dataItem.CanEdit)
+	            {
+	                toolbarViewContent +=
+	                    Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarAddButtonPart.txt") + "\r\n", dataItem.Name);
+	                toolbarViewContent +=
+	                    File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarSaveButtonPart.txt") + "\r\n";
+                }
+	            if (dataItem.CanClone)
+	            {
+	                toolbarViewContent +=
+	                    File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarCopyButtonPart.txt") + "\r\n";
+	            }
+	            if (dataItem.CanDelete)
+	            {
+	                toolbarViewContent +=
+	                    File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarDeleteButtonPart.txt") + "\r\n";
+	            }
+	            if (dataItem.CanEdit)
+	            {
+	                toolbarViewContent +=
+	                    File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarCancelButtonPart.txt") + "\r\n";
+	            }
+            }
+
+	        Helpers.CreateFile(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarViewTemplate.xaml.cs", _configuration.OutputPath + @"UI\Regions\Toolbar\ToolbarViewModel.cs");
+	        Helpers.CreateFile(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarViewTemplate.xaml", _configuration.OutputPath + @"UI\Regions\Toolbar\ToolbarView.xaml", new[] { toolbarViewContent });
+	        Helpers.CreateFile(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarViewTemplate.xaml.cs", _configuration.OutputPath + @"UI\Regions\Toolbar\ToolbarView.xaml.cs");
+        }
+
+        /// <summary>
+        /// Creates the UI.
+        /// </summary>
+        public void CreateUi()
 		{
 			string masterViewContent = string.Empty;
 
@@ -169,14 +213,18 @@ namespace PlusLayerCreator.Configure
 
 						if (plusDataObject.Type == "bool")
 						{
-							detailViewContent += "            <plus:PlusCheckbox " + addintionalInformation +
+							detailViewContent += "            <plus:PlusCheckBox " + addintionalInformation +
 												 " IsChecked=\"{Binding DataItem." + plusDataObject.Name + "}\" />\r\n";
 						}
-						else
+						else if (plusDataObject.Type == "DateTime")
+						{
+						    detailViewContent += Helpers.DoReplaces2(File.ReadAllText(_configuration.InputPath + @"UI\Regions\Detail\DetailDateTimePickerXaml.txt"), "DataItem." + plusDataObject.Name);
+						}
+                        else
 						{
 							if (plusDataObject.Length != string.Empty)
 							{
-								addintionalInformation += " MaxLength=\"" + plusDataObject.Length + "\"";
+								addintionalInformation += " MaxLength =\"" + plusDataObject.Length + "\"";
 							}
 							if (plusDataObject.Type == "int")
 							{
@@ -213,8 +261,8 @@ namespace PlusLayerCreator.Configure
 
 
 				//Master
-
-				string gridContent = _masterGridTemplate;
+			    
+				string gridContent = Helpers.DoReplaces(dataItem.CanEditMultiple ? _masterGridMultiTemplate : _masterGridTemplate, dataItem.Name);
 				string columnsContent = string.Empty;
 				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
 				{
@@ -256,7 +304,19 @@ namespace PlusLayerCreator.Configure
 					}
 			}
 
-			Helpers.CreateFile(masterViewModelPath, _configuration.OutputPath + @"UI\Regions\Master\" + _configuration.DialogName + @"MasterViewModel.cs");
+		    string dataItemName = string.Empty;
+
+		    if (_configuration.Template == TemplateMode.One)
+		    {
+		        PlusDataItem dataItem = _configuration.DataLayout
+		            .Where(t => string.IsNullOrEmpty(t.Parent) && t.IsPreFilterItem == false).FirstOrDefault();
+		        if (dataItem != null)
+		        {
+		            dataItemName = dataItem.Name;
+		        }
+		    }
+
+			Helpers.CreateFile(masterViewModelPath, _configuration.OutputPath + @"UI\Regions\Master\" + _configuration.DialogName + @"MasterViewModel.cs", new []{""}, dataItemName);
 			Helpers.CreateFile(_configuration.InputPath + @"UI\Regions\Master\MasterViewTemplate.xaml", _configuration.OutputPath + @"UI\Regions\Master\" + _configuration.DialogName + @"MasterView.xaml", new[] { masterViewContent });
 			Helpers.CreateFile(_configuration.InputPath + @"UI\Regions\Master\MasterViewTemplate.xaml.cs", _configuration.OutputPath + @"UI\Regions\Master\" + _configuration.DialogName + @"MasterView.xaml.cs");
 		}
@@ -267,6 +327,5 @@ namespace PlusLayerCreator.Configure
 			return "{localization:Localize Key=" + _configuration.Product + _configuration.DialogName + "_lbl" + input + extension + ", Source=" + _configuration.Product +
 			       "Localizer}";
 		}
-
 	}
 }

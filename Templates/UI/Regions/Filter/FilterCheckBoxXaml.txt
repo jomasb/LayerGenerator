@@ -3,4 +3,4 @@
 		Content="$Name$"
 		IsChecked="{Binding $Name$, Mode=TwoWay}"
 		IsThreeState="True" />
-</plus:PlusFormRow>"
+</plus:PlusFormRow>

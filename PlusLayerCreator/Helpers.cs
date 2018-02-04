@@ -90,7 +90,9 @@ namespace PlusLayerCreator
 			input = input.Replace("$product$", ToPascalCase(Product));
 			input = input.Replace("$Item$", item);
 			input = input.Replace("$item$", ToPascalCase(item));
-			input = input.Replace("$Name$", name);
+		    input = input.Replace("$Dialog$", DialogName);
+		    input = input.Replace("$dialog$", ToPascalCase(DialogName));
+            input = input.Replace("$Name$", name);
 			input = input.Replace("$name$", ToPascalCase(name));
 			input = input.Replace("$Type$", type);
 			input = input.Replace("$type$", ToPascalCase(type));
@@ -135,27 +137,31 @@ namespace PlusLayerCreator
 			filterPredicatesContent = string.Empty;
 			filterXamlContent = string.Empty;
 			filterMultiSelectorsInitializeContent = string.Empty;
+		    string filterType = string.Empty;
 
-			string filterSuffix = plusDataObject.Type == "string" ? string.Empty : ".ToString()";
+
+            string filterSuffix = plusDataObject.Type == "string" ? string.Empty : ".ToString()";
 			if (plusDataObject.Type == "string" || plusDataObject.Type == "int")
 			{
-				if (plusDataObject.FilterPropertyType == "TextBox")
+			    filterType = "string";
+
+                if (plusDataObject.FilterPropertyType == "TextBox")
 				{
-					filterMembersContent = "private string _" + ToPascalCase(plusDataObject.Name) + ";\r\n";
-					filterPropertiesContent = FilterPropertyTemplate.Replace(plusDataObject.Type, "string");
-					filterPredicateResetContent = plusDataObject.Name + " = string.Empty;\r\n";
+					filterMembersContent = "private string _" + ToPascalCase(plusDataObject.Name) + ";";
+					filterPropertiesContent = FilterPropertyTemplate;
+					filterPredicateResetContent = plusDataObject.Name + " = string.Empty;";
 					filterPredicatesContent = ".StartsWith(x => x." + plusDataObject.Name + filterSuffix + ", x => x." +
-											   plusDataObject.Name + ")\r\n";
+											   plusDataObject.Name + ")";
 					filterXamlContent = DoReplaces(FilterTextBoxXamlTemplate);
 				}
 
 				if (plusDataObject.FilterPropertyType == "ComboBox")
 				{
 					filterMembersContent = "private MultiValueSelector<string> _" +
-											ToPascalCase(plusDataObject.Name) + "MultiSelector;\r\n";
+											ToPascalCase(plusDataObject.Name) + "MultiSelector;";
 					filterPropertiesContent = FilterComboBoxPropertyTemplate;
 					filterPredicatesContent = ".IsContainedInList(x => x." + plusDataObject.Name + filterSuffix + ", x => x." +
-											   plusDataObject.Name + "MultiSelector.SelectedValues)\r\n";
+											   plusDataObject.Name + "MultiSelector.SelectedValues)";
 					filterMultiSelectorsInitializeContent =
 						plusDataObject.Name + "MultiSelector = new MultiValueSelector<string>(SourceCollection.Select(x => x." +
 						plusDataObject.Name + ".ToString()).Distinct(), RefreshCollectionView, AllValue);";
@@ -165,39 +171,52 @@ namespace PlusLayerCreator
 
 			if (plusDataObject.Type == "bool")
 			{
-				filterMembersContent = "private " + plusDataObject.Type + "? _" + ToPascalCase(plusDataObject.Name) +
-										";\r\n";
+			    filterType = "bool?";
+
+				filterMembersContent = "private " + filterType + " _" + ToPascalCase(plusDataObject.Name) + ";";
 				filterPropertiesContent = FilterPropertyTemplate;
-				filterPredicateResetContent = plusDataObject.Name + " = null;\r\n";
+				filterPredicateResetContent = plusDataObject.Name + " = null;";
 				filterPredicatesContent =
-					".IsEqual(x => x." + plusDataObject.Name + ", x => x." + plusDataObject.Name + ")\r\n";
+					".IsEqual(x => x." + plusDataObject.Name + ", x => x." + plusDataObject.Name + ")";
 				filterXamlContent = DoReplaces(FilterCheckBoxXamlTemplate);
 			}
 
 			if (plusDataObject.Type == "DateTime")
 			{
-				filterMembersContent = "private " + plusDataObject.Type + "? _" + ToPascalCase(plusDataObject.Name) +
-										";\r\n";
-				filterPropertiesContent = FilterPropertyTemplate;
-				filterPredicateResetContent = plusDataObject.Name + " = null;\r\n";
-				filterPredicatesContent =
-					".IsEqual(x => x." + plusDataObject.Name + ", x => x." + plusDataObject.Name + ")\r\n";
-				filterXamlContent = DoReplaces(FilterDateTimePickerXamlTemplate);
+			    filterType = "DateTime?";
+
+                filterMembersContent = "private " + filterType + " _" + ToPascalCase(plusDataObject.Name) + "From;\r\n";
+			    filterMembersContent += "private " + filterType + " _" + ToPascalCase(plusDataObject.Name) + "To;";
+                filterPropertiesContent = FilterPropertyTemplate.Replace("$Name$", plusDataObject.Name + "From").Replace("$name$", ToPascalCase(plusDataObject.Name) + "From");
+			    filterPropertiesContent += "\r\n" + FilterPropertyTemplate.Replace("$Name$", plusDataObject.Name + "To").Replace("$name$", ToPascalCase(plusDataObject.Name) + "To");
+                filterPredicateResetContent = plusDataObject.Name + "From = null;\r\n";
+			    filterPredicateResetContent += plusDataObject.Name + "To = null;";
+                filterPredicatesContent = ".IsInRange(x => x." + plusDataObject.Name + ", x => x." + plusDataObject.Name + "From, x => x." + plusDataObject.Name + "To)";
+				filterXamlContent = DoReplaces2(FilterDateTimePickerXamlTemplate + "\r\n", plusDataObject.Name + "From");
+			    filterXamlContent += DoReplaces2(FilterDateTimePickerXamlTemplate, plusDataObject.Name + "To");
 			}
 
 			filterMembersContent = filterMembersContent.Replace("$Name$", plusDataObject.Name)
 				                       .Replace("$name$", ToPascalCase(plusDataObject.Name))
-				                       .Replace("$Type$", plusDataObject.Type) + "\r\n";
+				                       .Replace("$Type$", filterType) + "\r\n";
 			filterPropertiesContent = filterPropertiesContent.Replace("$Name$", plusDataObject.Name)
-				.Replace("$name$", ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type) + "\r\n";
-			filterPredicateResetContent = filterPredicateResetContent.Replace("$Name$", plusDataObject.Name)
-				.Replace("$name$", ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type) + "\r\n";
-			filterPredicatesContent = filterPredicatesContent.Replace("$Name$", plusDataObject.Name)
-				.Replace("$name$", ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type) + "\r\n";
+				.Replace("$name$", ToPascalCase(plusDataObject.Name)).Replace("$Type$", filterType) + "\r\n";
+		    if (!string.IsNullOrEmpty(filterPredicateResetContent))
+		    {
+		        filterPredicateResetContent = filterPredicateResetContent.Replace("$Name$", plusDataObject.Name)
+		                                          .Replace("$name$", ToPascalCase(plusDataObject.Name))
+		                                          .Replace("$Type$", filterType) + "\r\n";
+		    }
+
+		    filterPredicatesContent = filterPredicatesContent.Replace("$Name$", plusDataObject.Name)
+				.Replace("$name$", ToPascalCase(plusDataObject.Name)).Replace("$Type$", filterType) + "\r\n";
 			filterXamlContent = filterXamlContent.Replace("$Name$", plusDataObject.Name)
-				.Replace("$name$", ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type);
-			filterMultiSelectorsInitializeContent = filterMultiSelectorsInitializeContent.Replace("$Name$", plusDataObject.Name)
-				.Replace("$name$", ToPascalCase(plusDataObject.Name)).Replace("$Type$", plusDataObject.Type) + "\r\n";
+				.Replace("$name$", ToPascalCase(plusDataObject.Name)).Replace("$Type$", filterType);
+            if (!string.IsNullOrEmpty(filterMultiSelectorsInitializeContent))
+            {
+                filterMultiSelectorsInitializeContent = filterMultiSelectorsInitializeContent.Replace("$Name$", plusDataObject.Name)
+				.Replace("$name$", ToPascalCase(plusDataObject.Name)).Replace("$Type$", filterType) + "\r\n";
+            }
 		}
 	}
 }

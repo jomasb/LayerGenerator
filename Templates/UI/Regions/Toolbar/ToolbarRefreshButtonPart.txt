@@ -1,0 +1,4 @@
+<plus:PlusButton
+	Command="{Binding RefreshCommand}"
+	Content="{localization:Localize Key=Global_btnRead, Source=GlobalLocalizer}"
+	Icon="{StaticResource Icon.Menu.Parameterization.Black.30}" />

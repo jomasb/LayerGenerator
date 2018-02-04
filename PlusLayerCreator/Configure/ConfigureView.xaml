@@ -222,7 +222,7 @@
 							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Name}" Header="Name" />
 							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Translation}" Header="Translation" />
 							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Type}" Header="Type" />
-							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Lenght}" Header="Lenght" />
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Length}" Header="Lenght" />
 							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsReadOnly}" Header="ReadOnly" />
 							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsRequired}" Header="Required" />
 							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsKey}" Header="IsKey" />

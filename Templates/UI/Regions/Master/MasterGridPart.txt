@@ -1,0 +1,21 @@
+<plus:PlusDataGrid
+			x:Name="FilteredGridView"
+			IsSynchronizedWithCurrentItem="False"
+			ItemsSource="{Binding FilterCollection}"
+			SelectedItem="{Binding SelectedDataItem}"
+			SelectionMode="Single"
+			plus:PlusSpinnerContainer.IsLoading="{Binding $Product$$Item$DataItemsList.IsLoading}">
+
+		<i:Interaction.Behaviors>
+			<selection:SingleActiveItemBehavior ActiveItem="{Binding SelectedDataItem, Mode=TwoWay}" />
+		</i:Interaction.Behaviors>
+		
+		<i:Interaction.Triggers>
+			<selection:RoutedEventTrigger RoutedEvent="selection:SelectionHelper.SelectionChanging">
+				<prism:InvokeCommandAction Command="{Binding SelectingActiveItemCommand}" TriggerParameterPath="CancelableSelectionArgs" />
+			</selection:RoutedEventTrigger>
+		</i:Interaction.Triggers>
+
+		$specialContent1$
+		</plus:PlusDataGrid.Columns>
+</plus:PlusDataGrid>

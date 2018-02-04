@@ -34,7 +34,6 @@ public class $Product$$Item$DataItemFilterViewModel : FilterViewModelBase<$Produ
 	protected override void OnSourceCollectionChanged()
 	{
 		$filterPredicateReset$
-
 		$filterMultiSelectorsInitialize$
 	}
 	

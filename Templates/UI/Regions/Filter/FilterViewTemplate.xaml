@@ -20,8 +20,6 @@
 	</UserControl.Resources>
 
 	<plus:PlusFormPanel IsEnabled="{Binding IsFilterEnabled}" Style="{StaticResource FormPanel.Filter.Dark}">
-		<StackPanel DataContext="{Binding $Product$$Item$DataItemFilterViewModel}">
 $specialContent1$
-		</StackPanel>
 	</plus:PlusFormPanel>
 </UserControl>

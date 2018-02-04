@@ -4,4 +4,4 @@
 		ItemsSource="{Binding $Name$MultiSelector.Values, Mode=OneWay}"
 		SelectedIndex="0"
 		SelectedItemsSource="{Binding $Name$MultiSelector.SelectedValues}" />
-</plus:PlusFormRow>"
+</plus:PlusFormRow>

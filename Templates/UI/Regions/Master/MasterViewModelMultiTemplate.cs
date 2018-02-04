@@ -330,7 +330,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 		/// <param name="activeItem">The active item.</param>
 		private void NavigateToDetail($Product$$Item$DataItem activeItem)
 		{
-			BaseServices.NavigationService.Navigate(RegionNames.DetailRegion, ViewNames.DetailView,
+			BaseServices.NavigationService.Navigate(RegionNames.DetailRegion, ViewNames.$Item$DetailView,
 				ParameterNames.SelectedDataItem, activeItem);
 		}
 
