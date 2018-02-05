@@ -149,7 +149,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 		{
 			if (sender is ILazyLoadingObservableCollection<$Product$$Item$DataItem>)
 			{
-				IsInitialLoadingCompleted = false;
+				IsInitialLoadingCompleted = true;
 				On$Product$$Item$DataItemListLoaded();
 			}
 

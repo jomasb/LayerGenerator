@@ -1,4 +1,4 @@
 <plus:PlusButton
-	Command="{Binding DeleteCommand}"
-	Content="{localization:Localize Key=Global_btnDelete, Source=GlobalLocalizer}"
-	Icon="{StaticResource Icon.Delete.20}" />
+	Command="{Binding CancelCommand}"
+	Content="{localization:Localize Key=Global_btnCancel, Source=GlobalLocalizer}"
+	Icon="{StaticResource Icon.ClosePage.Flip.60}" />

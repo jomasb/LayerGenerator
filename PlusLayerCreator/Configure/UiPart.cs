@@ -269,12 +269,12 @@ namespace PlusLayerCreator.Configure
 					if (plusDataObject.Type == "bool")
 					{
 						columnsContent += "                <plus:PlusGridViewCheckColumn Width=\"*\" DataMemberBinding=\"{Binding " +
-											 plusDataObject.Name + "}\" Header=\"" + GetLocalizedString(plusDataObject.Name) + "\"/>\r\n";
+											 plusDataObject.Name + "}\" Header=\"" + GetLocalizedString(dataItem.Name + plusDataObject.Name) + "\"/>\r\n";
 					}
 					else
 					{
 						columnsContent += "                <plus:PlusGridViewTextColumnMinimal Width=\"*\" DataMemberBinding=\"{Binding " +
-							plusDataObject.Name + "}\" Header=\"" + GetLocalizedString(plusDataObject.Name) + "\"/>\r\n";
+							plusDataObject.Name + "}\" Header=\"" + GetLocalizedString(dataItem.Name + plusDataObject.Name) + "\"/>\r\n";
 					}
 				}
 

@@ -1,6 +1,6 @@
 <plus:PlusFormRow>
 	<plus:PlusCheckBox
-		Content="$Name$"
+		Content="{localization:Localize Key=$Product$$Dialog$_lbl$Item$$Name$, Source=$Product$Localizer}"
 		IsChecked="{Binding $Name$, Mode=TwoWay}"
 		IsThreeState="True" />
 </plus:PlusFormRow>
