@@ -6,22 +6,28 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Win32;
+using PlusLayerCreator.Infrastructure;
 using PlusLayerCreator.Items;
 using Prism.Commands;
-using Prism.Mvvm;
+using Prism.Events;
 
 namespace PlusLayerCreator.Configure
 {
-	public class ConfigureViewModel : BindableBase
-	{
-		#region Members
+	public class ConfigureViewModel : RegionViewModelBase
+    {
+        #region Members
 
-		private PlusDataItem _selectedItem;
-		private PlusDataItemProperty _selectedPropertyItem;
+        private readonly INavigationService _navigationService;
+
+        private ConfigurationItem _activeConfiguration;
+		private ConfigurationItem _selectedItem;
+		private ConfigurationProperty _selectedPropertyItem;
 		private TemplateMode _template;
-		private ObservableCollection<PlusDataItem> _dataLayout;
+		private ObservableCollection<ConfigurationItem> _dataLayout;
 		
 		#region Settings
 		
@@ -52,26 +58,28 @@ namespace PlusLayerCreator.Configure
 
 		#region Construction
 
-		public ConfigureViewModel()
-		{
-			_dataLayout = new ObservableCollection<PlusDataItem>();
+        public ConfigureViewModel(INavigationService navigationService, IEventAggregator eventAggregator) : base(navigationService, eventAggregator)
+        {
+            _navigationService = navigationService;
 
-			//GenerateTempData();
+            _dataLayout = new ObservableCollection<ConfigurationItem>();
 
-			StartCommand = new DelegateCommand(StartExecuted);
-			AddItemCommand = new DelegateCommand(AddItemCommandExecuted);
-			DeleteItemCommand = new DelegateCommand(DeleteItemCommandExecuted, DeleteItemCommandCanExecute);
-			AddItemPropertyCommand = new DelegateCommand(AddItemPropertyCommandExecuted, AddItemPropertyCommandCanExecute);
-			DeleteItemPropertyCommand = new DelegateCommand(DeleteItemPropertyCommandExecuted, DeleteItemPropertyCommandCanExecute);
-			ImportSettingsCommand = new DelegateCommand(ImportSettingsExecuted);
-			ExportSettingsCommand = new DelegateCommand(ExportSettingsExecuted);
-		}
+            //GenerateTempData();
 
-		#endregion Construction
+            StartCommand = new DelegateCommand(StartExecuted);
+            AddItemCommand = new DelegateCommand(AddItemCommandExecuted);
+            DeleteItemCommand = new DelegateCommand(DeleteItemCommandExecuted, DeleteItemCommandCanExecute);
+            AddItemPropertyCommand = new DelegateCommand(AddItemPropertyCommandExecuted, AddItemPropertyCommandCanExecute);
+            DeleteItemPropertyCommand = new DelegateCommand(DeleteItemPropertyCommandExecuted, DeleteItemPropertyCommandCanExecute);
+            ImportSettingsCommand = new DelegateCommand(ImportSettingsExecuted);
+            ExportSettingsCommand = new DelegateCommand(ExportSettingsExecuted);
+        }
 
-		#region Commands
+        #endregion Construction
 
-		private void RaiseCanExecuteChanged()
+        #region Commands
+
+        private void RaiseCanExecuteChanged()
 		{
 			DeleteItemCommand.RaiseCanExecuteChanged();
 			AddItemPropertyCommand.RaiseCanExecuteChanged();
@@ -122,14 +130,14 @@ namespace PlusLayerCreator.Configure
 				PropertyInfo[] properties = typeof(Configuration).GetProperties();
 				foreach (var property in properties)
 				{
-					if (property.PropertyType == typeof(IList<PlusDataItem>))
+					if (property.PropertyType == typeof(IList<ConfigurationItem>))
 					{
-						IList<PlusDataItem> dataItems =
-							property.GetValue(configuration) as IList<PlusDataItem>;
+						IList<ConfigurationItem> dataItems =
+							property.GetValue(configuration) as IList<ConfigurationItem>;
 						DataLayout.Clear();
 						if (dataItems != null)
 						{
-							foreach (PlusDataItem plusDataItem in dataItems)
+							foreach (ConfigurationItem plusDataItem in dataItems)
 							{
 								DataLayout.Add(plusDataItem);
 							}
@@ -151,7 +159,7 @@ namespace PlusLayerCreator.Configure
 
 		private void AddItemCommandExecuted()
 		{
-			DataLayout.Add(new PlusDataItem(){Properties = new ObservableCollection<PlusDataItemProperty>()});
+			DataLayout.Add(new ConfigurationItem(){Properties = new ObservableCollection<ConfigurationProperty>()});
 		}
 
 		private void DeleteItemCommandExecuted()
@@ -166,25 +174,25 @@ namespace PlusLayerCreator.Configure
 
 		private void AddItemPropertyCommandExecuted()
 		{
-			SelectedItem.Properties.Add(new PlusDataItemProperty());
+		    ActiveConfiguration.Properties.Add(new ConfigurationProperty());
 		}
 
 		private bool AddItemPropertyCommandCanExecute()
 		{
-			return SelectedItem != null;
+			return ActiveConfiguration != null;
 		}
 
 		private void DeleteItemPropertyCommandExecuted()
 		{
-			if (SelectedPropertyItem != null && SelectedItem != null)
+			if (ActiveConfiguration != null && SelectedPropertyItem != null)
 			{
-				SelectedItem.Properties.Remove(SelectedPropertyItem);
+			    ActiveConfiguration.Properties.Remove(SelectedPropertyItem);
 			}
 		}
 
 		private bool DeleteItemPropertyCommandCanExecute()
 		{
-			return SelectedPropertyItem != null;
+			return ActiveConfiguration != null && SelectedPropertyItem != null;
 		}
 
 		private void StartExecuted()
@@ -345,24 +353,50 @@ namespace PlusLayerCreator.Configure
 			set;
 		}
 
-		#endregion Commands
+        #endregion Commands
 
-		public PlusDataItem SelectedItem
-		{
-			get
-			{
-				return _selectedItem;
-			}
-			set
-			{
-				if (SetProperty(ref _selectedItem, value))
-				{
-					RaiseCanExecuteChanged();
-				}
-			}
-		}
+        public ConfigurationItem ActiveConfiguration
+        {
+            get
+            {
+                return _activeConfiguration;
+            }
+            set
+            {
+                if (SetProperty(ref _activeConfiguration, value))
+                {
+                    RaiseCanExecuteChanged();
+                }
+            }
+        }
 
-		public PlusDataItemProperty SelectedPropertyItem
+        public ConfigurationItem SelectedItem
+        {
+            get
+            {
+                return _selectedItem;
+            }
+            set
+            {
+                if (SetProperty(ref _selectedItem, value))
+                {
+                    if (_selectedItem != null)
+                    {
+                        ActiveConfiguration = SelectedItem;
+                        NavigateToDataItemDetail();
+                        SelectedPropertyItem = null;
+                    }
+                    else if (_selectedPropertyItem == null)
+                    {
+                        UnloadDetailRegion();
+                    }
+
+                    RaiseCanExecuteChanged();
+                }
+            }
+        }
+
+        public ConfigurationProperty SelectedPropertyItem
 		{
 			get
 			{
@@ -372,7 +406,13 @@ namespace PlusLayerCreator.Configure
 			{
 				if (SetProperty(ref _selectedPropertyItem, value))
 				{
-					RaiseCanExecuteChanged();
+				    if (_selectedPropertyItem != null && _selectedItem != null)
+				    {
+				        SelectedItem = null;
+				        NavigateToDataItemPropertyDetail();
+                    }
+                    
+                    RaiseCanExecuteChanged();
 				}
 			}
 		}
@@ -543,7 +583,7 @@ namespace PlusLayerCreator.Configure
 			}
 		}
 
-		public ObservableCollection<PlusDataItem> DataLayout
+		public ObservableCollection<ConfigurationItem> DataLayout
 		{
 			get
 			{
@@ -628,5 +668,18 @@ namespace PlusLayerCreator.Configure
 		}
 
 		#endregion Properties
-	}
+
+        public void UnloadDetailRegion()
+        {
+            _navigationService.Navigate(RegionNames.DetailRegion, ViewNames.EmptyView);
+        }
+        public void NavigateToDataItemDetail()
+        {
+            _navigationService.Navigate(RegionNames.DetailRegion, ViewNames.DataItemDetailView, ParameterNames.SelectedItem, SelectedItem);
+        }
+        public void NavigateToDataItemPropertyDetail()
+        {
+            _navigationService.Navigate(RegionNames.DetailRegion, ViewNames.DataItemPropertyDetailView, ParameterNames.SelectedItem, SelectedPropertyItem);
+        }
+    }
 }

@@ -114,15 +114,16 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 			}
 			set
 			{
-				Set(ref _selectedDataItem, value);
-
-				if (_selectedDataItem != null)
+				if (Set(ref _selectedDataItem, value))
 				{
-					NavigateToDetail(_selectedDataItem);
-				}
-				else
-				{
-					ResetNavigation();
+					if (_selectedDataItem != null)
+					{
+						NavigateToDetail(_selectedDataItem);
+					}
+					else
+					{
+						ResetNavigation();
+					}
 				}
 
 				RaiseCanExecuteChanged();
@@ -238,7 +239,6 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 		{
 			await $Product$$Item$DataItemsList.Rollback();
 			$Product$$Item$DataItemsList.HasAnyChanges = false;
-			ResetNavigation();
 			RaiseCanExecuteChanged();
 			BaseServices.EventAggregator.Publish(GlobalEventNames.CancelExecuted);
 		}

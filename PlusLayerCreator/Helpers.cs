@@ -128,7 +128,7 @@ namespace PlusLayerCreator
 			File.WriteAllText(fileInfo.FullName, fileContent);
 		}
 
-		public static void CreateFilterContents(PlusDataItemProperty plusDataObject, out string filterMembersContent, out string filterPropertiesContent, out string filterPredicateResetContent,
+		public static void CreateFilterContents(ConfigurationProperty plusDataObject, out string filterMembersContent, out string filterPropertiesContent, out string filterPredicateResetContent,
 			out string filterPredicatesContent, out string filterXamlContent, out string filterMultiSelectorsInitializeContent)
 		{
 			filterMembersContent = string.Empty;

@@ -37,7 +37,7 @@ namespace PlusLayerCreator.Configure
 			lblDe += _configuration.Product + _configuration.DialogName + "_lblCaption=" + _configuration.Product + " - " + _configuration.DialogTranslationGerman + "\r\n";
 			lblDeOut += _configuration.Product + _configuration.DialogName + "_lblCaption=@@" + _configuration.Product + " - " + _configuration.DialogTranslationGerman + "\r\n";
 
-			foreach (PlusDataItem dataItem in _configuration.DataLayout)
+			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
 			{
 				lblEn += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name + "s=" + dataItem.Name + "s\r\n";
 				lblEnOut += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name + "s=@@" + dataItem.Name + "s\r\n";
@@ -52,7 +52,7 @@ namespace PlusLayerCreator.Configure
 			        btnDeOut += _configuration.Product + _configuration.DialogName + "_btnAdd" + dataItem.Name + "=@@Neues " + dataItem.Translation + "\r\n";
                 }
 
-                foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
+                foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
 				{
 				    lblEn += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name + plusDataObject.Name +
 				                "=" + plusDataObject.Name + "\r\n";

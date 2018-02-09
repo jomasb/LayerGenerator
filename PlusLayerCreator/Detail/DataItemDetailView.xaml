@@ -1,0 +1,48 @@
+﻿<UserControl
+    x:Class="PlusLayerCreator.Detail.DataItemDetailView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:detail="clr-namespace:PlusLayerCreator.Detail"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mvvm="http://prismlibrary.com/"
+    xmlns:plus="http://schemas.abatplus.de/xaml"
+    d:DataContext="{d:DesignInstance d:Type=detail:DataItemDetailViewModel}"
+    d:DesignWidth="1000"
+    mvvm:ViewModelLocator.AutoWireViewModel="True"
+    mc:Ignorable="d">
+    <plus:PlusExpandableHeader Header="Item Details">
+        <plus:PlusFormPanel>
+            <plus:PlusFormRow Label="Name">
+                <plus:PlusTextBox Text="{Binding DataItem.Name, UpdateSourceTrigger=PropertyChanged}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="Translation">
+                <plus:PlusTextBox Text="{Binding DataItem.Translation, UpdateSourceTrigger=PropertyChanged}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="Parent">
+                <plus:PlusTextBox Text="{Binding DataItem.Parent, UpdateSourceTrigger=PropertyChanged}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="IsPreFilterItem">
+                <plus:PlusCheckBox IsChecked="{Binding DataItem.IsPreFilterItem}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="CanRead">
+                <plus:PlusCheckBox IsChecked="{Binding DataItem.CanRead}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="CanEdit">
+                <plus:PlusCheckBox IsChecked="{Binding DataItem.CanEdit}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="CanEditMultiple">
+                <plus:PlusCheckBox IsChecked="{Binding DataItem.CanEditMultiple}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="CanDelete">
+                <plus:PlusCheckBox IsChecked="{Binding DataItem.CanDelete}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="CanClone">
+                <plus:PlusCheckBox IsChecked="{Binding DataItem.CanClone}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="CanSort">
+                <plus:PlusCheckBox IsChecked="{Binding DataItem.CanSort}" />
+            </plus:PlusFormRow>
+        </plus:PlusFormPanel>
+    </plus:PlusExpandableHeader>
+</UserControl>

@@ -138,6 +138,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Detail\DataItemPropertyDetailView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Detail\DataItemDetailView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Detail\EmptyView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -155,13 +167,29 @@
     <Compile Include="Configure\LocalizationPart.cs" />
     <Compile Include="Configure\RepositoryPart.cs" />
     <Compile Include="Configure\UiPart.cs" />
+    <Compile Include="Detail\DataItemPropertyDetailView.xaml.cs">
+      <DependentUpon>DataItemPropertyDetailView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Detail\DataItemDetailView.xaml.cs">
+      <DependentUpon>DataItemDetailView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Detail\DataItemPropertyDetailViewModel.cs" />
+    <Compile Include="Detail\DataItemDetailViewModel.cs" />
+    <Compile Include="Detail\EmptyView.xaml.cs">
+      <DependentUpon>EmptyView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Helpers.cs" />
     <Compile Include="Infrastructure\Bootstrapper.cs" />
+    <Compile Include="Infrastructure\INavigationService.cs" />
     <Compile Include="Infrastructure\Module.cs" />
+    <Compile Include="Infrastructure\NavigationService.cs" />
+    <Compile Include="Infrastructure\ParameterNames.cs" />
     <Compile Include="Infrastructure\RegionNames.cs" />
+    <Compile Include="Infrastructure\RegionViewModelBase.cs" />
+    <Compile Include="Infrastructure\ViewNames.cs" />
     <Compile Include="Items\Configuration.cs" />
-    <Compile Include="Items\PlusDataItem.cs" />
-    <Compile Include="Items\PlusDataItemProperty.cs" />
+    <Compile Include="Items\ConfigurationItem.cs" />
+    <Compile Include="Items\ConfigurationProperty.cs" />
     <Compile Include="Items\TemplateMode.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

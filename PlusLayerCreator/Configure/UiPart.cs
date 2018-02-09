@@ -38,7 +38,7 @@ namespace PlusLayerCreator.Configure
 			string filterChildViewModelContent = string.Empty;
 
 			//filterMembersContent
-			foreach (PlusDataItem dataItem in _configuration.DataLayout)
+			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
 			{
 				string filterMembersContent = string.Empty;
 				string filterPredicatesContent = string.Empty;
@@ -48,7 +48,7 @@ namespace PlusLayerCreator.Configure
 
 			    filterChildViewModelsContent += "\r\npublic " + _configuration.Product + dataItem.Name + "DataItemFilterViewModel " + _configuration.Product + dataItem.Name + "DataItemFilterViewModel { get; set; }";
 			    filterViewContent += "<StackPanel DataContext=\"{Binding " + _configuration.Product + dataItem.Name + "DataItemFilterViewModel}\">\r\n";
-                foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
+                foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
 				{
 					if (plusDataObject.IsFilterProperty)
 					{
@@ -108,7 +108,7 @@ namespace PlusLayerCreator.Configure
 			string moduleContent2 = string.Empty;
 			string viewNamesContent = "public static readonly string " + _configuration.DialogName + "MasterView = \"" + _configuration.DialogName + "MasterView\";\r\n";
 
-			foreach (PlusDataItem dataItem in _configuration.DataLayout)
+			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
 			{
 				moduleContent += "_container.RegisterType<object, " + dataItem.Name + "DetailView>(ViewNames." + dataItem.Name + "DetailView);\r\n";
 				moduleContent2 += "_container.RegisterType<IFilterSourceProvider<" + _configuration.Product + dataItem.Name + "DataItem>, " +
@@ -130,7 +130,7 @@ namespace PlusLayerCreator.Configure
 	    public void CreateUiToolbar()
 	    {
 	        string toolbarViewContent = string.Empty;
-	        foreach (PlusDataItem dataItem in _configuration.DataLayout.Where(t => string.IsNullOrEmpty(t.Parent) && t.IsPreFilterItem == false))
+	        foreach (ConfigurationItem dataItem in _configuration.DataLayout.Where(t => string.IsNullOrEmpty(t.Parent) && t.IsPreFilterItem == false))
 	        {
 	            if (dataItem.CanRead)
 	            {
@@ -173,7 +173,7 @@ namespace PlusLayerCreator.Configure
 		{
 			string masterViewContent = string.Empty;
 
-			foreach (PlusDataItem dataItem in _configuration.DataLayout)
+			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
 			{
 				//Detail
 				string detailViewContent = string.Empty;
@@ -182,7 +182,7 @@ namespace PlusLayerCreator.Configure
 				detailViewContent += "<plus:PlusGroupBox Header=\"" + GetLocalizedString(dataItem.Name, true) + "\">";
 				detailViewContent += "    <StackPanel>";
 
-				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
+				foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
 				{
 					detailViewContent += "        <plus:PlusFormRow Label=\"" + GetLocalizedString(dataItem.Name + plusDataObject.Name) + "\">\r\n";
 
@@ -264,7 +264,7 @@ namespace PlusLayerCreator.Configure
 			    
 				string gridContent = Helpers.DoReplaces(dataItem.CanEditMultiple ? _masterGridMultiTemplate : _masterGridTemplate, dataItem.Name);
 				string columnsContent = string.Empty;
-				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
+				foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
 				{
 					if (plusDataObject.Type == "bool")
 					{
@@ -308,7 +308,7 @@ namespace PlusLayerCreator.Configure
 
 		    if (_configuration.Template == TemplateMode.One)
 		    {
-		        PlusDataItem dataItem = _configuration.DataLayout
+		        ConfigurationItem dataItem = _configuration.DataLayout
 		            .Where(t => string.IsNullOrEmpty(t.Parent) && t.IsPreFilterItem == false).FirstOrDefault();
 		        if (dataItem != null)
 		        {

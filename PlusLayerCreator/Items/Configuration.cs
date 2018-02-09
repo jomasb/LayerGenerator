@@ -133,7 +133,7 @@ namespace PlusLayerCreator.Items
 		}
 
 		[DataMember]
-		public IList<PlusDataItem> DataLayout
+		public IList<ConfigurationItem> DataLayout
 		{
 			get;
 			set;

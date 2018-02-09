@@ -1,0 +1,50 @@
+﻿<UserControl
+    x:Class="PlusLayerCreator.Detail.DataItemPropertyDetailView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:detail="clr-namespace:PlusLayerCreator.Detail"
+    xmlns:local="clr-namespace:PlusLayerCreator"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mvvm="http://prismlibrary.com/"
+    xmlns:plus="http://schemas.abatplus.de/xaml"
+    d:DataContext="{d:DesignInstance d:Type=detail:DataItemPropertyDetailViewModel}"
+    d:DesignWidth="1000"
+    mvvm:ViewModelLocator.AutoWireViewModel="True"
+    mc:Ignorable="d">
+    <plus:PlusExpandableHeader Header="Property Details">
+        <plus:PlusFormPanel>
+            <plus:PlusFormRow Label="Name">
+                <plus:PlusTextBox Text="{Binding Property.Name, UpdateSourceTrigger=PropertyChanged}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="Translation">
+                <plus:PlusTextBox Text="{Binding Property.Translation, UpdateSourceTrigger=PropertyChanged}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="Type">
+                <plus:PlusComboBox ItemsSource="{Binding Types}" SelectedItem="{Binding Property.Type}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="Length">
+                <plus:PlusTextBox IsNumeric="True" Text="{Binding Property.Length, UpdateSourceTrigger=PropertyChanged}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="IsReadOnly">
+                <plus:PlusCheckBox IsChecked="{Binding Property.IsReadOnly}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="IsRequired">
+                <plus:PlusCheckBox IsChecked="{Binding Property.IsRequired}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="IsKey">
+                <plus:PlusCheckBox IsChecked="{Binding Property.IsKey}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="IsFilterProperty">
+                <plus:PlusCheckBox IsChecked="{Binding Property.IsFilterProperty}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="FilterPropertyType">
+                <plus:PlusComboBox
+                    IsEnabled="{Binding Property.IsFilterProperty}"
+                    ItemsSource="{Binding FilterTypes}"
+                    SelectedItem="{Binding Property.FilterPropertyType}" />
+            </plus:PlusFormRow>
+
+        </plus:PlusFormPanel>
+    </plus:PlusExpandableHeader>
+</UserControl>

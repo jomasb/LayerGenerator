@@ -1,13 +1,12 @@
 <plus:PlusDataGrid
-			x:Name="FilteredGridView"
+			x:Name="Filtered$Item$GridView"
 			IsSynchronizedWithCurrentItem="False"
-			ItemsSource="{Binding FilterCollection}"
-			SelectedItem="{Binding SelectedDataItem}"
-			SelectionMode="Single"
+			ItemsSource="{Binding $Item$FilterCollection}"
+			SelectedItem="{Binding Selected$Item$DataItem}"
 			plus:PlusSpinnerContainer.IsLoading="{Binding $Product$$Item$DataItemsList.IsLoading}">
 
 		<i:Interaction.Behaviors>
-			<selection:SingleActiveItemBehavior ActiveItem="{Binding SelectedDataItem, Mode=TwoWay}" />
+			<selection:SingleActiveItemBehavior ActiveItem="{Binding Selected$Item$DataItem, Mode=TwoWay}" />
 		</i:Interaction.Behaviors>
 		
 		<i:Interaction.Triggers>

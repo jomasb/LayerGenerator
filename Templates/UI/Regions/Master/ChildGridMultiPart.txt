@@ -1,0 +1,54 @@
+<GridSplitter
+	Grid.Row="2"
+	IsEnabled="False"
+	Style="{StaticResource GridSplitter.Vertical.Standard}" />
+
+<plus:PlusExpandableHeader
+	x:Name="DetailHeader"
+	Grid.Row="3"
+	Count="{Binding ElementName=FilteredLevelTwoGridView, Path=Items.ItemCount, Mode=OneWay}"
+	CountVisibility="{Binding ElementName=FilteredLevelTwoGridView, Path=Visibility}"
+	Header="{localization:Localize Key=DeltaAdminOfContainers_lblContainers,
+								   Source=DeltaLocalizer}"
+	Style="{StaticResource ExpandableHeader.Detail}"
+	Visibility="{Binding SelectedDataItem, Converter={StaticResource IsNullToNegateVisibilityConverter}}">
+
+	<plus:PlusExpandableHeader.HeaderAdditionalContent>
+		<StackPanel Orientation="Horizontal">
+			<plus:PlusButton
+				Command="{Binding AddContainerCommand}"
+				Icon="{StaticResource Icon.New.White.16}"
+				Style="{StaticResource ExpandableHeader.Small.Button}" />
+			<plus:PlusButton
+				Command="{Binding DeleteContainerCommand}"
+				Icon="{StaticResource Icon.Delete.White.16}"
+				Style="{StaticResource ExpandableHeader.Small.Button}" />
+			<plus:PlusButton Icon="{StaticResource Icon.Menu.Settings.White.30}" Style="{StaticResource ExpandableHeader.Small.Button}" />
+		</StackPanel>
+	</plus:PlusExpandableHeader.HeaderAdditionalContent>
+
+	<plus:PlusSpinnerContainer IsLoading="{Binding IsBusy}">
+		<plus:PlusDataGrid
+					x:Name="Filtered$Item$GridView"
+					IsSynchronizedWithCurrentItem="False"
+					ItemsSource="{Binding $Item$FilterCollection}"
+					SelectedItem="{Binding Selected$Item$DataItem}"
+					plus:PlusSpinnerContainer.IsLoading="{Binding $Product$$Item$DataItemsList.IsLoading}">
+
+				<i:Interaction.Behaviors>
+					<selection:SingleActiveItemBehavior ActiveItem="{Binding Selected$Item$DataItem, Mode=TwoWay}" />
+				</i:Interaction.Behaviors>
+
+				<plus:PlusDataGrid.Columns>
+					<plus:PlusGridViewCheckColumn
+						Width="40"
+						CheckedIcon="{StaticResource Icon.Edit.16}"
+						CheckedIconSelected="{StaticResource Icon.Edit.White.16}"
+						DataMemberBinding="{Binding HasAnyChanges}"
+						Header=""
+						IsVisibilityConfigurable="False" />
+				$specialContent1$
+				</plus:PlusDataGrid.Columns>
+		</plus:PlusDataGrid>
+	</plus:PlusSpinnerContainer>
+</plus:PlusExpandableHeader>

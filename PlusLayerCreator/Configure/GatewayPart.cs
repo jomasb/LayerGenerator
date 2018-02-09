@@ -33,7 +33,7 @@ namespace PlusLayerCreator.Configure
 			//Random rnd = new Random();
 			//string mock = string.Empty;
 
-			foreach (PlusDataItem dataItem in _configuration.DataLayout)
+			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
 			{
 				if (dataItem.CanRead)
 				{
@@ -74,7 +74,7 @@ namespace PlusLayerCreator.Configure
 					}
 				}
 
-				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties.Where(t => t.IsKey))
+				foreach (ConfigurationProperty plusDataObject in dataItem.Properties.Where(t => t.IsKey))
 				{
 					key += Helpers.ToPascalCase(dataItem.Name) + "." + plusDataObject.Name + ", ";
 					identifier += "x.Key." + plusDataObject.Name + ".Equals(dto." + plusDataObject.Name + ") &&";
@@ -132,11 +132,11 @@ namespace PlusLayerCreator.Configure
 		{
 			string layer = withBO ? "Gateway" : "Service";
 
-			foreach (PlusDataItem dataItem in _configuration.DataLayout)
+			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
 			{
 				string dtoContent = string.Empty;
 
-				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
+				foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
 				{
 					dtoContent += "public " + plusDataObject.Type + " " + plusDataObject.Name + " {get; set;}\r\n\r\n";
 				}
@@ -149,10 +149,10 @@ namespace PlusLayerCreator.Configure
 		public void CreateDtoFactory()
 		{
 			string factoryContent = string.Empty;
-			foreach (PlusDataItem dataItem in _configuration.DataLayout)
+			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
 			{
 				factoryContent += Helpers.DoReplaces(_createGatewayDtoTemplateUpperPart + "\r\n", dataItem.Name);
-				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
+				foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
 				{
 					if (plusDataObject.IsKey)
 					{

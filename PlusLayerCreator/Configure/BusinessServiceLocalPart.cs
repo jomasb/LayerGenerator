@@ -21,7 +21,7 @@ namespace PlusLayerCreator.Configure
 		{
 			string fileNameExtension = withBo ? string.Empty : "NoBO";
 
-			foreach (PlusDataItem dataItem in _configuration.DataLayout)
+			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
 			{
 				string interfaceReadContent = string.Empty;
 				string interfaceSaveContent = string.Empty;
@@ -85,7 +85,7 @@ namespace PlusLayerCreator.Configure
 		{
 			string converterMessageToBoContent = string.Empty;
 			string converterBoToMessageContent = string.Empty;
-			foreach (PlusDataItem dataItem in _configuration.DataLayout)
+			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
 			{
 				string serverMappingReadContent = string.Empty;
 				string serverMappingWriteContent = string.Empty;
@@ -105,7 +105,7 @@ namespace PlusLayerCreator.Configure
 				}
 
 
-				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
+				foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
 				{
 					converterMessageToBoContent += "serviceMessage." + plusDataObject.Name + "(" + Helpers.ToPascalCase(plusDataObject.Name) + "." +
 												   plusDataObject.Name + ", i);\r\n";

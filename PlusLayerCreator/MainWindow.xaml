@@ -1,10 +1,21 @@
 ﻿<Window
-	x:Class="PlusLayerCreator.MainWindow"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:infrastructure="clr-namespace:PlusLayerCreator.Infrastructure"
-	xmlns:regions="http://prismlibrary.com/"
-	Title="PlusLayerCreator">
+    x:Class="PlusLayerCreator.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:infrastructure="clr-namespace:PlusLayerCreator.Infrastructure"
+    xmlns:regions="http://prismlibrary.com/"
+    Title="PlusLayerCreator">
 
-	<ContentControl regions:RegionManager.RegionName="{x:Static infrastructure:RegionNames.MainRegion}" />
+    <Grid Background="{StaticResource Brush.Background.Medium}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="2" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <ContentControl regions:RegionManager.RegionName="{x:Static infrastructure:RegionNames.MainRegion}" />
+        <GridSplitter Grid.Column="1" Style="{StaticResource GridSplitter.Standard}" />
+        <ContentControl Grid.Column="2" regions:RegionManager.RegionName="{x:Static infrastructure:RegionNames.DetailRegion}" />
+    </Grid>
+
 </Window>

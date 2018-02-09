@@ -32,7 +32,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 		
 		private readonly I$Product$$Dialog$Repository _$product$$Dialog$Repository;
 		private PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem> _$product$$Item$DataItemsList;
-		private $Product$$Item$DataItem _selectedDataItem;
+		private $Product$$Item$DataItem _selected$Item$DataItem;
 		private PropertyObserver<PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem>> _isDirtyObserver;
 		
 		#endregion Members
@@ -106,25 +106,26 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 		/// <value>
 		/// The selected data item.
 		/// </value>
-		public $Product$$Item$DataItem SelectedDataItem
+		public $Product$$Item$DataItem Selected$Item$DataItem
 		{
 			get
 			{
-				return _selectedDataItem;
+				return _selected$Item$DataItem;
 			}
 			set
 			{
-				Set(ref _selectedDataItem, value);
-
-				if (_selectedDataItem != null)
+				if (Set(ref _selected$Item$DataItem, value))
 				{
-					NavigateToDetail(_selectedDataItem);
+					if (_selected$Item$DataItem != null)
+					{
+						NavigateToDetail(_selected$Item$DataItem);
+					}
+					else
+					{
+						ResetNavigation();
+					}
 				}
-				else
-				{
-					ResetNavigation();
-				}
-
+				
 				RaiseCanExecuteChanged();
 			}
 		}
@@ -171,8 +172,8 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 
 			if ($Product$$Item$DataItemsList.Count > 0)
 			{
-				SelectedDataItem = null;
-				SelectedDataItem = FilterCollection.GetItemAt(0) as $Product$$Item$DataItem;
+				Selected$Item$DataItem = null;
+				Selected$Item$DataItem = FilterCollection.GetItemAt(0) as $Product$$Item$DataItem;
 			}
 		}
 		
@@ -208,7 +209,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 			if (response.IsSuccess)
 			{
 				$Product$$Item$DataItem new$Product$$Item$DataItem = response.Result;
-				SelectedDataItem = new$Product$$Item$DataItem;
+				Selected$Item$DataItem = new$Product$$Item$DataItem;
 				new$Product$$Item$DataItem.HasAnyChanges = true;
 				new$Product$$Item$DataItem.PropertyChanged += New$Product$$Item$DataItem_PropertyChanged;
 				RaiseCanExecuteChanged();
@@ -219,13 +220,13 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 		private async Task CopyCommandExecuted()
 		{
 			IsGlobalBusy = true;
-			if (SelectedDataItem != null)
+			if (Selected$Item$DataItem != null)
 			{
-				CallResponse<$Product$$Item$DataItem> response = await _$product$$Dialog$Repository.Clone$Item$Async(CreateNewCallContext(true), SelectedDataItem, $Product$$Item$DataItemsList);
+				CallResponse<$Product$$Item$DataItem> response = await _$product$$Dialog$Repository.Clone$Item$Async(CreateNewCallContext(true), Selected$Item$DataItem, $Product$$Item$DataItemsList);
 				if (response.IsSuccess)
 				{
 					$Product$$Item$DataItem new$Product$$Item$DataItem = response.Result;
-					SelectedDataItem = new$Product$$Item$DataItem;
+					Selected$Item$DataItem = new$Product$$Item$DataItem;
 					new$Product$$Item$DataItem.HasAnyChanges = true;
 					new$Product$$Item$DataItem.PropertyChanged += New$Product$$Item$DataItem_PropertyChanged;
 					RaiseCanExecuteChanged();
@@ -247,13 +248,13 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 			if (ShowDeletingMessage() == NlsMessageResult.YES)
 			{
 				IsGlobalBusy = true;
-				CallResponse<bool> response = await _$product$$Dialog$Repository.Delete$Item$Async(CreateNewCallContext(true), SelectedDataItem, $Product$$Item$DataItemsList);
+				CallResponse<bool> response = await _$product$$Dialog$Repository.Delete$Item$Async(CreateNewCallContext(true), Selected$Item$DataItem, $Product$$Item$DataItemsList);
 				if (response.IsSuccess)
 				{
 					if ($Product$$Item$DataItemsList.Count > 0)
 					{
-						SelectedDataItem = null;
-						SelectedDataItem = FilterCollection.GetItemAt(0) as $Product$$Item$DataItem;
+						Selected$Item$DataItem = null;
+						Selected$Item$DataItem = FilterCollection.GetItemAt(0) as $Product$$Item$DataItem;
 					}
 				}
 				else
@@ -306,9 +307,9 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 		{
 			BaseServices.NavigationService.Unload(RegionNames.DetailRegion);
 			
-			if (SelectedDataItem != null)
+			if (Selected$Item$DataItem != null)
 			{
-				SelectedDataItem.PropertyChanged -= New$Product$$Item$DataItem_PropertyChanged;
+				Selected$Item$DataItem.PropertyChanged -= New$Product$$Item$DataItem_PropertyChanged;
 			}
 		}
 
@@ -331,7 +332,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 		private void NavigateToDetail($Product$$Item$DataItem activeItem)
 		{
 			BaseServices.NavigationService.Navigate(RegionNames.DetailRegion, ViewNames.$Item$DetailView,
-				ParameterNames.SelectedDataItem, activeItem);
+				ParameterNames.Selected$Item$DataItem, activeItem);
 		}
 
 		#endregion Navigation

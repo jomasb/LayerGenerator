@@ -32,7 +32,7 @@ namespace PlusLayerCreator.Configure
 			string interfaceContent = string.Empty;
 			string repositoryContent = string.Empty;
 
-			foreach (PlusDataItem dataItem in _configuration.DataLayout)
+			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
 			{
 				repositoryServiceMemberContent += "private readonly I" + _configuration.Product + dataItem.Name + "Service _" + Helpers.ToPascalCase(_configuration.Product + dataItem.Name + "Service;\r\n");
 				if (repositoryServiceParameterContent != string.Empty)
@@ -145,10 +145,10 @@ namespace PlusLayerCreator.Configure
 			Helpers.CreateFile(_configuration.InputPath + @"Repository\RepositoryTemplate.cs", _configuration.OutputPath + @"Repository\" + _configuration.Product + _configuration.DialogName + "Repository.cs", new[] { repositoryServiceMemberContent, repositoryServiceParameterContent, repositoryServiceConstructorContent, repositoryContent, dtoLayer });
 		}
 
-		private string GetIdentifier(PlusDataItem dataItem)
+		private string GetIdentifier(ConfigurationItem dataItem)
 		{
 			string identifier = string.Empty;
-			foreach (PlusDataItemProperty plusDataObject in dataItem.Properties.Where(t => t.IsKey))
+			foreach (ConfigurationProperty plusDataObject in dataItem.Properties.Where(t => t.IsKey))
 			{
 				if (identifier != string.Empty)
 				{
@@ -161,10 +161,10 @@ namespace PlusLayerCreator.Configure
 			return identifier;
 		}
 
-		private string GetReadOnly(PlusDataItem dataItem)
+		private string GetReadOnly(ConfigurationItem dataItem)
 		{
 			string readOnly = string.Empty;
-			foreach (PlusDataItemProperty plusDataObject in dataItem.Properties.Where(t => t.IsKey))
+			foreach (ConfigurationProperty plusDataObject in dataItem.Properties.Where(t => t.IsKey))
 			{
 				if (plusDataObject.IsReadOnly)
 				{
@@ -179,13 +179,13 @@ namespace PlusLayerCreator.Configure
 
 		public void CreateDataItem()
 		{
-			foreach (PlusDataItem dataItem in _configuration.DataLayout)
+			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
 			{
 				string dataItemContent = string.Empty;
 
 				if (string.IsNullOrEmpty(dataItem.Parent))
 				{
-					foreach (PlusDataItem preFilterDataItem in _configuration.DataLayout.Where(t => t.IsPreFilterItem && t.Properties.Any(z => z.Name == "Id")))
+					foreach (ConfigurationItem preFilterDataItem in _configuration.DataLayout.Where(t => t.IsPreFilterItem && t.Properties.Any(z => z.Name == "Id")))
 					{
 						var pp = preFilterDataItem.Properties.FirstOrDefault(t => t.Name == "Id");
 						if (pp != null)
@@ -203,7 +203,7 @@ namespace PlusLayerCreator.Configure
 					}
 				}
 
-				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
+				foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
 				{
 					if (plusDataObject.IsRequired || plusDataObject.Length != string.Empty)
 					{
@@ -242,7 +242,7 @@ namespace PlusLayerCreator.Configure
 									   "        Set<" + plusDataObject.Type + ">(value);\r\n" +
 									   "    }}\r\n\r\n";
 
-					foreach (PlusDataItem childDataItem in _configuration.DataLayout.Where(t => t.Parent == dataItem.Name))
+					foreach (ConfigurationItem childDataItem in _configuration.DataLayout.Where(t => t.Parent == dataItem.Name))
 					{
 						dataItemContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\DataItems\DataItemCollectionPart.txt"), childDataItem.Name) + "\r\n";
 					}
@@ -256,10 +256,10 @@ namespace PlusLayerCreator.Configure
 		public void CreateRepositoryDtoFactory()
 		{
 			string factoryContent = string.Empty;
-			foreach (PlusDataItem dataItem in _configuration.DataLayout)
+			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
 			{
 				factoryContent += Helpers.DoReplaces(_createRepositoryDtoTemplateUpperPart + "\r\n", dataItem.Name);
-				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
+				foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
 				{
 					factoryContent += plusDataObject.Name + " = dataItem." + plusDataObject.Name + ",\r\n";
 				}
@@ -275,10 +275,10 @@ namespace PlusLayerCreator.Configure
 		public void CreateDataItemFactory()
 		{
 			string factoryContent = string.Empty;
-			foreach (PlusDataItem dataItem in _configuration.DataLayout)
+			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
 			{
 				factoryContent += Helpers.DoReplaces(_createDataItemTemplateUpperPart + "\r\n", dataItem.Name);
-				foreach (PlusDataItemProperty plusDataObject in dataItem.Properties)
+				foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
 				{
 					factoryContent += plusDataObject.Name + " = dto." + plusDataObject.Name + ",\r\n";
 				}
