@@ -7,13 +7,6 @@ namespace PlusLayerCreator.Items
 	public class Configuration
 	{
 		[DataMember]
-		public TemplateMode Template
-		{
-			get;
-			set;
-		}
-
-		[DataMember]
 		public string InputPath
 		{
 			get;
@@ -132,7 +125,7 @@ namespace PlusLayerCreator.Items
 			set;
 		}
 
-		[DataMember]
+        [DataMember]
 		public IList<ConfigurationItem> DataLayout
 		{
 			get;

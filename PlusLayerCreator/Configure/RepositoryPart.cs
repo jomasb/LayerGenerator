@@ -37,7 +37,7 @@ namespace PlusLayerCreator.Configure
 				repositoryServiceMemberContent += "private readonly I" + _configuration.Product + dataItem.Name + "Service _" + Helpers.ToPascalCase(_configuration.Product + dataItem.Name + "Service;\r\n");
 				if (repositoryServiceParameterContent != string.Empty)
 				{
-					repositoryServiceParameterContent = ", " + repositoryServiceParameterContent;
+					repositoryServiceParameterContent = repositoryServiceParameterContent + ", ";
 				}
 				repositoryServiceParameterContent += "I" + _configuration.Product + dataItem.Name + "Service " + Helpers.ToPascalCase(_configuration.Product) + dataItem.Name + "Service";
 				repositoryServiceConstructorContent += "_" + Helpers.ToPascalCase(_configuration.Product) + dataItem.Name + "Service = " + Helpers.ToPascalCase(_configuration.Product) + dataItem.Name + "Service;\r\n";

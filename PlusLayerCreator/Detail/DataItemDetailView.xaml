@@ -43,6 +43,24 @@
             <plus:PlusFormRow Label="CanSort">
                 <plus:PlusCheckBox IsChecked="{Binding DataItem.CanSort}" />
             </plus:PlusFormRow>
+            <plus:PlusFormRow Label="Server">
+                <plus:PlusTextBox Text="{Binding DataItem.Server, UpdateSourceTrigger=PropertyChanged}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="RepRplRead">
+                <plus:PlusTextBox Text="{Binding DataItem.RepRplRead, UpdateSourceTrigger=PropertyChanged}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="RepRplWrite">
+                <plus:PlusTextBox Text="{Binding DataItem.RepRplWrite, UpdateSourceTrigger=PropertyChanged}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="TransactionCodeRead">
+                <plus:PlusTextBox Text="{Binding DataItem.TransactionCodeRead, UpdateSourceTrigger=PropertyChanged}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="TransactionCodeWrite">
+                <plus:PlusTextBox Text="{Binding DataItem.TransactionCodeWrite, UpdateSourceTrigger=PropertyChanged}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="TableCountProperty">
+                <plus:PlusTextBox Text="{Binding DataItem.TableCountProperty, UpdateSourceTrigger=PropertyChanged}" />
+            </plus:PlusFormRow>
         </plus:PlusFormPanel>
     </plus:PlusExpandableHeader>
 </UserControl>

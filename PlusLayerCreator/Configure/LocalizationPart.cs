@@ -44,7 +44,7 @@ namespace PlusLayerCreator.Configure
 				lblDe += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name + "s=" + dataItem.Translation + Helpers.GetLocaliatzionExtension(dataItem.Translation) + "\r\n";
 				lblDeOut += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name + "s=@@" + dataItem.Translation + Helpers.GetLocaliatzionExtension(dataItem.Translation) + "\r\n";
 
-			    if (dataItem.CanEdit || dataItem.CanEditMultiple)
+			    if ((dataItem.CanEdit || dataItem.CanEditMultiple) && string.IsNullOrEmpty(dataItem.Parent))
 			    {
 			        btnEn += _configuration.Product + _configuration.DialogName + "_btnAdd" + dataItem.Name + "=New " + dataItem.Name + "\r\n";
 			        btnEnOut += _configuration.Product + _configuration.DialogName + "_btnAdd" + dataItem.Name + "=@@New " + dataItem.Name + "\r\n";

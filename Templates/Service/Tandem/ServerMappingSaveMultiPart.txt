@@ -12,7 +12,7 @@ public bool Save$Item$List(I$Product$$Item$Service dataProvider, IDictionary<str
 
 	IList<$Product$$Item$> $item$sToSave = arguments["$Item$sToSave"] as IList<$Product$$Item$>;
 
-	int maxTimes = <YourServer>Req1.RefTab_MaxTimes;
+	int maxTimes = $specialContent2$;
 	int numberOfRequests = $item$sToSave.Count / maxTimes + ($item$sToSave.Count % maxTimes > 0 ? 1 : 0);
 
 	//set the offset 
@@ -20,7 +20,7 @@ public bool Save$Item$List(I$Product$$Item$Service dataProvider, IDictionary<str
 
 	for (int i = 0; i < numberOfRequests; i++)
 	{
-		isSuccessful &= AddBackendCallsToTransaction<$Product$$Item$Converter>(dataProvider, transaction, arguments, AcceptionBackendCallback, <YourServer>.Singleton.AddTransactionMR);
+		isSuccessful &= AddBackendCallsToTransaction<$Product$$Item$Converter>(dataProvider, transaction, arguments, AcceptionBackendCallback, $specialContent1$);
 	}
 
 	return isSuccessful;

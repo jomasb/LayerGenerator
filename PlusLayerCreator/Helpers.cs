@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using PlusLayerCreator.Items;
@@ -218,5 +219,34 @@ namespace PlusLayerCreator
 				.Replace("$name$", ToPascalCase(plusDataObject.Name)).Replace("$Type$", filterType) + "\r\n";
             }
 		}
+
+	    public static string GetBusinessServiceLocalGetMock(ConfigurationItem dataItem)
+	    {
+	        string propertyAssignments = string.Empty;
+	        Random random = new Random();
+	        foreach (ConfigurationProperty property in dataItem.Properties)
+	        {
+	            if (property.Type == "string")
+	            {
+	                propertyAssignments += property.Name + " = \"" + property.Name + "\",\r\n";
+	            }
+	            if (property.Type == "int")
+	            {
+	                propertyAssignments += property.Name + " = " + random.Next(1, 9) + ",\r\n";
+	            }
+	            if (property.Type == "bool")
+	            {
+	                int ran = random.Next(1, 9);
+	                bool val = ran % 2 == 0;
+	                propertyAssignments += property.Name + " = " + val + ",\r\n";
+	            }
+	            if (property.Type == "DateTime")
+	            {
+	                propertyAssignments += property.Name + " = new DateTime(2016, 1, 1),\r\n";
+	            }
+	        }
+
+	        return propertyAssignments;
+	    }
 	}
 }

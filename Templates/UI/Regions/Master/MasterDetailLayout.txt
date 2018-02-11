@@ -1,0 +1,40 @@
+<Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" MinHeight="170">
+                <RowDefinition.Style>
+                    <Style TargetType="{x:Type RowDefinition}">
+                        <Setter Property="Height" Value="*" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=DetailHeader, Path=Visibility}" Value="Collapsed">
+                                <Setter Property="Height" Value="*" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </RowDefinition.Style>
+            </RowDefinition>
+
+            <RowDefinition>
+                <RowDefinition.Style>
+                    <Style TargetType="{x:Type RowDefinition}">
+                        <Setter Property="Height" Value="2" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=DetailHeader, Path=Visibility}" Value="Collapsed">
+                                <Setter Property="Height" Value="0" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </RowDefinition.Style>
+            </RowDefinition>
+            <RowDefinition>
+                <RowDefinition.Style>
+                    <Style TargetType="{x:Type RowDefinition}">
+                        <Setter Property="Height" Value="*" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=DetailHeader, Path=Visibility}" Value="Collapsed">
+                                <Setter Property="Height" Value="0" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </RowDefinition.Style>
+            </RowDefinition>
+        </Grid.RowDefinitions>

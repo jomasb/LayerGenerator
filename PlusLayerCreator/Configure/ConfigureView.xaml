@@ -52,65 +52,38 @@
                     <ColumnDefinition Width="10" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <plus:PlusGroupBox Header="Template and Paths">
+                <plus:PlusGroupBox Header="Paths">
                     <StackPanel>
-                        <DockPanel Margin="0,5,0,0" LastChildFill="True">
-                            <plus:PlusLabel
-                                MinWidth="70"
-                                Content="Template"
-                                DockPanel.Dock="Left" />
-                            <plus:PlusComboBox
-                                VerticalAlignment="Top"
-                                ItemsSource="{Binding TemplateModes}"
-                                SelectedItem="{Binding Template, Mode=TwoWay}" />
-                        </DockPanel>
-                        <DockPanel Margin="0,5,0,0" LastChildFill="True">
-                            <plus:PlusLabel
-                                MinWidth="70"
-                                Content="InputPath"
-                                DockPanel.Dock="Left" />
-                            <plus:PlusTextBox DockPanel.Dock="Left" Text="{Binding InputPath}" />
-                        </DockPanel>
-                        <DockPanel Margin="0,5,0,0" LastChildFill="True">
-                            <plus:PlusLabel
-                                MinWidth="70"
-                                Content="OutputPath"
-                                DockPanel.Dock="Left" />
-                            <plus:PlusTextBox DockPanel.Dock="Left" Text="{Binding OutputPath}" />
-                        </DockPanel>
+                        <plus:PlusFormRow HorizontalLabelAlignment="Left" Label="InputPath">
+                            <plus:PlusTextBox Text="{Binding InputPath}" />
+                        </plus:PlusFormRow>
+                        <plus:PlusFormRow HorizontalLabelAlignment="Left" Label="OutputPath">
+                            <plus:PlusTextBox Text="{Binding OutputPath}" />
+                        </plus:PlusFormRow>
                     </StackPanel>
                 </plus:PlusGroupBox>
                 <plus:PlusGroupBox Grid.Column="2" Header="General Settings">
                     <StackPanel>
-                        <DockPanel Margin="0,5,0,0" LastChildFill="True">
-                            <plus:PlusLabel
-                                MinWidth="70"
-                                Content="Product/Dialog"
-                                DockPanel.Dock="Left" />
-                            <Grid DockPanel.Dock="Left">
+                        <plus:PlusFormRow HorizontalLabelAlignment="Left" Label="Product/Dialog">
+                            <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="3*"></ColumnDefinition>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="3*" />
                                 </Grid.ColumnDefinitions>
-                                <plus:PlusTextBox Margin="0 0 2 0" Text="{Binding Product}" />
-                                <plus:PlusTextBox Grid.Column="1" Margin="3 0 0 0" Text="{Binding DialogName}" />
+                                <plus:PlusTextBox Margin="0,0,2,0" Text="{Binding Product}" />
+                                <plus:PlusTextBox
+                                    Grid.Column="1"
+                                    Margin="3,0,0,0"
+                                    Text="{Binding DialogName}" />
                             </Grid>
-                        </DockPanel>
-                        <DockPanel Margin="0,5,0,0" LastChildFill="True">
-                            <plus:PlusLabel
-                                MinWidth="70"
-                                Content="Translation EN"
-                                DockPanel.Dock="Left" />
+                        </plus:PlusFormRow>
+                        <plus:PlusFormRow HorizontalLabelAlignment="Left" Label="Translation EN">
                             <plus:PlusTextBox Text="{Binding DialogTranslationEnglish}" />
-                        </DockPanel>
-                        <DockPanel Margin="0,5,0,0" LastChildFill="True">
-                            <plus:PlusLabel
-                                MinWidth="70"
-                                Content="Translation DE"
-                                DockPanel.Dock="Left" />
+                        </plus:PlusFormRow>
+                        <plus:PlusFormRow HorizontalLabelAlignment="Left" Label="Translation DE">
                             <plus:PlusTextBox Text="{Binding DialogTranslationGerman}" />
-                        </DockPanel>
-                        </StackPanel>
+                        </plus:PlusFormRow>
+                    </StackPanel>
                 </plus:PlusGroupBox>
             </Grid>
             <Grid Grid.Row="1">

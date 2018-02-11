@@ -1,0 +1,26 @@
+/// <summary>
+/// Gets the $item$s asynchronous.
+/// </summary>
+/// <param name="serviceCallContext">The service call context.</param>
+/// <returns></returns>
+public Task<CallResponse<IList<$Product$$Item$>>> Get$Item$sAsync(IServiceCallContext serviceCallContext)
+{
+	return Task.Factory.StartNew(() =>
+	{
+		$Product$$Item$s.Clear();
+		
+		for (int i = 0; i < 10; i++)
+		{
+			$Product$$Item$s.Add(new $Product$$Item$()
+			{
+				$specialContent1$
+				LupdTimestamp = new DateTime(2016, 1, 12),
+				LupdUser = "JMA"
+			});
+		}
+		
+		Thread.Sleep(500);
+		return CallResponse.FromSuccessfulResult($Product$$Item$s);
+
+	});
+}

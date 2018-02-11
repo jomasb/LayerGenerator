@@ -26,7 +26,6 @@ namespace PlusLayerCreator.Configure
         private ConfigurationItem _activeConfiguration;
 		private ConfigurationItem _selectedItem;
 		private ConfigurationProperty _selectedPropertyItem;
-		private TemplateMode _template;
 		private ObservableCollection<ConfigurationItem> _dataLayout;
 		
 		#region Settings
@@ -283,7 +282,6 @@ namespace PlusLayerCreator.Configure
 		{
 			return new Configuration()
 			{
-				Template = Template,
 				InputPath = InputPath,
 				OutputPath = OutputPath,
 				IsCreateDto = _isCreateDto,
@@ -561,27 +559,6 @@ namespace PlusLayerCreator.Configure
 		}
 
 		#endregion Settings
-
-		public TemplateMode Template
-		{
-			get
-			{
-				return _template;
-			}
-			set
-			{
-				SetProperty(ref _template, value);
-			}
-		}
-
-		public IEnumerable<TemplateMode> TemplateModes
-		{
-			get
-			{
-				return Enum.GetValues(typeof(TemplateMode))
-					.Cast<TemplateMode>();
-			}
-		}
 
 		public ObservableCollection<ConfigurationItem> DataLayout
 		{

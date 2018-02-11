@@ -48,7 +48,49 @@ namespace PlusLayerCreator.Items
 		[DataMember]
 		public bool CanSort { get; set; }
 
-		[DataMember]
+	    [DataMember]
+	    public string Server
+	    {
+	        get;
+	        set;
+	    }
+
+	    [DataMember]
+	    public string RepRplRead
+	    {
+	        get;
+	        set;
+	    }
+
+	    [DataMember]
+	    public string RepRplWrite
+        {
+	        get;
+	        set;
+	    }
+
+	    [DataMember]
+	    public string TransactionCodeRead
+	    {
+	        get;
+	        set;
+	    }
+
+	    [DataMember]
+	    public string TransactionCodeWrite
+	    {
+	        get;
+	        set;
+	    }
+
+	    [DataMember]
+	    public string TableCountProperty
+	    {
+	        get;
+	        set;
+	    }
+
+        [DataMember]
 		public ObservableCollection<ConfigurationProperty> Properties
 		{
 			get;

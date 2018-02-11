@@ -25,7 +25,7 @@ namespace Dcx.Plus.BusinessServiceLocal.Modules.$Product$
 	/// <company>abat+ GmbH</company>
 	/// <date></date>
 	[ImplementationOf(typeof(I$Product$$Item$Service))]
-	public class $Product$$Item$Service : BusinessServiceLocalBaseNoBOs<I$Product$$Item$Service>, I$Product$$Item$Service
+	public class $Product$$Item$Service$specialContent3$ : BusinessServiceLocalBaseNoBOs<I$Product$$Item$Service>, I$Product$$Item$Service
 	{
 		#region Members
 		

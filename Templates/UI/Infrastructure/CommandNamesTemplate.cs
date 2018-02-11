@@ -8,6 +8,6 @@
 	/// <date></date>
 	public class CommandNames
 	{
-		//public static readonly string XXXCommand = "XXXCommand";
+		$specialContent1$
 	}
 }

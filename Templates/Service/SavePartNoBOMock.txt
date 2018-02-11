@@ -1,0 +1,18 @@
+/// <summary>
+/// Saves the $item$s asynchronous.
+/// </summary>
+/// <param name="serviceCallContext">The service call context.</param>
+/// <param name="$item$Dto">The $item$ dto.</param>
+/// <returns></returns>
+public Task<CallResponse<$Product$$Item$>> Save$Item$Async(IServiceCallContext serviceCallContext, $Product$$Item$ $item$Dto)
+{
+	return Task.Factory.StartNew(() =>
+	{
+		Thread.Sleep(500);
+		$item$Dto.LupdTimestamp = DateTime.Now;
+		$item$Dto.LupdUser = "JMAN";
+		$item$Dto.SaveFlag = SaveFlag.Persistent;
+
+		return CallResponse.FromSuccessfulResult($item$Dto);
+	});
+}

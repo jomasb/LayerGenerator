@@ -1,39 +1,37 @@
+
+
 <GridSplitter
-	Grid.Row="2"
-	IsEnabled="False"
-	Style="{StaticResource GridSplitter.Vertical.Standard}" />
+		Grid.Row="1"
+		IsEnabled="False"
+		Style="{StaticResource GridSplitter.Vertical.Standard}" />
 
-<plus:PlusExpandableHeader
-	x:Name="DetailHeader"
-	Grid.Row="3"
-	Count="{Binding ElementName=FilteredLevelTwoGridView, Path=Items.ItemCount, Mode=OneWay}"
-	CountVisibility="{Binding ElementName=FilteredLevelTwoGridView, Path=Visibility}"
-	Header="{localization:Localize Key=DeltaAdminOfContainers_lblContainers,
-								   Source=DeltaLocalizer}"
-	Style="{StaticResource ExpandableHeader.Detail}"
-	Visibility="{Binding SelectedDataItem, Converter={StaticResource IsNullToNegateVisibilityConverter}}">
+	<plus:PlusExpandableHeader
+		x:Name="DetailHeader"
+		Grid.Row="2"
+		Count="{Binding ElementName=FilteredLevelTwoGridView, Path=Items.ItemCount, Mode=OneWay}"
+		CountVisibility="{Binding ElementName=FilteredLevelTwoGridView, Path=Visibility}"
+		Header="{localization:Localize Key=$Product$$Dialog$_lbl$Item$s,
+									   Source=$Product$Localizer}"
+		Style="{StaticResource ExpandableHeader.Detail}"
+		Visibility="{Binding SelectedDataItem, Converter={StaticResource IsNullToNegateVisibilityConverter}}">
 
-	<plus:PlusExpandableHeader.HeaderAdditionalContent>
-		<StackPanel Orientation="Horizontal">
-			<plus:PlusButton
-				Command="{Binding AddContainerCommand}"
-				Icon="{StaticResource Icon.New.White.16}"
-				Style="{StaticResource ExpandableHeader.Small.Button}" />
-			<plus:PlusButton
-				Command="{Binding DeleteContainerCommand}"
-				Icon="{StaticResource Icon.Delete.White.16}"
-				Style="{StaticResource ExpandableHeader.Small.Button}" />
-			<plus:PlusButton Icon="{StaticResource Icon.Menu.Settings.White.30}" Style="{StaticResource ExpandableHeader.Small.Button}" />
-		</StackPanel>
-	</plus:PlusExpandableHeader.HeaderAdditionalContent>
+		<plus:PlusExpandableHeader.HeaderAdditionalContent>
+			<StackPanel Orientation="Horizontal">
+				$specialContent2$
+				<plus:PlusButton
+					Command="{Binding OpenSecondSettingsDialogCommand}"
+					Icon="{StaticResource Icon.Menu.Settings.White.30}"
+					Style="{StaticResource ExpandableHeader.Small.Button}" />
+			</StackPanel>
+		</plus:PlusExpandableHeader.HeaderAdditionalContent>
 
-	<plus:PlusSpinnerContainer IsLoading="{Binding IsBusy}">
-		<plus:PlusDataGrid
-					x:Name="Filtered$Item$GridView"
-					IsSynchronizedWithCurrentItem="False"
-					ItemsSource="{Binding $Item$FilterCollection}"
-					SelectedItem="{Binding Selected$Item$DataItem}"
-					plus:PlusSpinnerContainer.IsLoading="{Binding $Product$$Item$DataItemsList.IsLoading}">
+		<plus:PlusSpinnerContainer IsLoading="{Binding IsBusy}">
+			<plus:PlusDataGrid
+				x:Name="FilteredLevelTwoGridView"
+				plus:PlusSpinnerContainer.IsLoading="{Binding SelectedDataItem.$Item$s.IsLoading}"
+				IsSynchronizedWithCurrentItem="False"
+				ItemsSource="{Binding SecondFilterCollection}"
+				SelectedItem="{Binding Selected$Item$DataItem}">
 
 				<i:Interaction.Behaviors>
 					<selection:SingleActiveItemBehavior ActiveItem="{Binding Selected$Item$DataItem, Mode=TwoWay}" />
@@ -47,8 +45,9 @@
 						DataMemberBinding="{Binding HasAnyChanges}"
 						Header=""
 						IsVisibilityConfigurable="False" />
-				$specialContent1$
+					$specialContent1$
 				</plus:PlusDataGrid.Columns>
-		</plus:PlusDataGrid>
-	</plus:PlusSpinnerContainer>
-</plus:PlusExpandableHeader>
+			</plus:PlusDataGrid>
+		</plus:PlusSpinnerContainer>
+	</plus:PlusExpandableHeader>
+</Grid>

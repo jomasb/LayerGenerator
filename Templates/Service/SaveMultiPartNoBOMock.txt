@@ -1,0 +1,37 @@
+/// <summary>
+/// Saves the $item$s asynchronous.
+/// </summary>
+/// <param name="serviceCallContext">The service call context.</param>
+/// <param name="$item$Dtos">The $item$ dtos.</param>
+/// <returns></returns>
+public Task<CallResponse<IList<$Product$$Item$>>> Save$Item$sAsync(IServiceCallContext serviceCallContext, IList<$Product$$Item$> $item$Dtos)
+{
+	return Task.Factory.StartNew(() =>
+	{
+		$Product$$Item$s.Clear();
+
+		var $items$ = from $item$Dto in $item$Dtos
+			where $item$Dto.SaveFlag.Equals(SaveFlag.New) || $item$Dto.SaveFlag.Equals(SaveFlag.Delete) ||
+				  $item$Dto.SaveFlag.Equals(SaveFlag.Modified)
+			select $item$Dto;
+
+		var $items$ToSave = $items$ as IList<$Product$$Item$> ?? $items$.ToList();
+
+		foreach (var dto in $items$ToSave.Where(t => t.SaveFlag == SaveFlag.New))
+		{
+			dto.LupdTimestamp = DateTime.Now;
+			dto.LupdUser = "JMAN";
+			dto.SaveFlag = SaveFlag.Persistent;
+		}
+
+		foreach (var dto in $items$ToSave.Where(t => t.SaveFlag == SaveFlag.Modified))
+		{
+			dto.LupdTimestamp = DateTime.Now;
+			dto.LupdUser = "JMAM";
+			dto.SaveFlag = SaveFlag.Persistent;
+		}
+
+		return CallResponse.FromSuccessfulResult($items$ToSave);
+
+	});
+}
