@@ -105,7 +105,7 @@ namespace PlusLayerCreator.Configure
 				servicePath = withBo ? _configuration.InputPath + @"Service\ServiceTemplate.cs" : _configuration.InputPath + @"Service\ServiceNoBOTemplate.cs";
 
 				Helpers.CreateFile(servicePath,
-					_configuration.OutputPath + @"Service\" + _configuration.Product + dataItem.Name + "Service.cs", new[] { serviceReadContent, serviceSaveContent }, dataItem.Name);
+					_configuration.OutputPath + @"Service\" + _configuration.Product + dataItem.Name + "Service.cs", new[] { serviceReadContent, serviceSaveContent, string.Empty }, dataItem.Name);
 
 			    if (!withBo)
 			    {

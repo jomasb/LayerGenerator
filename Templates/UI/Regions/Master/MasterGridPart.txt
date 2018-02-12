@@ -15,6 +15,7 @@
 			</selection:RoutedEventTrigger>
 		</i:Interaction.Triggers>
 
+		<plus:PlusDataGrid.Columns>
 		$specialContent1$
 		</plus:PlusDataGrid.Columns>
 </plus:PlusDataGrid>

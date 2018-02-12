@@ -29,7 +29,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 			var viewModel = DataContext as $Dialog$MasterViewModel;
 			if (viewModel != null)
 			{
-				viewModel.ColumnProvider = FilteredGridView;
+				$specialContent1$
 			}
 		}
     }
