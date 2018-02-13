@@ -5,4 +5,4 @@ public MultiValueSelector<string> $Name$MultiSelector
 	{
 		Set(ref _$name$MultiSelector, value);
 	}
-};
+}
