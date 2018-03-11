@@ -39,6 +39,10 @@ namespace PlusLayerCreator.Configure
 
 			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
 			{
+				lblEn += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name + "=" + dataItem.Name + "\r\n";
+				lblEnOut += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name + "=@@" + dataItem.Name + "\r\n";
+				lblDe += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name + "=" + dataItem.Translation + Helpers.GetLocaliatzionExtension(dataItem.Translation) + "\r\n";
+				lblDeOut += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name + "=@@" + dataItem.Translation + Helpers.GetLocaliatzionExtension(dataItem.Translation) + "\r\n";
 				lblEn += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name + "s=" + dataItem.Name + "s\r\n";
 				lblEnOut += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name + "s=@@" + dataItem.Name + "s\r\n";
 				lblDe += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name + "s=" + dataItem.Translation + Helpers.GetLocaliatzionExtension(dataItem.Translation) + "\r\n";

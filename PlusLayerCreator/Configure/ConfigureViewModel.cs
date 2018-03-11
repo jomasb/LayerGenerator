@@ -32,6 +32,7 @@ namespace PlusLayerCreator.Configure
 		
 		private string _product;
 		private string _dialogName;
+		private string _dialogControllerHandle;
 		private string _dialogTranslationEnglish;
 		private string _dialogTranslationGerman;
 		
@@ -62,9 +63,7 @@ namespace PlusLayerCreator.Configure
             _navigationService = navigationService;
 
             _dataLayout = new ObservableCollection<ConfigurationItem>();
-
-            //GenerateTempData();
-
+            
             StartCommand = new DelegateCommand(StartExecuted);
             AddItemCommand = new DelegateCommand(AddItemCommandExecuted);
             DeleteItemCommand = new DelegateCommand(DeleteItemCommandExecuted, DeleteItemCommandCanExecute);
@@ -158,7 +157,9 @@ namespace PlusLayerCreator.Configure
 
 		private void AddItemCommandExecuted()
 		{
-			DataLayout.Add(new ConfigurationItem(){Properties = new ObservableCollection<ConfigurationProperty>()});
+		    var item = new ConfigurationItem() {Properties = new ObservableCollection<ConfigurationProperty>()};
+            DataLayout.Add(item);
+		    SelectedItem = item;
 		}
 
 		private void DeleteItemCommandExecuted()
@@ -173,7 +174,9 @@ namespace PlusLayerCreator.Configure
 
 		private void AddItemPropertyCommandExecuted()
 		{
-		    ActiveConfiguration.Properties.Add(new ConfigurationProperty());
+		    var property = new ConfigurationProperty();
+            ActiveConfiguration.Properties.Add(property);
+		    SelectedPropertyItem = property;
 		}
 
 		private bool AddItemPropertyCommandCanExecute()
@@ -267,6 +270,7 @@ namespace PlusLayerCreator.Configure
 				uiPart.CreateUiToolbar();
 				uiPart.CreateUi();
 				uiPart.CreateUiFilter();
+			    uiPart.CreateLauncherConfigEntry();
 			}
 
 			localizationPart.CreateLocalization();
@@ -299,6 +303,7 @@ namespace PlusLayerCreator.Configure
 				DialogName = _dialogName,
 				DialogTranslationGerman = _dialogTranslationGerman,
 				DialogTranslationEnglish = _dialogTranslationEnglish,
+                ControllerHandle = _dialogControllerHandle,
 				DataLayout = _dataLayout.ToList()
 			};
 		}
@@ -617,6 +622,18 @@ namespace PlusLayerCreator.Configure
 			set
 			{
 				SetProperty(ref _dialogTranslationEnglish, value);
+			}
+		}
+
+		public string DialogControllerHandle
+        {
+			get
+			{
+				return _dialogControllerHandle;
+			}
+			set
+			{
+				SetProperty(ref _dialogControllerHandle, value);
 			}
 		}
 

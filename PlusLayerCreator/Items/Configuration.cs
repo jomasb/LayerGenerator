@@ -125,6 +125,13 @@ namespace PlusLayerCreator.Items
 			set;
 		}
 
+		[DataMember]
+		public string ControllerHandle
+		{
+			get;
+			set;
+		}
+
         [DataMember]
 		public IList<ConfigurationItem> DataLayout
 		{

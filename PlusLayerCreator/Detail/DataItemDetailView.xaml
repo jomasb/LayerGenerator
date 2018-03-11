@@ -23,25 +23,31 @@
                 <plus:PlusTextBox Text="{Binding DataItem.Parent, UpdateSourceTrigger=PropertyChanged}" />
             </plus:PlusFormRow>
             <plus:PlusFormRow Label="IsPreFilterItem">
-                <plus:PlusCheckBox IsChecked="{Binding DataItem.IsPreFilterItem}" />
+                <plus:PlusCheckBox x:Name="IsPreFilterItemCheckBox" IsChecked="{Binding DataItem.IsPreFilterItem}" />
             </plus:PlusFormRow>
             <plus:PlusFormRow Label="CanRead">
                 <plus:PlusCheckBox IsChecked="{Binding DataItem.CanRead}" />
             </plus:PlusFormRow>
             <plus:PlusFormRow Label="CanEdit">
-                <plus:PlusCheckBox IsChecked="{Binding DataItem.CanEdit}" />
+                <plus:PlusCheckBox
+                    x:Name="CanEditCheckBox"
+                    IsChecked="{Binding DataItem.CanEdit}"
+                    IsEnabled="{Binding ElementName=IsPreFilterItemCheckBox, Path=IsChecked, Converter={StaticResource InvertBoolConverter}}" />
             </plus:PlusFormRow>
             <plus:PlusFormRow Label="CanEditMultiple">
-                <plus:PlusCheckBox IsChecked="{Binding DataItem.CanEditMultiple}" />
+                <plus:PlusCheckBox
+                    x:Name="CanEditMultipleCheckBox"
+                    IsChecked="{Binding DataItem.CanEditMultiple}"
+                    IsEnabled="{Binding ElementName=CanEditCheckBox, Path=IsChecked}" />
             </plus:PlusFormRow>
             <plus:PlusFormRow Label="CanDelete">
-                <plus:PlusCheckBox IsChecked="{Binding DataItem.CanDelete}" />
+                <plus:PlusCheckBox IsChecked="{Binding DataItem.CanDelete}" IsEnabled="{Binding ElementName=IsPreFilterItemCheckBox, Path=IsChecked, Converter={StaticResource InvertBoolConverter}}" />
             </plus:PlusFormRow>
             <plus:PlusFormRow Label="CanClone">
-                <plus:PlusCheckBox IsChecked="{Binding DataItem.CanClone}" />
+                <plus:PlusCheckBox IsChecked="{Binding DataItem.CanClone}" IsEnabled="{Binding ElementName=IsPreFilterItemCheckBox, Path=IsChecked, Converter={StaticResource InvertBoolConverter}}" />
             </plus:PlusFormRow>
             <plus:PlusFormRow Label="CanSort">
-                <plus:PlusCheckBox IsChecked="{Binding DataItem.CanSort}" />
+                <plus:PlusCheckBox IsChecked="{Binding DataItem.CanSort}" IsEnabled="{Binding ElementName=CanEditMultipleCheckBox, Path=IsChecked}" />
             </plus:PlusFormRow>
             <plus:PlusFormRow Label="Server">
                 <plus:PlusTextBox Text="{Binding DataItem.Server, UpdateSourceTrigger=PropertyChanged}" />
@@ -50,13 +56,13 @@
                 <plus:PlusTextBox Text="{Binding DataItem.RepRplRead, UpdateSourceTrigger=PropertyChanged}" />
             </plus:PlusFormRow>
             <plus:PlusFormRow Label="RepRplWrite">
-                <plus:PlusTextBox Text="{Binding DataItem.RepRplWrite, UpdateSourceTrigger=PropertyChanged}" />
+                <plus:PlusTextBox IsEnabled="{Binding ElementName=IsPreFilterItemCheckBox, Path=IsChecked, Converter={StaticResource InvertBoolConverter}}" Text="{Binding DataItem.RepRplWrite, UpdateSourceTrigger=PropertyChanged}" />
             </plus:PlusFormRow>
             <plus:PlusFormRow Label="TransactionCodeRead">
                 <plus:PlusTextBox Text="{Binding DataItem.TransactionCodeRead, UpdateSourceTrigger=PropertyChanged}" />
             </plus:PlusFormRow>
             <plus:PlusFormRow Label="TransactionCodeWrite">
-                <plus:PlusTextBox Text="{Binding DataItem.TransactionCodeWrite, UpdateSourceTrigger=PropertyChanged}" />
+                <plus:PlusTextBox IsEnabled="{Binding ElementName=IsPreFilterItemCheckBox, Path=IsChecked, Converter={StaticResource InvertBoolConverter}}" Text="{Binding DataItem.TransactionCodeWrite, UpdateSourceTrigger=PropertyChanged}" />
             </plus:PlusFormRow>
             <plus:PlusFormRow Label="TableCountProperty">
                 <plus:PlusTextBox Text="{Binding DataItem.TableCountProperty, UpdateSourceTrigger=PropertyChanged}" />

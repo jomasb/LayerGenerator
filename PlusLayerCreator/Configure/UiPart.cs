@@ -22,7 +22,33 @@ namespace PlusLayerCreator.Configure
 		    _masterGridMultiTemplate = File.ReadAllText(configuration.InputPath + @"UI\Regions\Master\MasterGridMultiPart.txt");
         }
 
-		public void CreateUiFilter()
+	    public void CreateLauncherConfigEntry()
+	    {
+	        string entry = "<Product Name=\"" + _configuration.Product + "\">\r\n";
+	        entry += "<Module Handle=\"" + _configuration.ControllerHandle + "\" Name=\"" + _configuration.DialogName + "\" />\r\n";
+
+	        if (_configuration.IsUseBusinessServiceWithoutBo)
+	        {
+	            foreach (ConfigurationItem configurationItem in _configuration.DataLayout)
+	            {
+	                entry += "<Dependency iface=\"I" + _configuration.Product + configurationItem.Name +
+	                         "Service\" impl=\"" + _configuration.Product + configurationItem.Name + "Mock\" />\r\n";
+
+	            }
+	        }
+
+	        entry += "</Product>";
+            
+	        FileInfo fileInfo = new FileInfo(_configuration.OutputPath + "PlusLauncher.xml");
+	        if (fileInfo.Directory != null)
+	        {
+	            fileInfo.Directory.Create();
+	        }
+	        File.WriteAllText(fileInfo.FullName, entry);
+        }
+
+
+        public void CreateUiFilter()
 		{
 			string filterViewModelTemplate1 = "public FilterViewModel(IViewModelBaseServices baseServices";
 			string filterViewModelTemplate2 = "): base(baseServices)\r\n" +
@@ -194,7 +220,7 @@ namespace PlusLayerCreator.Configure
 	            if (!string.IsNullOrEmpty(dataItem.Parent))
 	            {
                     // Parent key fields
-	                detailViewContent += "<plus:PlusGroupBox Header=\"" + GetLocalizedString(dataItem.Parent, true) + "\">";
+	                detailViewContent += "<plus:PlusGroupBox Header=\"" + GetLocalizedString(dataItem.Parent) + "\">";
 	                detailViewContent += "    <StackPanel>";
 
 	                foreach (ConfigurationProperty property in _configuration.DataLayout.FirstOrDefault(t => t.Name == dataItem.Parent).Properties)

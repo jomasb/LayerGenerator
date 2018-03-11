@@ -1,0 +1,49 @@
+/// <summary>
+/// Moves the new $Item$ order up asynchronous.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="$item$DataItems">The $Item$ data items.</param>
+/// <returns></returns>
+public async Task<CallResponse<$Product$$Item$DataItem>> Move$Item$OrderUpAsync(IRepositoryCallContext callContext, IList<$Product$$Item$DataItem> $item$DataItems,
+	$Product$$Item$DataItem currentItem)
+{
+	int selectedOrder = currentItem.Id;
+	var previousItem = $item$DataItems.Where(s => s.Id < selectedOrder).OrderByDescending(b => b.Id).FirstOrDefault();
+
+	currentItem.Id = selectedOrder - 1;
+	previousItem.Id = selectedOrder;
+
+	int counter = selectedOrder;
+
+	foreach ($Product$$Item$DataItem $item$DataItem in $item$DataItems.Where(t => t.Id >= selectedOrder - 1 && t.Id <= selectedOrder).OrderBy(s => s.Id))
+	{
+		$item$DataItem.Id = counter++;
+	}
+
+	return CallResponse.FromSuccessfulResult(currentItem);
+}
+
+/// <summary>
+/// Moves the new $Item$ order down asynchronous.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="$item$DataItems">The $Item$ data items.</param>
+/// <returns></returns>
+public async Task<CallResponse<$Product$$Item$DataItem>> Move$Item$OrderDownAsync(IRepositoryCallContext callContext, IList<$Product$$Item$DataItem> $item$DataItems,
+	$Product$$Item$DataItem currentItem)
+{
+	int selectedOrder = currentItem.Id;
+	var nextItem = $item$DataItems.Where(s => s.Id > selectedOrder).OrderBy(b => b.Id).FirstOrDefault();
+
+	currentItem.Id = selectedOrder + 1;
+	nextItem.Id = selectedOrder;
+
+	int counter = selectedOrder;
+
+	foreach ($Product$$Item$DataItem $item$DataItem in $item$DataItems.Where(t => t.Id >= selectedOrder && t.Id <= selectedOrder + 1).OrderBy(s => s.Id))
+	{
+		$item$DataItem.Id = counter++;
+	}
+
+	return CallResponse.FromSuccessfulResult(currentItem);
+}

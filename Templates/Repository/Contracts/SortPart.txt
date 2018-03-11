@@ -1,0 +1,15 @@
+/// <summary>
+/// Moves the new $Item$ order up asynchronous.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="$item$DataItems">The $Item$ data items.</param>
+/// <returns></returns>
+Task<CallResponse<$Product$$Item$DataItem>> Move$Item$OrderUpAsync(IRepositoryCallContext callContext, IList<$Product$$Item$DataItem> $item$DataItems, $Product$$Item$DataItem currentItem);
+
+/// <summary>
+/// Moves the new $Item$ order down asynchronous.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="$item$DataItems">The $Item$ data items.</param>
+/// <returns></returns>
+Task<CallResponse<$Product$$Item$DataItem>> Move$Item$OrderDownAsync(IRepositoryCallContext callContext, IList<$Product$$Item$DataItem> $item$DataItems, $Product$$Item$DataItem currentItem);

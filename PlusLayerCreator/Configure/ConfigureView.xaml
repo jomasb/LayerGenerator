@@ -24,19 +24,13 @@
     <plus:PlusExpandableHeader Header="Configuration">
         <plus:PlusExpandableHeader.HeaderAdditionalContent>
             <UniformGrid Width="400" Rows="1">
-                <plus:PlusButton
-                    Command="{Binding StartCommand}"
-                    Content="Start"
-                    Style="{StaticResource Button.Primary}" />
+                <plus:PlusButton Command="{Binding StartCommand}" Content="Start" Style="{StaticResource Button.Primary}" />
                 <plus:PlusButton
                     Margin="5,0"
                     Command="{Binding ImportSettingsCommand}"
                     Content="Import"
                     Style="{StaticResource Button.Primary}" />
-                <plus:PlusButton
-                    Command="{Binding ExportSettingsCommand}"
-                    Content="Export"
-                    Style="{StaticResource Button.Primary}" />
+                <plus:PlusButton Command="{Binding ExportSettingsCommand}" Content="Export" Style="{StaticResource Button.Primary}" />
             </UniformGrid>
         </plus:PlusExpandableHeader.HeaderAdditionalContent>
 
@@ -60,6 +54,9 @@
                         <plus:PlusFormRow HorizontalLabelAlignment="Left" Label="OutputPath">
                             <plus:PlusTextBox Text="{Binding OutputPath}" />
                         </plus:PlusFormRow>
+                        <plus:PlusFormRow HorizontalLabelAlignment="Left" Label="DialogControllerHandle">
+                            <plus:PlusTextBox MaxLength="5" Text="{Binding DialogControllerHandle}" />
+                        </plus:PlusFormRow>
                     </StackPanel>
                 </plus:PlusGroupBox>
                 <plus:PlusGroupBox Grid.Column="2" Header="General Settings">
@@ -71,10 +68,7 @@
                                     <ColumnDefinition Width="3*" />
                                 </Grid.ColumnDefinitions>
                                 <plus:PlusTextBox Margin="0,0,2,0" Text="{Binding Product}" />
-                                <plus:PlusTextBox
-                                    Grid.Column="1"
-                                    Margin="3,0,0,0"
-                                    Text="{Binding DialogName}" />
+                                <plus:PlusTextBox Grid.Column="1" Margin="3,0,0,0" Text="{Binding DialogName}" />
                             </Grid>
                         </plus:PlusFormRow>
                         <plus:PlusFormRow HorizontalLabelAlignment="Left" Label="Translation EN">
@@ -103,10 +97,7 @@
                         <plus:PlusCheckBox Content="Create Gateway and Interface" IsChecked="{Binding IsCreateGateway, Mode=TwoWay}" />
                     </StackPanel>
                 </plus:PlusGroupBox>
-                <plus:PlusGroupBox
-                    Grid.Row="0"
-                    Grid.Column="2"
-                    Header="Repository">
+                <plus:PlusGroupBox Grid.Row="0" Grid.Column="2" Header="Repository">
                     <StackPanel>
                         <plus:PlusCheckBox Content="Create DataItem" IsChecked="{Binding IsCreateDataItem, Mode=TwoWay}" />
                         <plus:PlusCheckBox Content="Create DataItem Factory" IsChecked="{Binding IsCreateDataItemFactory, Mode=TwoWay}" />
@@ -114,22 +105,13 @@
                         <plus:PlusCheckBox Content="Create Repository and Interface" IsChecked="{Binding IsCreateRepository, Mode=TwoWay}" />
                     </StackPanel>
                 </plus:PlusGroupBox>
-                <plus:PlusGroupBox
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Header="Business Service Local">
+                <plus:PlusGroupBox Grid.Row="1" Grid.Column="0" Header="Business Service Local">
                     <StackPanel>
                         <plus:PlusCheckBox Content="Create Business Service Local and Interface" IsChecked="{Binding IsCreateBusinessService, Mode=TwoWay}" />
-                        <plus:PlusCheckBox
-                            x:Name="CheckBoxWithoutBO"
-                            Content="Use Business Service without BOs"
-                            IsChecked="{Binding IsUseBusinessServiceWithoutBo, Mode=TwoWay}" />
+                        <plus:PlusCheckBox x:Name="CheckBoxWithoutBO" Content="Use Business Service without BOs" IsChecked="{Binding IsUseBusinessServiceWithoutBo, Mode=TwoWay}" />
                     </StackPanel>
                 </plus:PlusGroupBox>
-                <plus:PlusGroupBox
-                    Grid.Row="1"
-                    Grid.Column="2"
-                    Header="UI">
+                <plus:PlusGroupBox Grid.Row="1" Grid.Column="2" Header="UI">
                     <StackPanel>
                         <plus:PlusCheckBox Content="Create Master/Detail Views" IsChecked="{Binding IsCreateUi, Mode=TwoWay}" />
                         <plus:PlusCheckBox Content="Create Filter" IsChecked="{Binding IsCreateUiFilter, Mode=TwoWay}" />
@@ -146,14 +128,8 @@
                 <plus:PlusExpandableHeader Header="Items">
                     <plus:PlusExpandableHeader.HeaderAdditionalContent>
                         <StackPanel Orientation="Horizontal">
-                            <plus:PlusButton
-                                Command="{Binding AddItemCommand}"
-                                Icon="{StaticResource Icon.New.White.16}"
-                                Style="{StaticResource ExpandableHeader.Small.Button}" />
-                            <plus:PlusButton
-                                Command="{Binding DeleteItemCommand}"
-                                Icon="{StaticResource Icon.Delete.White.16}"
-                                Style="{StaticResource ExpandableHeader.Small.Button}" />
+                            <plus:PlusButton Command="{Binding AddItemCommand}" Icon="{StaticResource Icon.New.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
+                            <plus:PlusButton Command="{Binding DeleteItemCommand}" Icon="{StaticResource Icon.Delete.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
                         </StackPanel>
                     </plus:PlusExpandableHeader.HeaderAdditionalContent>
                     <plus:PlusGridView
@@ -178,20 +154,11 @@
 
                 <GridSplitter Grid.Row="1" />
 
-                <plus:PlusExpandableHeader
-                    Grid.Row="2"
-                    Header="Properties"
-                    Style="{StaticResource ExpandableHeader.Detail}">
+                <plus:PlusExpandableHeader Grid.Row="2" Header="Properties" Style="{StaticResource ExpandableHeader.Detail}">
                     <plus:PlusExpandableHeader.HeaderAdditionalContent>
                         <StackPanel Orientation="Horizontal">
-                            <plus:PlusButton
-                                Command="{Binding AddItemPropertyCommand}"
-                                Icon="{StaticResource Icon.New.White.16}"
-                                Style="{StaticResource ExpandableHeader.Small.Button}" />
-                            <plus:PlusButton
-                                Command="{Binding DeleteItemPropertyCommand}"
-                                Icon="{StaticResource Icon.Delete.White.16}"
-                                Style="{StaticResource ExpandableHeader.Small.Button}" />
+                            <plus:PlusButton Command="{Binding AddItemPropertyCommand}" Icon="{StaticResource Icon.New.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
+                            <plus:PlusButton Command="{Binding DeleteItemPropertyCommand}" Icon="{StaticResource Icon.Delete.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
                         </StackPanel>
                     </plus:PlusExpandableHeader.HeaderAdditionalContent>
                     <plus:PlusGridView
