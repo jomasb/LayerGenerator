@@ -18,14 +18,15 @@ private CallResponse<IList<$Product$$Item$>> Get$Item$s(IServiceCallContext call
 {
 	using (TraceLog.Log(this, options: TraceLogOptions.All))
 	{		
-		$Product$$Item$s.Clear();
+		IList<$Product$$Item$> $product$$Item$s = new List<$Product$$Item$>();
 
 		IDictionary<string, object> arguments = new Dictionary<string, object>();
+		arguments.Add("$Item$s", $product$$Item$s);
 		if (!DataAdapter.Execute<I$Product$$Item$Service>(this, "Get$Item$List", ref arguments))
 		{
-			return CallResponse.FromFailedResult($Product$$Item$s);
+			return CallResponse.FromFailedResult($product$$Item$s);
 		}
 		
-		return CallResponse.FromSuccessfulResult($Product$$Item$s);
+		return CallResponse.FromSuccessfulResult($product$$Item$s);
 	}
 }

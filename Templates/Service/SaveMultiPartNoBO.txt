@@ -3,23 +3,25 @@
 /// </summary>
 /// <param name="serviceCallContext">The service call context.</param>
 /// <param name="$item$Dtos">The $item$ dtos.</param>
+/// <param name="maxLupdTimestamp">The maximum lupd timestamp.</param>
 /// <returns></returns>
-public Task<CallResponse<IList<$Product$$Item$>>> Save$Item$sAsync(IServiceCallContext serviceCallContext, IList<$Product$$Item$> $item$Dtos)
+public Task<CallResponse<IList<$Product$$Item$>>> Save$Item$sAsync(IServiceCallContext serviceCallContext, IList<$Product$$Item$> $item$Dtos, DateTime maxLupdTimestamp)
 {
 	ServiceCallContext = serviceCallContext;
-	return GetDataTandemResponseAsync(() => Save$Item$s($item$Dtos), serviceCallContext);
+	return GetDataTandemResponseAsync(() => Save$Item$s($item$Dtos, maxLupdTimestamp), serviceCallContext);
 }
 
 /// <summary>
 /// Saves the $item$s.
 /// </summary>
 /// <param name="$item$Dtos">The $item$ dtos.</param>
+/// <param name="maxLupdTimestamp">The maximum lupd timestamp.</param>
 /// <returns></returns>
-private CallResponse<IList<$Product$$Item$>> Save$Item$s(IList<$Product$$Item$> $item$Dtos)
+private CallResponse<IList<$Product$$Item$>> Save$Item$s(IList<$Product$$Item$> $item$Dtos, DateTime maxLupdTimestamp)
 {
 	using (TraceLog.Log(this, options: TraceLogOptions.All))
 	{
-		$Product$$Item$s.Clear();
+		IList<$Product$$Item$> $product$$Item$s = new List<$Product$$Item$>();
 		IDictionary<string, object> arguments = new Dictionary<string, object>();
 
 		//filter the new and deleted $Item$s
@@ -29,13 +31,15 @@ private CallResponse<IList<$Product$$Item$>> Save$Item$s(IList<$Product$$Item$> 
 
 		var $item$sToSave = $item$s as IList<$Product$$Item$> ?? $item$s.ToList();
 
+		arguments.Add("MaxLupdTimestamp", maxLupdTimestamp);
+		arguments.Add("$Item$s", $product$$Item$s);
 		arguments.Add("$Item$sToSave", $item$sToSave);
 
 		if (!DataAdapter.Execute<I$Product$$Item$Service>(this, "Save$Item$List", ref arguments))
 		{
-			return CallResponse.FromFailedResult($Product$$Item$s);
+			return CallResponse.FromFailedResult($product$$Item$s);
 		}
 
-		return CallResponse.FromSuccessfulResult($Product$$Item$s);
+		return CallResponse.FromSuccessfulResult($product$$Item$s);
 	}
 }

@@ -27,12 +27,6 @@ namespace Dcx.Plus.BusinessServiceLocal.Modules.$Product$
 	[ImplementationOf(typeof(I$Product$$Item$Service))]
 	public class $Product$$Item$Service$specialContent3$ : BusinessServiceLocalBaseNoBOs<I$Product$$Item$Service>, I$Product$$Item$Service
 	{
-		#region Members
-		
-		private IList<$Product$$Item$> _$item$s;
-
-		#endregion Members
-
 		#region Get
 
 		$specialContent1$
@@ -44,39 +38,5 @@ namespace Dcx.Plus.BusinessServiceLocal.Modules.$Product$
 		$specialContent2$
 
 		#endregion Save
-
-		#region DataProvider
-
-		/// <summary>
-		/// Gets or sets the $product$ $item$s.
-		/// </summary>
-		/// <value>
-		/// The $product$ $item$s.
-		/// </value>
-		public IList<$Product$$Item$> $Product$$Item$s
-		{
-			get
-			{
-				return _$item$s ?? (_$item$s = new List<$Product$$Item$>());
-			}
-			set
-			{
-				_$item$s = value;
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets the maximum lupd timestamp.
-		/// </summary>
-		/// <value>
-		/// The maximum lupd timestamp.
-		/// </value>
-		public DateTime MaxLupdTimestamp
-		{
-			get;
-			set;
-		}
-
-		#endregion DataProvider
 	}
 }
