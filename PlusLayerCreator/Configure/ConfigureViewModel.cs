@@ -66,6 +66,7 @@ namespace PlusLayerCreator.Configure
             
             StartCommand = new DelegateCommand(StartExecuted);
             AddItemCommand = new DelegateCommand(AddItemCommandExecuted);
+            AddVersionCommand = new DelegateCommand(AddVersionCommandExecuted, AddVersionCommandCanExecute);
             DeleteItemCommand = new DelegateCommand(DeleteItemCommandExecuted, DeleteItemCommandCanExecute);
             AddItemPropertyCommand = new DelegateCommand(AddItemPropertyCommandExecuted, AddItemPropertyCommandCanExecute);
             DeleteItemPropertyCommand = new DelegateCommand(DeleteItemPropertyCommandExecuted, DeleteItemPropertyCommandCanExecute);
@@ -79,6 +80,7 @@ namespace PlusLayerCreator.Configure
 
         private void RaiseCanExecuteChanged()
 		{
+			AddVersionCommand.RaiseCanExecuteChanged();
 			DeleteItemCommand.RaiseCanExecuteChanged();
 			AddItemPropertyCommand.RaiseCanExecuteChanged();
 			DeleteItemPropertyCommand.RaiseCanExecuteChanged();
@@ -158,6 +160,53 @@ namespace PlusLayerCreator.Configure
 		private void AddItemCommandExecuted()
 		{
 		    var item = new ConfigurationItem() {Properties = new ObservableCollection<ConfigurationProperty>()};
+            DataLayout.Add(item);
+		    SelectedItem = item;
+		}
+
+	    private bool AddVersionCommandCanExecute()
+	    {
+		    return SelectedItem != null;
+	    }
+
+		private void AddVersionCommandExecuted()
+		{
+		    var item = new ConfigurationItem()
+		    {
+			    Name = "Version",
+			    Translation = "Version",
+				CanClone = true,
+				CanDelete = true,
+				CanEdit = true,
+				CanRead = true,
+				Parent = SelectedItem.Name,
+			    Properties = new ObservableCollection<ConfigurationProperty>()
+			    {
+				    new ConfigurationProperty()
+				    {
+					    IsKey = true,
+						IsRequired = true,
+					    Type = "int",
+					    Name = "Version",
+						Translation = "Version",
+						Length = "2"
+				    },
+				    new ConfigurationProperty()
+				    {
+						Type = "bool",
+					    Name = "IsActive",
+					    Translation = "Aktiv",
+					    Length = "2"
+				    },
+				    new ConfigurationProperty()
+				    {
+						Type = "string",
+					    Name = "Description",
+					    Translation = "Beschreibung",
+					    Length = "60"
+				    }
+			    }
+		    };
             DataLayout.Add(item);
 		    SelectedItem = item;
 		}
@@ -336,6 +385,11 @@ namespace PlusLayerCreator.Configure
 			set;
 		}
 		public DelegateCommand AddItemCommand
+		{
+			get;
+			set;
+		}
+		public DelegateCommand AddVersionCommand
 		{
 			get;
 			set;

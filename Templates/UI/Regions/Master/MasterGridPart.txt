@@ -1,7 +1,7 @@
 <plus:PlusDataGrid
 			x:Name="Filtered$Item$GridView"
 			IsSynchronizedWithCurrentItem="False"
-			ItemsSource="{Binding $Item$FilterCollection}"
+			ItemsSource="{Binding FilterCollection}"
 			SelectedItem="{Binding Selected$Item$DataItem}"
 			plus:PlusSpinnerContainer.IsLoading="{Binding $Product$$Item$DataItemsList.IsLoading}">
 

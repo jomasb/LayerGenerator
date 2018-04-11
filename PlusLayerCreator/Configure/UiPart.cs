@@ -13,12 +13,14 @@ namespace PlusLayerCreator.Configure
 		private string _readOnlyTemplate = " IsReadOnly=\"True\"";
 		private string _isNumericTemplate = " IsNumeric=\"True\"";
 		private readonly string _masterGridTemplate;
+		private readonly string _masterGridVersionTemplate;
 	    private readonly string _masterGridMultiTemplate;
 
         public UiPart(Configuration configuration)
 		{
 			_configuration = configuration;
 			_masterGridTemplate = File.ReadAllText(configuration.InputPath + @"UI\Regions\Master\MasterGridPart.txt");
+			_masterGridVersionTemplate = File.ReadAllText(configuration.InputPath + @"UI\Regions\Master\MasterVersionGridPart.txt");
 		    _masterGridMultiTemplate = File.ReadAllText(configuration.InputPath + @"UI\Regions\Master\MasterGridMultiPart.txt");
         }
 
@@ -162,8 +164,11 @@ namespace PlusLayerCreator.Configure
             }
 
 			Helpers.CreateFile(_configuration.InputPath + @"UI\ModuleTemplate.cs", _configuration.OutputPath + @"UI\" + _configuration.DialogName + @"Module.cs", new[] { moduleContent, moduleContent2 });
+			Helpers.CreateFile(_configuration.InputPath + @"UI\ControllerTemplate.cs", _configuration.OutputPath + @"UI\" + _configuration.DialogName + @"Controller.cs");
 			Helpers.CreateFile(_configuration.InputPath + @"UI\ViewTemplate.xaml", _configuration.OutputPath + @"UI\" + _configuration.DialogName + @"View.xaml");
+			Helpers.CreateFile(_configuration.InputPath + @"UI\ViewTemplate.xaml.cs", _configuration.OutputPath + @"UI\" + _configuration.DialogName + @"View.xaml.cs");
 			Helpers.CreateFile(_configuration.InputPath + @"UI\WindowTemplate.xaml", _configuration.OutputPath + @"UI\" + _configuration.DialogName + @"Window.xaml");
+			Helpers.CreateFile(_configuration.InputPath + @"UI\WindowTemplate.xaml.cs", _configuration.OutputPath + @"UI\" + _configuration.DialogName + @"Window.xaml.cs");
             Helpers.CreateFile(_configuration.InputPath + @"UI\Infrastructure\BootstrapperTemplate.cs", _configuration.OutputPath + @"UI\Infrastructure\Bootstrapper.cs");
             Helpers.CreateFile(_configuration.InputPath + @"UI\Infrastructure\CommandNamesTemplate.cs", _configuration.OutputPath + @"UI\Infrastructure\CommandNames.cs", new []{ commandNamesContent });
 			Helpers.CreateFile(_configuration.InputPath + @"UI\Infrastructure\EventNamesTemplate.cs", _configuration.OutputPath + @"UI\Infrastructure\EventNames.cs");
@@ -374,7 +379,7 @@ namespace PlusLayerCreator.Configure
 	        }
 
             // Master/Detail
-	        if (_configuration.DataLayout.Count == 2 && _configuration.DataLayout.Count(t => string.IsNullOrEmpty(t.Parent)) == 1)
+	        if (_configuration.DataLayout.Count == 2 && _configuration.DataLayout.Count(t => string.IsNullOrEmpty(t.Parent)) == 1 && _configuration.DataLayout.All(t => t.Name != "Version"))
 	        {
 	            ConfigurationItem master = _configuration.DataLayout.FirstOrDefault(t => string.IsNullOrEmpty(t.Parent));
 	            ConfigurationItem detail = _configuration.DataLayout.FirstOrDefault(t => !string.IsNullOrEmpty(t.Parent));
@@ -405,8 +410,20 @@ namespace PlusLayerCreator.Configure
                 }
 	            masterViewContent += gridContent.Replace("$specialContent1$", GetGridXaml(detail));
             }
-            
-	        Helpers.CreateFile(_configuration.InputPath + @"UI\Regions\Master\MasterViewTemplate.xaml", _configuration.OutputPath + @"UI\Regions\Master\" + _configuration.DialogName + @"MasterView.xaml", new[] { masterViewContent });
+
+		    if (_configuration.DataLayout.Count == 2 && _configuration.DataLayout.Count(t => string.IsNullOrEmpty(t.Parent)) == 1 && _configuration.DataLayout.Any(t => t.Name == "Version"))
+		    {
+			    ConfigurationItem master = _configuration.DataLayout.FirstOrDefault(t => string.IsNullOrEmpty(t.Parent));
+			    ConfigurationItem detail = _configuration.DataLayout.FirstOrDefault(t => t.Name == "Version");
+			    masterViewCodeBehindContent += "viewModel.ColumnProvider = Filtered" + master.Name + "sGridView;\r\n\r\n";
+
+				masterViewContent += File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\MasterViewTemplate.txt") + "\r\n\r\n";
+			    string gridContent = Helpers.DoReplaces(_masterGridVersionTemplate, master.Name);
+			    masterViewContent += gridContent.Replace("$specialContent1$", GetGridXaml(master));
+			    masterViewContent += gridContent.Replace("$specialContent2$", GetGridXaml(detail));
+		    }
+
+		    Helpers.CreateFile(_configuration.InputPath + @"UI\Regions\Master\MasterViewTemplate.xaml", _configuration.OutputPath + @"UI\Regions\Master\" + _configuration.DialogName + @"MasterView.xaml", new[] { masterViewContent });
 	        Helpers.CreateFile(_configuration.InputPath + @"UI\Regions\Master\MasterViewTemplate.xaml.cs", _configuration.OutputPath + @"UI\Regions\Master\" + _configuration.DialogName + @"MasterView.xaml.cs", new[] { masterViewCodeBehindContent});
         }
 
