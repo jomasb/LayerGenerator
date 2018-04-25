@@ -1,0 +1,25 @@
+/// <summary>
+/// $Handle$Key = "$Handle$"; $Dialog$
+/// </summary>
+public const string $Handle$Key = "$Handle$";
+
+
+case $Handle$Key:
+{
+	handle = PlusDialogControllerHandle.$Handle$;
+	break;
+}
+
+
+
+/// <summary>
+/// Get new instance $Handle$.
+/// </summary>
+[PlusPermissionDialogControllerHandle]
+public static PlusDialogControllerHandle $Handle$
+{
+	get
+	{
+		return new PlusDialogControllerHandle($Handle$Key, false, true, PlusDataTandemLocalizer.Singleton.MainDialogController_txtLogicalKey$Handle$, PlusProducts.$PRODUCT$);
+	}
+}

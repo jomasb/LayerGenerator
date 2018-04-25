@@ -1,5 +1,5 @@
 ﻿<UserControl
-	x:Class="Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.ToolBar.ToolbarView"
+	x:Class="Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Toolbar.ToolbarView"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,7 +7,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:mvvm="http://prismlibrary.com/"
 	xmlns:plus="http://schemas.abatplus.de/xaml"
-	xmlns:toolbar="clr-namespace:Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.ToolBar"
+	xmlns:toolbar="clr-namespace:Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Toolbar"
 	d:DataContext="{d:DesignInstance toolbar:ToolbarViewModel}"
 	mvvm:ViewModelLocator.AutoWireViewModel="True"
 	mc:Ignorable="d">

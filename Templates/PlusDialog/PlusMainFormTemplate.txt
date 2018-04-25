@@ -1,0 +1,1 @@
+AddToolStripMenuItem(mnu$PRODUCT$, PlusDialogLocalizer.Singleton.PlusMainForm_mnu$PRODUCT$$Dialog$, PlusDialogControllerHandle.$Handle$);

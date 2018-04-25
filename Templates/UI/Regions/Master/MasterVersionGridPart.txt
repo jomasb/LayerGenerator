@@ -69,7 +69,7 @@
 	AlternateRowStyle="{StaticResource GridViewRow.Parent.Alternate}"
 	HierarchyChildTemplate="{StaticResource DataTemplate.GridViewRow.Child}"
 	IsSynchronizedWithCurrentItem="False"
-	ItemsSource="{Binding $Item$FilterCollection}"
+	ItemsSource="{Binding FilterCollection}"
 	RowStyle="{StaticResource GridViewRow.Parent}"
 	plus:PlusSpinnerContainer.IsLoading="{Binding $Product$$Item$DataItemsList.IsLoading}">
 

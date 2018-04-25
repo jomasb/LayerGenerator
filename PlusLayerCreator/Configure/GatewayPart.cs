@@ -120,9 +120,9 @@ namespace PlusLayerCreator.Configure
 				gatewaySaveContent = Helpers.ReplaceSpecialContent(gatewaySaveContent,
 					new[] { key, identifier, readOnlyMappingDto, readOnlyMappingBo });
 
-				Helpers.CreateFile(_configuration.InputPath + @"Gateway\Contracts\IGatewayTemplate.cs",
+				Helpers.CreateFileFromPath(_configuration.InputPath + @"Gateway\Contracts\IGatewayTemplate.cs",
 					_configuration.OutputPath + @"Gateway\Contracts\I" + _configuration.Product + dataItem.Name + "Gateway.cs", new[] { interfaceReadContent, interfaceSaveContent }, dataItem.Name);
-				Helpers.CreateFile(_configuration.InputPath + @"Gateway\GatewayTemplate.cs",
+				Helpers.CreateFileFromPath(_configuration.InputPath + @"Gateway\GatewayTemplate.cs",
 					_configuration.OutputPath + @"Gateway\" + _configuration.Product + dataItem.Name + "Gateway.cs", new[] { gatewayReadContent, gatewaySaveContent }, dataItem.Name);
 
 			}
@@ -141,7 +141,7 @@ namespace PlusLayerCreator.Configure
 					dtoContent += "public " + plusDataObject.Type + " " + plusDataObject.Name + " {get; set;}\r\n\r\n";
 				}
 
-				Helpers.CreateFile(_configuration.InputPath + layer + @"\Dtos\DtoTemplate.cs",
+				Helpers.CreateFileFromPath(_configuration.InputPath + layer + @"\Dtos\DtoTemplate.cs",
 					_configuration.OutputPath + layer + @"\Dtos\" + _configuration.Product + dataItem.Name + ".cs", new[] { dtoContent }, dataItem.Name);
 			}
 		}
@@ -170,7 +170,7 @@ namespace PlusLayerCreator.Configure
 				factoryContent
 			};
 
-			Helpers.CreateFile(_configuration.InputPath + @"Gateway\DtoFactoryTemplate.cs", _configuration.OutputPath + @"Gateway\" + _configuration.Product + "DtoFactory.cs", contentsDtoFactory);
+			Helpers.CreateFileFromPath(_configuration.InputPath + @"Gateway\DtoFactoryTemplate.cs", _configuration.OutputPath + @"Gateway\" + _configuration.Product + "DtoFactory.cs", contentsDtoFactory);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -32,7 +33,7 @@ namespace PlusLayerCreator.Configure
 		
 		private string _product;
 		private string _dialogName;
-		private string _dialogControllerHandle;
+		private string _controllerHandle;
 		private string _dialogTranslationEnglish;
 		private string _dialogTranslationGerman;
 		
@@ -149,6 +150,10 @@ namespace PlusLayerCreator.Configure
 						if (propertyInfo != null)
 						{
 							propertyInfo.SetValue(this, property.GetValue(configuration));
+						}
+						else
+						{
+						    throw new Exception("Property not found.");
 						}
 					}
 				}
@@ -316,10 +321,12 @@ namespace PlusLayerCreator.Configure
 			if (IsCreateUi)
 			{
 				uiPart.CreateUiInfrastructure();
-				uiPart.CreateUiToolbar();
-				uiPart.CreateUi();
+				uiPart.CreateUiStatusbar();
+			    uiPart.CreateUiToolbar();
+                uiPart.CreateUi();
 				uiPart.CreateUiFilter();
 			    uiPart.CreateLauncherConfigEntry();
+			    uiPart.CreatePlusDialogInfrastructure();
 			}
 
 			localizationPart.CreateLocalization();
@@ -352,15 +359,14 @@ namespace PlusLayerCreator.Configure
 				DialogName = _dialogName,
 				DialogTranslationGerman = _dialogTranslationGerman,
 				DialogTranslationEnglish = _dialogTranslationEnglish,
-                ControllerHandle = _dialogControllerHandle,
+                ControllerHandle = _controllerHandle,
 				DataLayout = _dataLayout.ToList()
 			};
 		}
 		
 		private void GetTemplatesFromDisk()
 		{
-			Helpers.Product = Product;
-			Helpers.DialogName = DialogName;
+			Helpers.Configuration = GetConfiguration();
 
 			Helpers.FilterChildViewModelTemplate = File.ReadAllText(InputPath + @"UI\Regions\Filter\FilterViewModelChildTemplate.txt");
 			Helpers.FilterPropertyTemplate = File.ReadAllText(InputPath + @"UI\Regions\Filter\FilterProperty.txt");
@@ -679,15 +685,15 @@ namespace PlusLayerCreator.Configure
 			}
 		}
 
-		public string DialogControllerHandle
+		public string ControllerHandle
         {
 			get
 			{
-				return _dialogControllerHandle;
+				return _controllerHandle;
 			}
 			set
 			{
-				SetProperty(ref _dialogControllerHandle, value);
+				SetProperty(ref _controllerHandle, value);
 			}
 		}
 

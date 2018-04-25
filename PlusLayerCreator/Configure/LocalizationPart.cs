@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using PlusLayerCreator.Items;
 
 namespace PlusLayerCreator.Configure
@@ -32,7 +29,10 @@ namespace PlusLayerCreator.Configure
 			string btnDe = string.Empty;
 			string btnDeOut = string.Empty;
 
-			lblEn += _configuration.Product + _configuration.DialogName + "_lblCaption=" + _configuration.Product + " - " + _configuration.DialogTranslationEnglish + "\r\n";
+		    CreateTandemLocalization();
+            CreatePlusDialogLocalization();
+
+            lblEn += _configuration.Product + _configuration.DialogName + "_lblCaption=" + _configuration.Product + " - " + _configuration.DialogTranslationEnglish + "\r\n";
 			lblEnOut += _configuration.Product + _configuration.DialogName + "_lblCaption=@@" + _configuration.Product + " - " + _configuration.DialogTranslationEnglish + "\r\n";
 			lblDe += _configuration.Product + _configuration.DialogName + "_lblCaption=" + _configuration.Product + " - " + _configuration.DialogTranslationGerman + "\r\n";
 			lblDeOut += _configuration.Product + _configuration.DialogName + "_lblCaption=@@" + _configuration.Product + " - " + _configuration.DialogTranslationGerman + "\r\n";
@@ -54,6 +54,13 @@ namespace PlusLayerCreator.Configure
 			        btnEnOut += _configuration.Product + _configuration.DialogName + "_btnAdd" + dataItem.Name + "=@@New " + dataItem.Name + "\r\n";
 			        btnDe += _configuration.Product + _configuration.DialogName + "_btnAdd" + dataItem.Name + "=Neues " + dataItem.Translation + "\r\n";
 			        btnDeOut += _configuration.Product + _configuration.DialogName + "_btnAdd" + dataItem.Name + "=@@Neues " + dataItem.Translation + "\r\n";
+                }
+			    if (dataItem.Name == "Version")
+			    {
+			        btnEn += _configuration.Product + _configuration.DialogName + "_btnAdd" + dataItem.Name + "=New " + dataItem.Name + "\r\n";
+			        btnEnOut += _configuration.Product + _configuration.DialogName + "_btnAdd" + dataItem.Name + "=@@New " + dataItem.Name + "\r\n";
+			        btnDe += _configuration.Product + _configuration.DialogName + "_btnAdd" + dataItem.Name + "=Neue " + dataItem.Translation + "\r\n";
+			        btnDeOut += _configuration.Product + _configuration.DialogName + "_btnAdd" + dataItem.Name + "=@@Neue " + dataItem.Translation + "\r\n";
                 }
 
                 foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
@@ -131,5 +138,38 @@ namespace PlusLayerCreator.Configure
 				File.WriteAllText(fileInfo.FullName, fileContent, Encoding.UTF8);
 			}
 		}
+
+	    private void CreateTandemLocalization()
+	    {
+	        string lblDataTandem = string.Empty;
+
+	        lblDataTandem += "MainDialogController_txtLogicalKey" + _configuration.ControllerHandle + "=" + _configuration.Product.ToUpper() + " " + _configuration.DialogTranslationEnglish + "\r\n";
+	        lblDataTandem += "MainDialogController_txtLogicalKey" + _configuration.ControllerHandle + "=@@" + _configuration.Product.ToUpper() + " " + _configuration.DialogTranslationEnglish + "\r\n";
+	        lblDataTandem += "MainDialogController_txtLogicalKey" + _configuration.ControllerHandle + "=" + _configuration.Product.ToUpper() + " " + _configuration.DialogTranslationGerman + "\r\n";
+	        lblDataTandem += "MainDialogController_txtLogicalKey" + _configuration.ControllerHandle + "=@@" + _configuration.Product.ToUpper() + " " + _configuration.DialogTranslationGerman + "\r\n";
+
+	        FileInfo fileInfo = new FileInfo(_configuration.OutputPath + @"Localization\DataTandem.txt");
+	        if (fileInfo.Directory != null)
+	        {
+	            fileInfo.Directory.Create();
+	        }
+	        File.WriteAllText(fileInfo.FullName, lblDataTandem, Encoding.UTF8);
+        }
+        private void CreatePlusDialogLocalization()
+	    {
+	        string lblPlusDialog = string.Empty;
+
+	        lblPlusDialog += "PlusMainForm_mnu" + _configuration.Product.ToUpper() + _configuration.DialogName + "=" + _configuration.DialogTranslationEnglish + "\r\n";
+	        lblPlusDialog += "PlusMainForm_mnu" + _configuration.Product.ToUpper() + _configuration.DialogName + "=@@" + _configuration.DialogTranslationEnglish + "\r\n";
+	        lblPlusDialog += "PlusMainForm_mnu" + _configuration.Product.ToUpper() + _configuration.DialogName + "=" + _configuration.DialogTranslationGerman + "\r\n";
+	        lblPlusDialog += "PlusMainForm_mnu" + _configuration.Product.ToUpper() + _configuration.DialogName + "=@@" + _configuration.DialogTranslationGerman + "\r\n";
+
+	        FileInfo fileInfo = new FileInfo(_configuration.OutputPath + @"Localization\PlusDialog.txt");
+	        if (fileInfo.Directory != null)
+	        {
+	            fileInfo.Directory.Create();
+	        }
+	        File.WriteAllText(fileInfo.FullName, lblPlusDialog, Encoding.UTF8);
+        }
 	}
 }

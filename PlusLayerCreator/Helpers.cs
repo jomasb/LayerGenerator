@@ -8,8 +8,7 @@ namespace PlusLayerCreator
 {
 	public static class Helpers
 	{
-		public static string Product;
-		public static string DialogName;
+		public static Configuration Configuration;
 
 		public static string FilterChildViewModelTemplate;
 		public static string FilterPropertyTemplate;
@@ -75,24 +74,26 @@ namespace PlusLayerCreator
 
 		public static string DoReplaces(string input, string item = "")
 		{
-			input = input.Replace("$Product$", Product);
-			input = input.Replace("$product$", ToPascalCase(Product));
+			input = input.Replace("$PPRODUCT$", Configuration.Product.ToUpper());
+			input = input.Replace("$Product$", Configuration.Product);
+			input = input.Replace("$product$", ToPascalCase(Configuration.Product));
 			input = input.Replace("$Item$", item);
 			input = input.Replace("$item$", ToPascalCase(item));
-			input = input.Replace("$Dialog$", DialogName);
-			input = input.Replace("$dialog$", ToPascalCase(DialogName));
+			input = input.Replace("$Dialog$", Configuration.DialogName);
+			input = input.Replace("$dialog$", ToPascalCase(Configuration.DialogName));
+		    input = input.Replace("$Handle$", Configuration.ControllerHandle);
 
-			return input;
+            return input;
 		}
 
 		public static string DoReplaces2(string input, string name = "", string item = "", string type = "")
 		{
-			input = input.Replace("$Product$", Product);
-			input = input.Replace("$product$", ToPascalCase(Product));
+			input = input.Replace("$Product$", Configuration.Product);
+			input = input.Replace("$product$", ToPascalCase(Configuration.Product));
 			input = input.Replace("$Item$", item);
 			input = input.Replace("$item$", ToPascalCase(item));
-		    input = input.Replace("$Dialog$", DialogName);
-		    input = input.Replace("$dialog$", ToPascalCase(DialogName));
+		    input = input.Replace("$Dialog$", Configuration.DialogName);
+		    input = input.Replace("$dialog$", ToPascalCase(Configuration.DialogName));
             input = input.Replace("$Name$", name);
 			input = input.Replace("$name$", ToPascalCase(name));
 			input = input.Replace("$Type$", type);
@@ -114,22 +115,29 @@ namespace PlusLayerCreator
 			return fileContent;
 		}
 
-		public static void CreateFile(string input, string output, string[] contents = null, string item = "")
+	    public static void CreateFileFromString(string input, string output, string[] contents = null, string item = "")
+	    {
+	        string fileContent = input;
+
+	        fileContent = DoReplaces(fileContent, item);
+	        fileContent = ReplaceSpecialContent(fileContent, contents);
+
+	        FileInfo fileInfo = new FileInfo(output);
+	        if (fileInfo.Directory != null)
+	        {
+	            fileInfo.Directory.Create();
+	        }
+	        File.WriteAllText(fileInfo.FullName, fileContent);
+	    }
+
+        public static void CreateFileFromPath(string inputPath, string output, string[] contents = null, string item = "")
 		{
-			string fileContent = File.ReadAllText(input);
+			string fileContent = File.ReadAllText(inputPath);
 
-			fileContent = DoReplaces(fileContent, item);
-			fileContent = ReplaceSpecialContent(fileContent, contents);
-
-			FileInfo fileInfo = new FileInfo(output);
-			if (fileInfo.Directory != null)
-			{
-				fileInfo.Directory.Create();
-			}
-			File.WriteAllText(fileInfo.FullName, fileContent);
+		    CreateFileFromString(fileContent, output, contents, item);
 		}
 
-		public static void CreateFilterContents(ConfigurationProperty plusDataObject, out string filterMembersContent, out string filterPropertiesContent, out string filterPredicateResetContent,
+		public static void CreateFilterContents(ConfigurationItem plusDataItem, ConfigurationProperty plusDataObject, out string filterMembersContent, out string filterPropertiesContent, out string filterPredicateResetContent,
 			out string filterPredicatesContent, out string filterXamlContent, out string filterMultiSelectorsInitializeContent)
 		{
 			filterMembersContent = string.Empty;
@@ -153,7 +161,7 @@ namespace PlusLayerCreator
 					filterPredicateResetContent = plusDataObject.Name + " = string.Empty;";
 					filterPredicatesContent = ".StartsWith(x => x." + plusDataObject.Name + filterSuffix + ", x => x." +
 											   plusDataObject.Name + ")";
-					filterXamlContent = DoReplaces(FilterTextBoxXamlTemplate);
+					filterXamlContent = DoReplaces(FilterTextBoxXamlTemplate, plusDataItem.Name);
 				}
 
 				if (plusDataObject.FilterPropertyType == "ComboBox")

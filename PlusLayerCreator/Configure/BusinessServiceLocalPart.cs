@@ -98,18 +98,18 @@ namespace PlusLayerCreator.Configure
 
 				string servicePath = withBo ? _configuration.InputPath + @"Service\Contracts\IServiceTemplate.cs" : _configuration.InputPath + @"Service\Contracts\IServiceNoBOTemplate.cs";
 
-				Helpers.CreateFile(servicePath,
+				Helpers.CreateFileFromPath(servicePath,
 					_configuration.OutputPath + @"Service\Contracts\I" + _configuration.Product + dataItem.Name + "Service.cs", new[] { interfaceReadContent, interfaceSaveContent }, dataItem.Name);
 
 
 				servicePath = withBo ? _configuration.InputPath + @"Service\ServiceTemplate.cs" : _configuration.InputPath + @"Service\ServiceNoBOTemplate.cs";
 
-				Helpers.CreateFile(servicePath,
+				Helpers.CreateFileFromPath(servicePath,
 					_configuration.OutputPath + @"Service\" + _configuration.Product + dataItem.Name + "Service.cs", new[] { serviceReadContent, serviceSaveContent, string.Empty }, dataItem.Name);
 
 			    if (!withBo)
 			    {
-			        Helpers.CreateFile(servicePath,
+			        Helpers.CreateFileFromPath(servicePath,
 			            _configuration.OutputPath + @"Service\" + _configuration.Product + dataItem.Name + "ServiceMock.cs", new[] { serviceMockReadContent, serviceMockSaveContent, "Mock" }, dataItem.Name);
                 }
 			}
@@ -146,8 +146,8 @@ namespace PlusLayerCreator.Configure
 					converterBoToMessageContent += plusDataObject.Name + " = serviceMessage." + plusDataObject.Name + "(i),\r\n";
 				}
 
-				Helpers.CreateFile(_configuration.InputPath + @"Service\Tandem\Converter.cs", _configuration.OutputPath + @"Service\Tandem\" + _configuration.Product + dataItem.Name + "Converter.cs", new[] { converterMessageToBoContent, converterBoToMessageContent }, dataItem.Name);
-				Helpers.CreateFile(_configuration.InputPath + @"Service\Tandem\ServerMapping.cs", _configuration.OutputPath + @"Service\Tandem\" + _configuration.Product + dataItem.Name + "ServerMapping.cs", new[] { serverMappingReadContent, serverMappingWriteContent }, dataItem.Name);
+				Helpers.CreateFileFromPath(_configuration.InputPath + @"Service\Tandem\Converter.cs", _configuration.OutputPath + @"Service\Tandem\" + _configuration.Product + dataItem.Name + "Converter.cs", new[] { converterMessageToBoContent, converterBoToMessageContent }, dataItem.Name);
+				Helpers.CreateFileFromPath(_configuration.InputPath + @"Service\Tandem\ServerMapping.cs", _configuration.OutputPath + @"Service\Tandem\" + _configuration.Product + dataItem.Name + "ServerMapping.cs", new[] { serverMappingReadContent, serverMappingWriteContent }, dataItem.Name);
 			}
 		}
 	}

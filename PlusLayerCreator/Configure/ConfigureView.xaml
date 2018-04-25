@@ -61,7 +61,7 @@
 							<plus:PlusTextBox Text="{Binding OutputPath}" />
 						</plus:PlusFormRow>
 						<plus:PlusFormRow HorizontalLabelAlignment="Left" Label="DialogControllerHandle">
-							<plus:PlusTextBox MaxLength="5" Text="{Binding DialogControllerHandle}" />
+							<plus:PlusTextBox MaxLength="5" Text="{Binding ControllerHandle}" />
 						</plus:PlusFormRow>
 					</StackPanel>
 				</plus:PlusGroupBox>

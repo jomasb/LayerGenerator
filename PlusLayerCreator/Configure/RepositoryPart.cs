@@ -141,8 +141,8 @@ namespace PlusLayerCreator.Configure
 
 			string dtoLayer = _configuration.IsUseBusinessServiceWithoutBo ? "BusinessServiceLocal" : "Gateway";
 
-			Helpers.CreateFile(_configuration.InputPath + @"Repository\Contracts\IRepositoryTemplate.cs", _configuration.OutputPath + @"Repository\Contracts\I" + _configuration.Product + _configuration.DialogName + "Repository.cs", new[] { interfaceContent });
-			Helpers.CreateFile(_configuration.InputPath + @"Repository\RepositoryTemplate.cs", _configuration.OutputPath + @"Repository\" + _configuration.Product + _configuration.DialogName + "Repository.cs", new[] { repositoryServiceMemberContent, repositoryServiceParameterContent, repositoryServiceConstructorContent, repositoryContent, dtoLayer });
+			Helpers.CreateFileFromPath(_configuration.InputPath + @"Repository\Contracts\IRepositoryTemplate.cs", _configuration.OutputPath + @"Repository\Contracts\I" + _configuration.Product + _configuration.DialogName + "Repository.cs", new[] { interfaceContent });
+			Helpers.CreateFileFromPath(_configuration.InputPath + @"Repository\RepositoryTemplate.cs", _configuration.OutputPath + @"Repository\" + _configuration.Product + _configuration.DialogName + "Repository.cs", new[] { repositoryServiceMemberContent, repositoryServiceParameterContent, repositoryServiceConstructorContent, repositoryContent, dtoLayer });
 		}
 
 		private string GetIdentifier(ConfigurationItem dataItem)
@@ -248,7 +248,7 @@ namespace PlusLayerCreator.Configure
 					}
 				}
 
-				Helpers.CreateFile(_configuration.InputPath + @"Repository\DataItems\DataItemTemplate.cs",
+				Helpers.CreateFileFromPath(_configuration.InputPath + @"Repository\DataItems\DataItemTemplate.cs",
 					_configuration.OutputPath + @"Repository\DataItems\" + _configuration.Product + dataItem.Name + "DataItem.cs", new[] { dataItemContent }, dataItem.Name);
 			}
 		}
@@ -268,7 +268,7 @@ namespace PlusLayerCreator.Configure
 
 			string dtoLayer = _configuration.IsUseBusinessServiceWithoutBo ? "BusinessServiceLocal" : "Gateway";
 
-			Helpers.CreateFile(_configuration.InputPath + @"Repository\DtoFactoryTemplate.cs", _configuration.OutputPath + @"Repository\" + _configuration.Product + "DtoFactory.cs",
+			Helpers.CreateFileFromPath(_configuration.InputPath + @"Repository\DtoFactoryTemplate.cs", _configuration.OutputPath + @"Repository\" + _configuration.Product + "DtoFactory.cs",
 				new[] { factoryContent, dtoLayer });
 		}
 
@@ -287,7 +287,7 @@ namespace PlusLayerCreator.Configure
 
 			string dtoLayer = _configuration.IsUseBusinessServiceWithoutBo ? "BusinessServiceLocal" : "Gateway";
 
-			Helpers.CreateFile(_configuration.InputPath + @"Repository\DataItemFactoryTemplate.cs",
+			Helpers.CreateFileFromPath(_configuration.InputPath + @"Repository\DataItemFactoryTemplate.cs",
 				_configuration.OutputPath + @"Repository\" + _configuration.Product + "DataItemFactory.cs", new[] { factoryContent, dtoLayer });
 		}
 

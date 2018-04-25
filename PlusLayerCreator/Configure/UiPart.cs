@@ -24,7 +24,15 @@ namespace PlusLayerCreator.Configure
 		    _masterGridMultiTemplate = File.ReadAllText(configuration.InputPath + @"UI\Regions\Master\MasterGridMultiPart.txt");
         }
 
-	    public void CreateLauncherConfigEntry()
+	    public void CreatePlusDialogInfrastructure()
+	    {
+	        Helpers.CreateFileFromPath(_configuration.InputPath + @"PlusDialog\DialogControllerHandleTemplate.txt", _configuration.OutputPath + @"PlusDialog\DialogControllerHandle.cs");
+	        Helpers.CreateFileFromPath(_configuration.InputPath + @"PlusDialog\PlusMainControllerTemplate.txt", _configuration.OutputPath + @"PlusDialog\PlusMainController.cs");
+	        Helpers.CreateFileFromPath(_configuration.InputPath + @"PlusDialog\PlusMainFormTemplate.txt", _configuration.OutputPath + @"PlusDialog\PlusMainForm.cs");
+        }
+
+
+        public void CreateLauncherConfigEntry()
 	    {
 	        string entry = "<Product Name=\"" + _configuration.Product + "\">\r\n";
 	        entry += "<Module Handle=\"" + _configuration.ControllerHandle + "\" Name=\"" + _configuration.DialogName + "\" />\r\n";
@@ -66,7 +74,7 @@ namespace PlusLayerCreator.Configure
 			string filterChildViewModelContent = string.Empty;
 
 			//filterMembersContent
-			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
+			foreach (ConfigurationItem dataItem in _configuration.DataLayout.Where(t => t.Name != "Version"))
 			{
 				string filterMembersContent = string.Empty;
 				string filterPredicatesContent = string.Empty;
@@ -87,7 +95,7 @@ namespace PlusLayerCreator.Configure
 						string propertyFilterMultiSelectorsInitializeContent;
 						string propertyFilterPropertiesContent;
 
-						Helpers.CreateFilterContents(plusDataObject, out propertyFilterMembersContent,
+						Helpers.CreateFilterContents(dataItem, plusDataObject, out propertyFilterMembersContent,
 							out propertyFilterPropertiesContent, out propertyFilterPredicateResetContent,
 							out propertyFilterPredicatesContent, out propertyFilterXamlContent,
 							out propertyFilterMultiSelectorsInitializeContent);
@@ -121,12 +129,12 @@ namespace PlusLayerCreator.Configure
 			var filterViewModelContent = filterViewModelTemplate1 + filterViewModelConstructionContent + filterViewModelTemplate2 +
 											filterViewModelInitializationContent + filterViewModelTemplate3 + filterChildViewModelsContent;
 
-			Helpers.CreateFile(_configuration.InputPath + @"UI\Regions\Filter\FilterViewTemplate.xaml",
+			Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Regions\Filter\FilterViewTemplate.xaml",
 				_configuration.OutputPath + @"UI\Regions\Filter\FilterView.xaml", new[] { filterViewContent });
-			Helpers.CreateFile(_configuration.InputPath + @"UI\Regions\Filter\FilterViewTemplate.xaml.cs",
+			Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Regions\Filter\FilterViewTemplate.xaml.cs",
 				_configuration.OutputPath + @"UI\Regions\Filter\FilterView.xaml.cs");
 
-			Helpers.CreateFile(_configuration.InputPath + @"UI\Regions\Filter\FilterViewModelTemplate.cs",
+			Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Regions\Filter\FilterViewModelTemplate.cs",
 				_configuration.OutputPath + @"UI\Regions\Filter\FilterViewModel.cs", new[] { filterViewModelContent, filterChildViewModelContent });
 		}
 
@@ -141,11 +149,17 @@ namespace PlusLayerCreator.Configure
 			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
 			{
 				moduleContent += "_container.RegisterType<object, " + dataItem.Name + "DetailView>(ViewNames." + dataItem.Name + "DetailView);\r\n";
-				moduleContent2 += "_container.RegisterType<IFilterSourceProvider<" + _configuration.Product + dataItem.Name + "DataItem>, " +
+
+                if (dataItem.Name != "Version")
+                {
+                    moduleContent2 += "_container.RegisterType<IFilterSourceProvider<" + _configuration.Product + dataItem.Name + "DataItem>, " +
 								  _configuration.DialogName + "MasterViewModel>(new ContainerControlledLifetimeManager());\r\n";
+                    
+                }
+
 				viewNamesContent += "public static readonly string " + dataItem.Name + "DetailView = \"" + dataItem.Name + "DetailView\";\r\n";
 
-			    if (!string.IsNullOrEmpty(dataItem.Parent))
+			    if (!string.IsNullOrEmpty(dataItem.Parent) && dataItem.Name != "Version")
 			    {
 			        if (dataItem.CanDelete)
 			        {
@@ -163,56 +177,69 @@ namespace PlusLayerCreator.Configure
 			    }
             }
 
-			Helpers.CreateFile(_configuration.InputPath + @"UI\ModuleTemplate.cs", _configuration.OutputPath + @"UI\" + _configuration.DialogName + @"Module.cs", new[] { moduleContent, moduleContent2 });
-			Helpers.CreateFile(_configuration.InputPath + @"UI\ControllerTemplate.cs", _configuration.OutputPath + @"UI\" + _configuration.DialogName + @"Controller.cs");
-			Helpers.CreateFile(_configuration.InputPath + @"UI\ViewTemplate.xaml", _configuration.OutputPath + @"UI\" + _configuration.DialogName + @"View.xaml");
-			Helpers.CreateFile(_configuration.InputPath + @"UI\ViewTemplate.xaml.cs", _configuration.OutputPath + @"UI\" + _configuration.DialogName + @"View.xaml.cs");
-			Helpers.CreateFile(_configuration.InputPath + @"UI\WindowTemplate.xaml", _configuration.OutputPath + @"UI\" + _configuration.DialogName + @"Window.xaml");
-			Helpers.CreateFile(_configuration.InputPath + @"UI\WindowTemplate.xaml.cs", _configuration.OutputPath + @"UI\" + _configuration.DialogName + @"Window.xaml.cs");
-            Helpers.CreateFile(_configuration.InputPath + @"UI\Infrastructure\BootstrapperTemplate.cs", _configuration.OutputPath + @"UI\Infrastructure\Bootstrapper.cs");
-            Helpers.CreateFile(_configuration.InputPath + @"UI\Infrastructure\CommandNamesTemplate.cs", _configuration.OutputPath + @"UI\Infrastructure\CommandNames.cs", new []{ commandNamesContent });
-			Helpers.CreateFile(_configuration.InputPath + @"UI\Infrastructure\EventNamesTemplate.cs", _configuration.OutputPath + @"UI\Infrastructure\EventNames.cs");
-			Helpers.CreateFile(_configuration.InputPath + @"UI\Infrastructure\ParameterNamesTemplate.cs", _configuration.OutputPath + @"UI\Infrastructure\ParameterNames.cs");
-			Helpers.CreateFile(_configuration.InputPath + @"UI\Infrastructure\ViewNamesTemplate.cs", _configuration.OutputPath + @"UI\Infrastructure\ViewNames.cs", new[] { viewNamesContent });
+			Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\ModuleTemplate.cs", _configuration.OutputPath + @"UI\" + _configuration.DialogName + @"Module.cs", new[] { moduleContent, moduleContent2 });
+			Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\ControllerTemplate.cs", _configuration.OutputPath + @"UI\" + _configuration.DialogName + @"Controller.cs");
+			Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\ViewModelTemplate.cs", _configuration.OutputPath + @"UI\" + _configuration.DialogName + @"ViewModel.cs");
+			Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\ViewTemplate.xaml", _configuration.OutputPath + @"UI\" + _configuration.DialogName + @"View.xaml");
+			Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\ViewTemplate.xaml.cs", _configuration.OutputPath + @"UI\" + _configuration.DialogName + @"View.xaml.cs");
+			Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\WindowTemplate.xaml", _configuration.OutputPath + @"UI\" + _configuration.DialogName + @"Window.xaml");
+			Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\WindowTemplate.xaml.cs", _configuration.OutputPath + @"UI\" + _configuration.DialogName + @"Window.xaml.cs");
+            Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Infrastructure\BootstrapperTemplate.cs", _configuration.OutputPath + @"UI\Infrastructure\Bootstrapper.cs");
+            Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Infrastructure\CommandNamesTemplate.cs", _configuration.OutputPath + @"UI\Infrastructure\CommandNames.cs", new []{ commandNamesContent });
+			Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Infrastructure\EventNamesTemplate.cs", _configuration.OutputPath + @"UI\Infrastructure\EventNames.cs");
+			Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Infrastructure\ParameterNamesTemplate.cs", _configuration.OutputPath + @"UI\Infrastructure\ParameterNames.cs");
+			Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Infrastructure\ViewNamesTemplate.cs", _configuration.OutputPath + @"UI\Infrastructure\ViewNames.cs", new[] { viewNamesContent });
 		}
 
-	    public void CreateUiToolbar()
+	    public void CreateUiStatusbar()
+	    {
+	        Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Regions\Statusbar\StatusbarViewModelTemplate.cs", _configuration.OutputPath + @"UI\Regions\Statusbar\StatusbarViewModel.cs");
+	        Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Regions\Statusbar\StatusbarViewTemplate.xaml", _configuration.OutputPath + @"UI\Regions\Statusbar\StatusbarView.xaml");
+	        Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Regions\Statusbar\StatusbarViewTemplate.xaml.cs", _configuration.OutputPath + @"UI\Regions\Statusbar\StatusbarView.xaml.cs");
+        }
+
+
+        public void CreateUiToolbar()
 	    {
 	        string toolbarViewContent = string.Empty;
-	        foreach (ConfigurationItem dataItem in _configuration.DataLayout.Where(t => string.IsNullOrEmpty(t.Parent) && t.IsPreFilterItem == false))
+
+	        toolbarViewContent +=
+	            File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarRefreshButtonPart.txt") + "\r\n";
+
+            foreach (ConfigurationItem dataItem in _configuration.DataLayout.Where(t => string.IsNullOrEmpty(t.Parent) && t.IsPreFilterItem == false || t.Name == "Version"))
 	        {
-	            if (dataItem.CanRead)
-	            {
-	                toolbarViewContent +=
-	                    File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarRefreshButtonPart.txt") + "\r\n";
-	            }
 	            if (dataItem.CanEdit)
 	            {
 	                toolbarViewContent +=
 	                    Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarAddButtonPart.txt") + "\r\n", dataItem.Name);
-	                toolbarViewContent +=
-	                    File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarSaveButtonPart.txt") + "\r\n";
                 }
-	            if (dataItem.CanClone)
-	            {
-	                toolbarViewContent +=
-	                    File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarCopyButtonPart.txt") + "\r\n";
-	            }
-	            if (dataItem.CanDelete)
-	            {
-	                toolbarViewContent +=
-	                    File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarDeleteButtonPart.txt") + "\r\n";
-	            }
-	            if (dataItem.CanEdit)
-	            {
-	                toolbarViewContent +=
-	                    File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarCancelButtonPart.txt") + "\r\n";
-	            }
             }
 
-	        Helpers.CreateFile(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarViewModelTemplate.cs", _configuration.OutputPath + @"UI\Regions\Toolbar\ToolbarViewModel.cs");
-	        Helpers.CreateFile(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarViewTemplate.xaml", _configuration.OutputPath + @"UI\Regions\Toolbar\ToolbarView.xaml", new[] { toolbarViewContent });
-	        Helpers.CreateFile(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarViewTemplate.xaml.cs", _configuration.OutputPath + @"UI\Regions\Toolbar\ToolbarView.xaml.cs");
+	        if (_configuration.DataLayout.Any(t => t.CanEdit))
+	        {
+	            toolbarViewContent +=
+	                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarSaveButtonPart.txt") + "\r\n";
+	        }
+
+            if (_configuration.DataLayout.Any(t => t.CanClone))
+	        {
+	            toolbarViewContent +=
+	                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarCopyButtonPart.txt") + "\r\n";
+	        }
+	        if (_configuration.DataLayout.Any(t => t.CanDelete))
+	        {
+	            toolbarViewContent +=
+	                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarDeleteButtonPart.txt") + "\r\n";
+	        }
+	        if (_configuration.DataLayout.Any(t => t.CanEdit))
+	        {
+	            toolbarViewContent +=
+	                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarCancelButtonPart.txt") + "\r\n";
+	        }
+
+            Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarViewModelTemplate.cs", _configuration.OutputPath + @"UI\Regions\Toolbar\ToolbarViewModel.cs");
+	        Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarViewTemplate.xaml", _configuration.OutputPath + @"UI\Regions\Toolbar\ToolbarView.xaml", new[] { toolbarViewContent });
+	        Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarViewTemplate.xaml.cs", _configuration.OutputPath + @"UI\Regions\Toolbar\ToolbarView.xaml.cs");
         }
 
 	    private void CreateUiDetail()
@@ -332,19 +359,19 @@ namespace PlusLayerCreator.Configure
 	            detailViewContent += "    </StackPanel>";
 	            detailViewContent += "</plus:PlusGroupBox>";
 
-	            Helpers.CreateFile(_configuration.InputPath + @"UI\Regions\Detail\DetailViewModelTemplate.cs",
+	            Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Regions\Detail\DetailViewModelTemplate.cs",
 	                _configuration.OutputPath + @"UI\Regions\Detail\" + dataItem.Name + "DetailViewModel.cs", null,
 	                dataItem.Name);
-	            Helpers.CreateFile(_configuration.InputPath + @"UI\Regions\Detail\DetailViewTemplate.xaml",
+	            Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Regions\Detail\DetailViewTemplate.xaml",
 	                _configuration.OutputPath + @"UI\Regions\Detail\" + dataItem.Name + "DetailView.xaml",
 	                new[] {detailViewContent}, dataItem.Name);
-	            Helpers.CreateFile(_configuration.InputPath + @"UI\Regions\Detail\DetailViewTemplate.xaml.cs",
+	            Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Regions\Detail\DetailViewTemplate.xaml.cs",
 	                _configuration.OutputPath + @"UI\Regions\Detail\" + dataItem.Name + "DetailView.xaml.cs", null,
 	                dataItem.Name);
 	        }
 	    }
 
-	    private string GetGridXaml(ConfigurationItem dataItem)
+	    private string GetGridXaml(ConfigurationItem dataItem, bool old = false)
 	    {
 	        string columnsContent = string.Empty;
 	        foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
@@ -356,8 +383,16 @@ namespace PlusLayerCreator.Configure
 	            }
 	            else
 	            {
-	                columnsContent += "                <plus:PlusGridViewTextColumnMinimal Width=\"*\" DataMemberBinding=\"{Binding " +
-	                                  plusDataObject.Name + "}\" Header=\"" + GetLocalizedString(dataItem.Name + plusDataObject.Name) + "\"/>\r\n";
+	                if (old)
+	                {
+	                    columnsContent += "                <plus:PlusGridViewTextColumn Width=\"*\" DataMemberBinding=\"{Binding " +
+	                                      plusDataObject.Name + "}\" Header=\"" + GetLocalizedString(dataItem.Name + plusDataObject.Name) + "\"/>\r\n";
+                    }
+	                else
+	                {
+	                    columnsContent += "                <plus:PlusGridViewTextColumnMinimal Width=\"*\" DataMemberBinding=\"{Binding " +
+	                                      plusDataObject.Name + "}\" Header=\"" + GetLocalizedString(dataItem.Name + plusDataObject.Name) + "\"/>\r\n";
+                    }
 	            }
 	        }
 
@@ -417,40 +452,34 @@ namespace PlusLayerCreator.Configure
 			    ConfigurationItem detail = _configuration.DataLayout.FirstOrDefault(t => t.Name == "Version");
 			    masterViewCodeBehindContent += "viewModel.ColumnProvider = Filtered" + master.Name + "sGridView;\r\n\r\n";
 
-				masterViewContent += File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\MasterViewTemplate.txt") + "\r\n\r\n";
+				//masterViewContent += File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\MasterVersionTemplate.txt") + "\r\n\r\n";
 			    string gridContent = Helpers.DoReplaces(_masterGridVersionTemplate, master.Name);
-			    masterViewContent += gridContent.Replace("$specialContent1$", GetGridXaml(master));
-			    masterViewContent += gridContent.Replace("$specialContent2$", GetGridXaml(detail));
+			    masterViewContent += gridContent.Replace("$specialContent1$", GetGridXaml(master, true)).Replace("$specialContent2$", GetGridXaml(detail, true));
 		    }
 
-		    Helpers.CreateFile(_configuration.InputPath + @"UI\Regions\Master\MasterViewTemplate.xaml", _configuration.OutputPath + @"UI\Regions\Master\" + _configuration.DialogName + @"MasterView.xaml", new[] { masterViewContent });
-	        Helpers.CreateFile(_configuration.InputPath + @"UI\Regions\Master\MasterViewTemplate.xaml.cs", _configuration.OutputPath + @"UI\Regions\Master\" + _configuration.DialogName + @"MasterView.xaml.cs", new[] { masterViewCodeBehindContent});
+		    Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Regions\Master\MasterViewTemplate.xaml", _configuration.OutputPath + @"UI\Regions\Master\" + _configuration.DialogName + @"MasterView.xaml", new[] { masterViewContent });
+	        Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Regions\Master\MasterViewTemplate.xaml.cs", _configuration.OutputPath + @"UI\Regions\Master\" + _configuration.DialogName + @"MasterView.xaml.cs", new[] { masterViewCodeBehindContent});
         }
 
 	    private void CreateUiMasterViewModel()
 	    {
 	        string masterViewModelPath = string.Empty;
 
-
-	        if (_configuration.DataLayout.Count == 1 && _configuration.DataLayout.Any(t => t.CanEditMultiple))
-	        {
-	            masterViewModelPath = _configuration.InputPath + @"UI\Regions\Master\MasterViewModelMultiTemplate.cs";
-	        }
-	        else if (_configuration.DataLayout.Any(t => !string.IsNullOrEmpty(t.Parent)))
-	        {
-	            masterViewModelPath = _configuration.InputPath + @"UI\Regions\Master\MasterViewModelMasterDetailTemplate.cs";
-	        }
-	        else if (_configuration.DataLayout.Count == 1 && _configuration.DataLayout.Any(t => !t.CanEdit))
-            {
-	            masterViewModelPath = _configuration.InputPath + @"UI\Regions\Master\MasterViewModelReadTemplate.cs";
-	        }
-	        else
-	        {
-	            masterViewModelPath = _configuration.InputPath + @"UI\Regions\Master\MasterViewModelTemplate.cs";
-	        }
-
 	        if (_configuration.DataLayout.Count == 1)
 	        {
+	            if (_configuration.DataLayout.Any(t => t.CanEditMultiple))
+	            {
+	                masterViewModelPath = _configuration.InputPath + @"UI\Regions\Master\MasterViewModelMultiTemplate.cs";
+	            }
+	            else if (_configuration.DataLayout.Any(t => !t.CanEdit))
+	            {
+	                masterViewModelPath = _configuration.InputPath + @"UI\Regions\Master\MasterViewModelReadTemplate.cs";
+	            }
+	            else
+	            {
+	                masterViewModelPath = _configuration.InputPath + @"UI\Regions\Master\MasterViewModelTemplate.cs";
+	            }
+
 	            string dataItemName = string.Empty;
 
 	            ConfigurationItem configurationItem = _configuration.DataLayout
@@ -460,22 +489,31 @@ namespace PlusLayerCreator.Configure
 	                dataItemName = configurationItem.Name;
 	            }
 
-	            Helpers.CreateFile(masterViewModelPath,
+	            Helpers.CreateFileFromPath(masterViewModelPath,
 	                _configuration.OutputPath + @"UI\Regions\Master\" + _configuration.DialogName + @"MasterViewModel.cs",
-	                new[] {""}, dataItemName);
-	        }
-	        else if (_configuration.DataLayout.Count == 2)
-            {
-                ConfigurationItem master = _configuration.DataLayout.FirstOrDefault(t => string.IsNullOrEmpty(t.Parent));
-                ConfigurationItem detail = _configuration.DataLayout.FirstOrDefault(t => !string.IsNullOrEmpty(t.Parent));
-                string fileContent = Helpers.DoReplaces(File.ReadAllText(masterViewModelPath).Replace("$MasterDataItem$", master.Name).Replace("$masterDataItem$", Helpers.ToPascalCase(master.Name)).Replace("$ChildDataItem$", detail.Name).Replace("$childDataItem$", Helpers.ToPascalCase(detail.Name)));
+	                new[] { "" }, dataItemName);
+            }
+	        else
+	        {
+	            if (_configuration.DataLayout.Any(t => t.Name == "Version"))
+	            {
+	                masterViewModelPath = _configuration.InputPath + @"UI\Regions\Master\MasterViewModelVersionTemplate.cs";
+	            }
+                else if (_configuration.DataLayout.Any(t => !string.IsNullOrEmpty(t.Parent)))
+	            {
+	                masterViewModelPath = _configuration.InputPath + @"UI\Regions\Master\MasterViewModelMasterDetailTemplate.cs";
+	            }
 
-                FileInfo fileInfo = new FileInfo(_configuration.OutputPath + @"UI\Regions\Master\" + _configuration.DialogName + @"MasterViewModel.cs");
-                if (fileInfo.Directory != null)
-                {
-                    fileInfo.Directory.Create();
-                }
-                File.WriteAllText(fileInfo.FullName, fileContent);
+	            ConfigurationItem master = _configuration.DataLayout.FirstOrDefault(t => string.IsNullOrEmpty(t.Parent));
+	            ConfigurationItem detail = _configuration.DataLayout.FirstOrDefault(t => !string.IsNullOrEmpty(t.Parent));
+	            string fileContent = Helpers.DoReplaces(File.ReadAllText(masterViewModelPath).Replace("$MasterDataItem$", master.Name).Replace("$masterDataItem$", Helpers.ToPascalCase(master.Name)).Replace("$ChildDataItem$", detail.Name).Replace("$childDataItem$", Helpers.ToPascalCase(detail.Name)));
+
+	            FileInfo fileInfo = new FileInfo(_configuration.OutputPath + @"UI\Regions\Master\" + _configuration.DialogName + @"MasterViewModel.cs");
+	            if (fileInfo.Directory != null)
+	            {
+	                fileInfo.Directory.Create();
+	            }
+	            File.WriteAllText(fileInfo.FullName, fileContent);
             }
 	    }
 

@@ -1,0 +1,17 @@
+using Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$;
+
+
+RegisterController(PlusDialogControllerHandle.$Handle$, new GetControllerTypeDelegate($Product$$Dialog$ControllerType));
+
+
+InitProductAction((PlusMainForm)mainForm, PlusDialogControllerHandle.$Handle$);
+
+
+/// <summary>
+/// Only for the delegate usage, to avoid loading the assembly
+/// </summary>
+/// <returns></returns>
+private Type $Product$$Dialog$ControllerType()
+{
+	return typeof($Dialog$Controller);
+}
