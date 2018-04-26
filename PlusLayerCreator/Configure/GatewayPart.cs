@@ -39,18 +39,18 @@ namespace PlusLayerCreator.Configure
 				{
 					if (string.IsNullOrEmpty(dataItem.Parent))
 					{
-						interfaceReadContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\GetPart.txt"), dataItem.Name) + "\r\n\r\n";
-						gatewayReadContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\GetPart.txt"), dataItem.Name) + "\r\n\r\n";
+						interfaceReadContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\GetPart.txt"), dataItem) + "\r\n\r\n";
+						gatewayReadContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\GetPart.txt"), dataItem) + "\r\n\r\n";
 					}
 					else
 					{
-						string content = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\GetChildPart.txt"), dataItem.Name) +
+						string content = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\GetChildPart.txt"), dataItem) +
 										 "\r\n\r\n";
 						content = Helpers.ReplaceSpecialContent(content, new[] { _configuration.Product + dataItem.Parent });
 						interfaceReadContent += content;
 
 
-						content = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\GetChildPart.txt"), dataItem.Name) +
+						content = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\GetChildPart.txt"), dataItem) +
 								  "\r\n\r\n";
 						content = Helpers.ReplaceSpecialContent(content, new[] { _configuration.Product + dataItem.Parent });
 						gatewayReadContent += content;
@@ -61,16 +61,16 @@ namespace PlusLayerCreator.Configure
 				{
 					if (string.IsNullOrEmpty(dataItem.Parent))
 					{
-						interfaceSaveContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\SavePart.txt"), dataItem.Name) + "\r\n\r\n";
-						gatewaySaveContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\SavePart.txt"), dataItem.Name) + "\r\n\r\n";
+						interfaceSaveContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\SavePart.txt"), dataItem) + "\r\n\r\n";
+						gatewaySaveContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\SavePart.txt"), dataItem) + "\r\n\r\n";
 					}
 				}
 				if (dataItem.CanEdit && dataItem.CanEditMultiple)
 				{
 					if (string.IsNullOrEmpty(dataItem.Parent))
 					{
-						interfaceSaveContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\SaveMultiPart.txt"), dataItem.Name) + "\r\n\r\n";
-						gatewaySaveContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\SaveMultiPart.txt"), dataItem.Name) + "\r\n\r\n";
+						interfaceSaveContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\SaveMultiPart.txt"), dataItem) + "\r\n\r\n";
+						gatewaySaveContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\SaveMultiPart.txt"), dataItem) + "\r\n\r\n";
 					}
 				}
 
@@ -121,9 +121,9 @@ namespace PlusLayerCreator.Configure
 					new[] { key, identifier, readOnlyMappingDto, readOnlyMappingBo });
 
 				Helpers.CreateFileFromPath(_configuration.InputPath + @"Gateway\Contracts\IGatewayTemplate.cs",
-					_configuration.OutputPath + @"Gateway\Contracts\I" + _configuration.Product + dataItem.Name + "Gateway.cs", new[] { interfaceReadContent, interfaceSaveContent }, dataItem.Name);
+					_configuration.OutputPath + @"Gateway\Contracts\I" + _configuration.Product + dataItem.Name + "Gateway.cs", new[] { interfaceReadContent, interfaceSaveContent }, dataItem);
 				Helpers.CreateFileFromPath(_configuration.InputPath + @"Gateway\GatewayTemplate.cs",
-					_configuration.OutputPath + @"Gateway\" + _configuration.Product + dataItem.Name + "Gateway.cs", new[] { gatewayReadContent, gatewaySaveContent }, dataItem.Name);
+					_configuration.OutputPath + @"Gateway\" + _configuration.Product + dataItem.Name + "Gateway.cs", new[] { gatewayReadContent, gatewaySaveContent }, dataItem);
 
 			}
 		}
@@ -142,7 +142,7 @@ namespace PlusLayerCreator.Configure
 				}
 
 				Helpers.CreateFileFromPath(_configuration.InputPath + layer + @"\Dtos\DtoTemplate.cs",
-					_configuration.OutputPath + layer + @"\Dtos\" + _configuration.Product + dataItem.Name + ".cs", new[] { dtoContent }, dataItem.Name);
+					_configuration.OutputPath + layer + @"\Dtos\" + _configuration.Product + dataItem.Name + ".cs", new[] { dtoContent }, dataItem);
 			}
 		}
 
@@ -151,7 +151,7 @@ namespace PlusLayerCreator.Configure
 			string factoryContent = string.Empty;
 			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
 			{
-				factoryContent += Helpers.DoReplaces(_createGatewayDtoTemplateUpperPart + "\r\n", dataItem.Name);
+				factoryContent += Helpers.DoReplaces(_createGatewayDtoTemplateUpperPart + "\r\n", dataItem);
 				foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
 				{
 					if (plusDataObject.IsKey)
@@ -163,7 +163,7 @@ namespace PlusLayerCreator.Configure
 						factoryContent += plusDataObject.Name + " = bo." + plusDataObject.Name + ",\r\n";
 					}
 				}
-				factoryContent += Helpers.DoReplaces(_createGatewayDtoTemplateLowerPart, dataItem.Name);
+				factoryContent += Helpers.DoReplaces(_createGatewayDtoTemplateLowerPart, dataItem);
 			}
 
 			string[] contentsDtoFactory = {

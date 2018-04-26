@@ -1,0 +1,7 @@
+<plus:PlusButton
+	Margin="0 16"
+	Command="{Binding ActivateVersionCommand}"
+	Content="{Binding ActivateVersionCommandDisplayName}"
+	DockPanel.Dock="Top"
+	IsEnabled="{Binding IsBusy, Converter={StaticResource InvertBoolConverter}}"
+	Style="{StaticResource ActionButton.Standard}" />

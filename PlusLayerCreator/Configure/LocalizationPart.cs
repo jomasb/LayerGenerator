@@ -55,12 +55,22 @@ namespace PlusLayerCreator.Configure
 			        btnDe += _configuration.Product + _configuration.DialogName + "_btnAdd" + dataItem.Name + "=Neues " + dataItem.Translation + "\r\n";
 			        btnDeOut += _configuration.Product + _configuration.DialogName + "_btnAdd" + dataItem.Name + "=@@Neues " + dataItem.Translation + "\r\n";
                 }
-			    if (dataItem.Name == "Version")
+			    if (dataItem.Name.EndsWith("Version"))
 			    {
-			        btnEn += _configuration.Product + _configuration.DialogName + "_btnAdd" + dataItem.Name + "=New " + dataItem.Name + "\r\n";
+                    btnEn += _configuration.Product + _configuration.DialogName + "_btnAdd" + dataItem.Name + "=New " + dataItem.Name + "\r\n";
 			        btnEnOut += _configuration.Product + _configuration.DialogName + "_btnAdd" + dataItem.Name + "=@@New " + dataItem.Name + "\r\n";
 			        btnDe += _configuration.Product + _configuration.DialogName + "_btnAdd" + dataItem.Name + "=Neue " + dataItem.Translation + "\r\n";
 			        btnDeOut += _configuration.Product + _configuration.DialogName + "_btnAdd" + dataItem.Name + "=@@Neue " + dataItem.Translation + "\r\n";
+
+			        btnEn += _configuration.Product + _configuration.DialogName + "_btnDeactivateVersion=Deactivate version\r\n";
+			        btnEnOut += _configuration.Product + _configuration.DialogName + "_btnDeactivateVersion=@@Deactivate version\r\n";
+			        btnDe += _configuration.Product + _configuration.DialogName + "_btnDeactivateVersion=Version deaktivieren\r\n";
+			        btnDeOut += _configuration.Product + _configuration.DialogName + "_btnDeactivateVersion=@@Version deaktivieren\r\n";
+
+			        btnEn += _configuration.Product + _configuration.DialogName + "_btnActivateVersion=Activate version\r\n";
+			        btnEnOut += _configuration.Product + _configuration.DialogName + "_btnActivateVersion=@@Activate version\r\n";
+			        btnDe += _configuration.Product + _configuration.DialogName + "_btnActivateVersion=Version aktivieren\r\n";
+			        btnDeOut += _configuration.Product + _configuration.DialogName + "_btnActivateVersion=@@Version aktivieren\r\n";
                 }
 
                 foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
@@ -101,7 +111,7 @@ namespace PlusLayerCreator.Configure
 			foreach (string language in languages)
 			{
 				string fileContent = File.ReadAllText(_configuration.InputPath + @"Localization\localization.txt");
-				fileContent = Helpers.DoReplaces(fileContent, string.Empty);
+				fileContent = Helpers.DoReplaces(fileContent);
 				fileContent = fileContent.Replace("$language$", language);
 				fileContent = fileContent.Replace("$date$", DateTime.Now.ToShortDateString());
 				fileContent = fileContent.Replace("$_configuration.Product$", _configuration.Product);

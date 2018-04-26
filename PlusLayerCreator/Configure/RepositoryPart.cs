@@ -55,7 +55,7 @@ namespace PlusLayerCreator.Configure
 						if (_configuration.DataLayout.Any(t => t.Parent == dataItem.Name))
 						{
 							//parent
-							interfaceContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\GetParentPart.txt"), dataItem.Name) + "\r\n\r\n";
+							interfaceContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\GetParentPart.txt"), dataItem) + "\r\n\r\n";
 
 							string childDataItem = _configuration.DataLayout.FirstOrDefault(t => t.Parent == dataItem.Name).Name;
 							string getChild = childDataItem +
@@ -63,7 +63,7 @@ namespace PlusLayerCreator.Configure
 											  "() => Get" + childDataItem + "sAsync(callContext, " + Helpers.ToPascalCase(dataItem.Name) + "DataItem))" +
 											  "{ AutoAcceptAfterSuccessfullyLoading = true, AutoOverwriteParent = true };";
 
-							string content = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\GetParentPart.txt"), dataItem.Name) +
+							string content = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\GetParentPart.txt"), dataItem) +
 											 "\r\n\r\n";
 							content = Helpers.ReplaceSpecialContent(content, new[] { getChild });
 							repositoryContent += content;
@@ -71,20 +71,20 @@ namespace PlusLayerCreator.Configure
 						else
 						{
 							//single
-							interfaceContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\GetPart.txt"), dataItem.Name) + "\r\n\r\n";
-							repositoryContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\GetPart.txt"), dataItem.Name) + "\r\n\r\n";
+							interfaceContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\GetPart.txt"), dataItem) + "\r\n\r\n";
+							repositoryContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\GetPart.txt"), dataItem) + "\r\n\r\n";
 						}
 					}
 					else
 					{
 						//child
 						string transformParent = "_" + Helpers.ToPascalCase(_configuration.Product) + "DtoFactory.Create" + dataItem.Parent + "FromDataItem";
-						string content = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\GetChildPart.txt"), dataItem.Name) +
+						string content = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\GetChildPart.txt"), dataItem) +
 										 "\r\n\r\n";
 						content = Helpers.ReplaceSpecialContent(content, new[] { _configuration.Product + dataItem.Parent });
 						interfaceContent += content;
 
-						content = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\GetChildPart.txt"), dataItem.Name) +
+						content = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\GetChildPart.txt"), dataItem) +
 								  "\r\n\r\n";
 						content = Helpers.ReplaceSpecialContent(content, new[] { _configuration.Product + dataItem.Parent, transformParent });
 						repositoryContent += content;
@@ -93,32 +93,32 @@ namespace PlusLayerCreator.Configure
 
 				if (dataItem.CanClone)
 				{
-					interfaceContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\ClonePart.txt"), dataItem.Name) + "\r\n\r\n";
-					repositoryContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\ClonePart.txt"), dataItem.Name) + "\r\n\r\n";
+					interfaceContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\ClonePart.txt"), dataItem) + "\r\n\r\n";
+					repositoryContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\ClonePart.txt"), dataItem) + "\r\n\r\n";
 				}
 
 				if (dataItem.CanDelete)
 				{
-					interfaceContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\DeletePart.txt"), dataItem.Name) + "\r\n\r\n";
-					repositoryContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\DeletePart.txt"), dataItem.Name) + "\r\n\r\n";
+					interfaceContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\DeletePart.txt"), dataItem) + "\r\n\r\n";
+					repositoryContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\DeletePart.txt"), dataItem) + "\r\n\r\n";
 				}
 
 				if (dataItem.CanSort)
 				{
-					interfaceContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\SortPart.txt"), dataItem.Name) + "\r\n\r\n";
-					repositoryContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\SortPart.txt"), dataItem.Name) + "\r\n\r\n";
+					interfaceContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\SortPart.txt"), dataItem) + "\r\n\r\n";
+					repositoryContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\SortPart.txt"), dataItem) + "\r\n\r\n";
 				}
 				if (dataItem.CanEdit)
 				{
-					interfaceContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\AddPart.txt"), dataItem.Name) + "\r\n\r\n";
-					repositoryContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\AddPart.txt"), dataItem.Name) + "\r\n\r\n";
+					interfaceContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\AddPart.txt"), dataItem) + "\r\n\r\n";
+					repositoryContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\AddPart.txt"), dataItem) + "\r\n\r\n";
 
 					if (!dataItem.CanEditMultiple)
 					{
-						if (string.IsNullOrEmpty(dataItem.Parent))
+						if (string.IsNullOrEmpty(dataItem.Parent) || dataItem.Name.EndsWith("Version"))
 						{
-							interfaceContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\SavePart.txt"), dataItem.Name) + "\r\n\r\n";
-							string content = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\SavePart.txt"), dataItem.Name) + "\r\n\r\n";
+							interfaceContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\SavePart.txt"), dataItem) + "\r\n\r\n";
+							string content = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\SavePart.txt"), dataItem) + "\r\n\r\n";
 							content = Helpers.ReplaceSpecialContent(content, new[] { identifier, readOnly });
 							repositoryContent += content;
 						}
@@ -127,13 +127,24 @@ namespace PlusLayerCreator.Configure
 					{
 						if (string.IsNullOrEmpty(dataItem.Parent))
 						{
-							interfaceContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\SaveMultiPart.txt"), dataItem.Name) + "\r\n\r\n";
-							string content = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\SaveMultiPart.txt"), dataItem.Name) + "\r\n\r\n";
+							interfaceContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\SaveMultiPart.txt"), dataItem) + "\r\n\r\n";
+							string content = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\SaveMultiPart.txt"), dataItem) + "\r\n\r\n";
 							content = Helpers.ReplaceSpecialContent(content, new[] { identifier, readOnly });
 							repositoryContent += content;
 						}
 					}
 				}
+
+			    if (dataItem.Name.EndsWith("Version"))
+			    {
+			        if (!string.IsNullOrEmpty(dataItem.Parent))
+			        {
+			            interfaceContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\VersionPart.txt"), dataItem) + "\r\n\r\n";
+			            string content = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\VersionPart.txt"), dataItem) + "\r\n\r\n";
+			            content = Helpers.ReplaceSpecialContent(content, new[] { identifier, readOnly });
+			            repositoryContent += content;
+			        }
+                }
 
 				interfaceContent += "#endregion " + dataItem.Name + "\r\n\r\n";
 				repositoryContent += "#endregion " + dataItem.Name + "\r\n\r\n";
@@ -244,12 +255,12 @@ namespace PlusLayerCreator.Configure
 
 					foreach (ConfigurationItem childDataItem in _configuration.DataLayout.Where(t => t.Parent == dataItem.Name))
 					{
-						dataItemContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\DataItems\DataItemCollectionPart.txt"), childDataItem.Name) + "\r\n";
+						dataItemContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Repository\DataItems\DataItemCollectionPart.txt"), childDataItem) + "\r\n";
 					}
 				}
 
 				Helpers.CreateFileFromPath(_configuration.InputPath + @"Repository\DataItems\DataItemTemplate.cs",
-					_configuration.OutputPath + @"Repository\DataItems\" + _configuration.Product + dataItem.Name + "DataItem.cs", new[] { dataItemContent }, dataItem.Name);
+					_configuration.OutputPath + @"Repository\DataItems\" + _configuration.Product + dataItem.Name + "DataItem.cs", new[] { dataItemContent }, dataItem);
 			}
 		}
 
@@ -258,12 +269,12 @@ namespace PlusLayerCreator.Configure
 			string factoryContent = string.Empty;
 			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
 			{
-				factoryContent += Helpers.DoReplaces(_createRepositoryDtoTemplateUpperPart + "\r\n", dataItem.Name);
+				factoryContent += Helpers.DoReplaces(_createRepositoryDtoTemplateUpperPart + "\r\n", dataItem);
 				foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
 				{
 					factoryContent += plusDataObject.Name + " = dataItem." + plusDataObject.Name + ",\r\n";
 				}
-				factoryContent += Helpers.DoReplaces(_createRepositoryDtoTemplateLowerPart, dataItem.Name) + "\r\n";
+				factoryContent += Helpers.DoReplaces(_createRepositoryDtoTemplateLowerPart, dataItem) + "\r\n";
 			}
 
 			string dtoLayer = _configuration.IsUseBusinessServiceWithoutBo ? "BusinessServiceLocal" : "Gateway";
@@ -277,12 +288,12 @@ namespace PlusLayerCreator.Configure
 			string factoryContent = string.Empty;
 			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
 			{
-				factoryContent += Helpers.DoReplaces(_createDataItemTemplateUpperPart + "\r\n", dataItem.Name);
+				factoryContent += Helpers.DoReplaces(_createDataItemTemplateUpperPart + "\r\n", dataItem);
 				foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
 				{
 					factoryContent += plusDataObject.Name + " = dto." + plusDataObject.Name + ",\r\n";
 				}
-				factoryContent += Helpers.DoReplaces(_createDataItemTemplateLowerPart, dataItem.Name) + "\r\n";
+				factoryContent += Helpers.DoReplaces(_createDataItemTemplateLowerPart, dataItem) + "\r\n";
 			}
 
 			string dtoLayer = _configuration.IsUseBusinessServiceWithoutBo ? "BusinessServiceLocal" : "Gateway";

@@ -1,3 +1,11 @@
+<UserControl.Resources>
+	<ResourceDictionary>
+		<ResourceDictionary.MergedDictionaries>
+			<plus:PlusDesignTimeResourceDictionary Source="pack://application:,,,/Dcx.Plus.UI.WPF.FW.Controls;component/Themes/Generic.xaml" />
+		</ResourceDictionary.MergedDictionaries>
+	</ResourceDictionary>
+</UserControl.Resources>
+
 <plus:PlusDataGrid
 			x:Name="Filtered$Item$GridView"
 			IsSynchronizedWithCurrentItem="False"

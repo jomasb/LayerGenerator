@@ -13,6 +13,7 @@ namespace PlusLayerCreator.Configure
 		private string _readOnlyTemplate = " IsReadOnly=\"True\"";
 		private string _isNumericTemplate = " IsNumeric=\"True\"";
 		private readonly string _masterGridTemplate;
+		private readonly string _masterGridNoResourcesTemplate;
 		private readonly string _masterGridVersionTemplate;
 	    private readonly string _masterGridMultiTemplate;
 
@@ -20,6 +21,7 @@ namespace PlusLayerCreator.Configure
 		{
 			_configuration = configuration;
 			_masterGridTemplate = File.ReadAllText(configuration.InputPath + @"UI\Regions\Master\MasterGridPart.txt");
+		    _masterGridNoResourcesTemplate = File.ReadAllText(configuration.InputPath + @"UI\Regions\Master\MasterGridNoResourcesPart.txt");
 			_masterGridVersionTemplate = File.ReadAllText(configuration.InputPath + @"UI\Regions\Master\MasterVersionGridPart.txt");
 		    _masterGridMultiTemplate = File.ReadAllText(configuration.InputPath + @"UI\Regions\Master\MasterGridMultiPart.txt");
         }
@@ -74,7 +76,7 @@ namespace PlusLayerCreator.Configure
 			string filterChildViewModelContent = string.Empty;
 
 			//filterMembersContent
-			foreach (ConfigurationItem dataItem in _configuration.DataLayout.Where(t => t.Name != "Version"))
+			foreach (ConfigurationItem dataItem in _configuration.DataLayout.Where(t => !t.Name.EndsWith("Version")))
 			{
 				string filterMembersContent = string.Empty;
 				string filterPredicatesContent = string.Empty;
@@ -100,19 +102,19 @@ namespace PlusLayerCreator.Configure
 							out propertyFilterPredicatesContent, out propertyFilterXamlContent,
 							out propertyFilterMultiSelectorsInitializeContent);
 
-						filterMembersContent += Helpers.DoReplaces2(propertyFilterMembersContent, plusDataObject.Name, dataItem.Name, plusDataObject.Type);
-						filterPredicatesContent += Helpers.DoReplaces2(propertyFilterPredicatesContent, plusDataObject.Name, dataItem.Name, plusDataObject.Type);
-						filterPredicateResetContent += Helpers.DoReplaces2(propertyFilterPredicateResetContent, plusDataObject.Name, dataItem.Name, plusDataObject.Type);
-						filterMultiSelectorsInitializeContent += Helpers.DoReplaces2(propertyFilterMultiSelectorsInitializeContent, plusDataObject.Name, dataItem.Name, plusDataObject.Type);
-						filterPropertiesContent += Helpers.DoReplaces2(propertyFilterPropertiesContent, plusDataObject.Name, dataItem.Name);
-						filterViewContent += Helpers.DoReplaces2(propertyFilterXamlContent, plusDataObject.Name, dataItem.Name, plusDataObject.Type);
+						filterMembersContent += Helpers.DoReplaces2(propertyFilterMembersContent, plusDataObject.Name, dataItem, plusDataObject.Type);
+						filterPredicatesContent += Helpers.DoReplaces2(propertyFilterPredicatesContent, plusDataObject.Name, dataItem, plusDataObject.Type);
+						filterPredicateResetContent += Helpers.DoReplaces2(propertyFilterPredicateResetContent, plusDataObject.Name, dataItem, plusDataObject.Type);
+						filterMultiSelectorsInitializeContent += Helpers.DoReplaces2(propertyFilterMultiSelectorsInitializeContent, plusDataObject.Name, dataItem, plusDataObject.Type);
+						filterPropertiesContent += Helpers.DoReplaces2(propertyFilterPropertiesContent, plusDataObject.Name, dataItem);
+						filterViewContent += Helpers.DoReplaces2(propertyFilterXamlContent, plusDataObject.Name, dataItem, plusDataObject.Type);
 					}
 				}
 
 			    filterViewContent += "</StackPanel>\r\n";
 
                 string childViewModel = Helpers.FilterChildViewModelTemplate;
-				childViewModel = Helpers.DoReplaces(childViewModel, dataItem.Name);
+				childViewModel = Helpers.DoReplaces(childViewModel, dataItem);
 				childViewModel = childViewModel.Replace("$filterMembers$", filterMembersContent);
 				childViewModel = childViewModel.Replace("$filterPredicates$", filterPredicatesContent);
 				childViewModel = childViewModel.Replace("$filterPredicateReset$", filterPredicateResetContent);
@@ -143,6 +145,7 @@ namespace PlusLayerCreator.Configure
 			string moduleContent = string.Empty;
 			string moduleContent2 = string.Empty;
 		    string commandNamesContent = string.Empty;
+		    string eventNamesContent = string.Empty;
 
             string viewNamesContent = "public static readonly string " + _configuration.DialogName + "MasterView = \"" + _configuration.DialogName + "MasterView\";\r\n";
 
@@ -150,7 +153,7 @@ namespace PlusLayerCreator.Configure
 			{
 				moduleContent += "_container.RegisterType<object, " + dataItem.Name + "DetailView>(ViewNames." + dataItem.Name + "DetailView);\r\n";
 
-                if (dataItem.Name != "Version")
+                if (!dataItem.Name.EndsWith("Version"))
                 {
                     moduleContent2 += "_container.RegisterType<IFilterSourceProvider<" + _configuration.Product + dataItem.Name + "DataItem>, " +
 								  _configuration.DialogName + "MasterViewModel>(new ContainerControlledLifetimeManager());\r\n";
@@ -159,7 +162,7 @@ namespace PlusLayerCreator.Configure
 
 				viewNamesContent += "public static readonly string " + dataItem.Name + "DetailView = \"" + dataItem.Name + "DetailView\";\r\n";
 
-			    if (!string.IsNullOrEmpty(dataItem.Parent) && dataItem.Name != "Version")
+			    if (!string.IsNullOrEmpty(dataItem.Parent) && !dataItem.Name.EndsWith("Version"))
 			    {
 			        if (dataItem.CanDelete)
 			        {
@@ -175,6 +178,12 @@ namespace PlusLayerCreator.Configure
 			            commandNamesContent += "public static readonly string Sort" + dataItem.Name + "DownCommand = \"" + dataItem.Name + "SortDownCommand\";\r\n";
 			        }
 			    }
+
+			    if (dataItem.Name.EndsWith("Version"))
+			    {
+			        eventNamesContent += "public static string VersionActivationChanged = \"VersionActivationChanged\";\r\n";
+
+			    }
             }
 
 			Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\ModuleTemplate.cs", _configuration.OutputPath + @"UI\" + _configuration.DialogName + @"Module.cs", new[] { moduleContent, moduleContent2 });
@@ -186,8 +195,8 @@ namespace PlusLayerCreator.Configure
 			Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\WindowTemplate.xaml.cs", _configuration.OutputPath + @"UI\" + _configuration.DialogName + @"Window.xaml.cs");
             Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Infrastructure\BootstrapperTemplate.cs", _configuration.OutputPath + @"UI\Infrastructure\Bootstrapper.cs");
             Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Infrastructure\CommandNamesTemplate.cs", _configuration.OutputPath + @"UI\Infrastructure\CommandNames.cs", new []{ commandNamesContent });
-			Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Infrastructure\EventNamesTemplate.cs", _configuration.OutputPath + @"UI\Infrastructure\EventNames.cs");
-			Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Infrastructure\ParameterNamesTemplate.cs", _configuration.OutputPath + @"UI\Infrastructure\ParameterNames.cs");
+			Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Infrastructure\EventNamesTemplate.cs", _configuration.OutputPath + @"UI\Infrastructure\EventNames.cs", new[] { eventNamesContent });
+            Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Infrastructure\ParameterNamesTemplate.cs", _configuration.OutputPath + @"UI\Infrastructure\ParameterNames.cs");
 			Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Infrastructure\ViewNamesTemplate.cs", _configuration.OutputPath + @"UI\Infrastructure\ViewNames.cs", new[] { viewNamesContent });
 		}
 
@@ -206,12 +215,12 @@ namespace PlusLayerCreator.Configure
 	        toolbarViewContent +=
 	            File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarRefreshButtonPart.txt") + "\r\n";
 
-            foreach (ConfigurationItem dataItem in _configuration.DataLayout.Where(t => string.IsNullOrEmpty(t.Parent) && t.IsPreFilterItem == false || t.Name == "Version"))
+            foreach (ConfigurationItem dataItem in _configuration.DataLayout.Where(t => string.IsNullOrEmpty(t.Parent) && t.IsPreFilterItem == false || t.Name.EndsWith("Version")))
 	        {
 	            if (dataItem.CanEdit)
 	            {
 	                toolbarViewContent +=
-	                    Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarAddButtonPart.txt") + "\r\n", dataItem.Name);
+	                    Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarAddButtonPart.txt") + "\r\n", dataItem);
                 }
             }
 
@@ -251,23 +260,25 @@ namespace PlusLayerCreator.Configure
 
 	            if (!string.IsNullOrEmpty(dataItem.Parent))
 	            {
+	                var parent = _configuration.DataLayout.FirstOrDefault(t => t.Name == dataItem.Parent);
+                    
                     // Parent key fields
-	                detailViewContent += "<plus:PlusGroupBox Header=\"" + GetLocalizedString(dataItem.Parent) + "\">";
+                    detailViewContent += "<plus:PlusGroupBox Header=\"" + GetLocalizedString(dataItem.Parent) + "\">";
 	                detailViewContent += "    <StackPanel>";
 
-	                foreach (ConfigurationProperty property in _configuration.DataLayout.FirstOrDefault(t => t.Name == dataItem.Parent).Properties)
+	                foreach (ConfigurationProperty property in parent.Properties)
 	                {
 	                    detailViewContent += "        <plus:PlusFormRow Label=\"" +
-	                                         GetLocalizedString(dataItem.Name + property.Name) + "\">\r\n";
+	                                         GetLocalizedString(parent.Name + property.Name) + "\">\r\n";
 	                    if (property.Type == "bool")
 	                    {
-	                        detailViewContent += "            <plus:PlusLabel Content=\"{Binding DataItem." +
+	                        detailViewContent += "            <plus:PlusLabel Content=\"{Binding DataItem.Parent.Parent." +
 	                                             property.Name +
 	                                             yesNoConverterString + "}\" />\r\n";
 	                    }
 	                    else
 	                    {
-	                        detailViewContent += "            <plus:PlusLabel Content=\"{Binding DataItem." +
+	                        detailViewContent += "            <plus:PlusLabel Content=\"{Binding DataItem.Parent.Parent." +
 	                                             property.Name +
 	                                             "}\" />\r\n";
 	                    }
@@ -280,8 +291,18 @@ namespace PlusLayerCreator.Configure
                 detailViewContent += "<plus:PlusGroupBox Header=\"" + GetLocalizedString(dataItem.Name, true) + "\">";
 	            detailViewContent += "    <StackPanel>";
 
-	            foreach (ConfigurationProperty property in dataItem.Properties)
+	            if (dataItem.Name.EndsWith("Version"))
 	            {
+	                detailViewContent += File.ReadAllText(_configuration.InputPath + @"UI\Regions\Detail\VersionDetailButtonXaml.txt");
+                }
+
+                foreach (ConfigurationProperty property in dataItem.Properties)
+	            {
+	                if (dataItem.Name.EndsWith("Version") && property.Name == "IsActive")
+	                {
+	                    continue;
+	                }
+
 	                detailViewContent += "        <plus:PlusFormRow Label=\"" +
 	                                     GetLocalizedString(dataItem.Name + property.Name) + "\">\r\n";
 
@@ -359,15 +380,24 @@ namespace PlusLayerCreator.Configure
 	            detailViewContent += "    </StackPanel>";
 	            detailViewContent += "</plus:PlusGroupBox>";
 
-	            Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Regions\Detail\DetailViewModelTemplate.cs",
-	                _configuration.OutputPath + @"UI\Regions\Detail\" + dataItem.Name + "DetailViewModel.cs", null,
-	                dataItem.Name);
-	            Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Regions\Detail\DetailViewTemplate.xaml",
+	            if (dataItem.Name.EndsWith("Version"))
+	            {
+	                Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Regions\Detail\VersionDetailViewModelTemplate.cs",
+	                    _configuration.OutputPath + @"UI\Regions\Detail\" + dataItem.Name + "DetailViewModel.cs", null,
+	                    dataItem);
+                }
+	            else
+	            {
+	                Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Regions\Detail\DetailViewModelTemplate.cs",
+	                    _configuration.OutputPath + @"UI\Regions\Detail\" + dataItem.Name + "DetailViewModel.cs", null,
+	                    dataItem);
+                }
+                Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Regions\Detail\DetailViewTemplate.xaml",
 	                _configuration.OutputPath + @"UI\Regions\Detail\" + dataItem.Name + "DetailView.xaml",
-	                new[] {detailViewContent}, dataItem.Name);
+	                new[] {detailViewContent}, dataItem);
 	            Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Regions\Detail\DetailViewTemplate.xaml.cs",
 	                _configuration.OutputPath + @"UI\Regions\Detail\" + dataItem.Name + "DetailView.xaml.cs", null,
-	                dataItem.Name);
+	                dataItem);
 	        }
 	    }
 
@@ -408,13 +438,13 @@ namespace PlusLayerCreator.Configure
 	        if (_configuration.DataLayout.Count == 1)
 	        {
 	            ConfigurationItem dataItem = _configuration.DataLayout.FirstOrDefault();
-                string gridContent = Helpers.DoReplaces(dataItem.CanEditMultiple ? _masterGridMultiTemplate : _masterGridTemplate, dataItem.Name);
+                string gridContent = Helpers.DoReplaces(dataItem.CanEditMultiple ? _masterGridMultiTemplate : _masterGridTemplate, dataItem);
 	            masterViewContent += gridContent.Replace("$specialContent1$", GetGridXaml(dataItem));
 	            masterViewCodeBehindContent += "viewModel.ColumnProvider = Filtered" + dataItem.Name + "sGridView;\r\n\r\n";
 	        }
 
             // Master/Detail
-	        if (_configuration.DataLayout.Count == 2 && _configuration.DataLayout.Count(t => string.IsNullOrEmpty(t.Parent)) == 1 && _configuration.DataLayout.All(t => t.Name != "Version"))
+	        if (_configuration.DataLayout.Count == 2 && _configuration.DataLayout.Count(t => string.IsNullOrEmpty(t.Parent)) == 1 && _configuration.DataLayout.All(t => !t.Name.EndsWith("Version")))
 	        {
 	            ConfigurationItem master = _configuration.DataLayout.FirstOrDefault(t => string.IsNullOrEmpty(t.Parent));
 	            ConfigurationItem detail = _configuration.DataLayout.FirstOrDefault(t => !string.IsNullOrEmpty(t.Parent));
@@ -423,37 +453,36 @@ namespace PlusLayerCreator.Configure
 	            masterViewCodeBehindContent += "viewModel.ColumnProvider = Filtered" + detail.Name + "sGridView;\r\n\r\n";
 
                 masterViewContent += File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\MasterDetailLayout.txt") + "\r\n\r\n";
-	            string gridContent = Helpers.DoReplaces(_masterGridTemplate, master.Name);
+	            string gridContent = Helpers.DoReplaces(_masterGridNoResourcesTemplate, master);
 	            masterViewContent += gridContent.Replace("$specialContent1$", GetGridXaml(master));
 	            if (detail.CanEditMultiple)
 	            {
 	                string commandButtonsContent = string.Empty;
 	                if (detail.CanSort)
 	                {
-	                    commandButtonsContent = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ChildGridCommandWithSortButtons.txt"), detail.Name);
+	                    commandButtonsContent = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ChildGridCommandWithSortButtons.txt"), detail);
                     }
 	                else
 	                {
-	                    commandButtonsContent = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ChildGridCommandButtons.txt"), detail.Name);
+	                    commandButtonsContent = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ChildGridCommandButtons.txt"), detail);
                     }
-	                gridContent = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ChildGridMultiPart.txt") + "\r\n\r\n", detail.Name);
+	                gridContent = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ChildGridMultiPart.txt") + "\r\n\r\n", detail);
 	                gridContent = gridContent.Replace("$specialContent2$", commandButtonsContent);
 	            }
 	            else
 	            {
-	                gridContent = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ChildGridPart.txt") + "\r\n\r\n", detail.Name);
+	                gridContent = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ChildGridPart.txt") + "\r\n\r\n", detail);
                 }
 	            masterViewContent += gridContent.Replace("$specialContent1$", GetGridXaml(detail));
             }
 
-		    if (_configuration.DataLayout.Count == 2 && _configuration.DataLayout.Count(t => string.IsNullOrEmpty(t.Parent)) == 1 && _configuration.DataLayout.Any(t => t.Name == "Version"))
+		    if (_configuration.DataLayout.Count == 2 && _configuration.DataLayout.Count(t => string.IsNullOrEmpty(t.Parent)) == 1 && _configuration.DataLayout.Any(t => t.Name.EndsWith("Version")))
 		    {
 			    ConfigurationItem master = _configuration.DataLayout.FirstOrDefault(t => string.IsNullOrEmpty(t.Parent));
-			    ConfigurationItem detail = _configuration.DataLayout.FirstOrDefault(t => t.Name == "Version");
+			    ConfigurationItem detail = _configuration.DataLayout.FirstOrDefault(t => t.Name.EndsWith("Version"));
 			    masterViewCodeBehindContent += "viewModel.ColumnProvider = Filtered" + master.Name + "sGridView;\r\n\r\n";
 
-				//masterViewContent += File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\MasterVersionTemplate.txt") + "\r\n\r\n";
-			    string gridContent = Helpers.DoReplaces(_masterGridVersionTemplate, master.Name);
+			    string gridContent = Helpers.DoReplaces(_masterGridVersionTemplate, master);
 			    masterViewContent += gridContent.Replace("$specialContent1$", GetGridXaml(master, true)).Replace("$specialContent2$", GetGridXaml(detail, true));
 		    }
 
@@ -480,22 +509,16 @@ namespace PlusLayerCreator.Configure
 	                masterViewModelPath = _configuration.InputPath + @"UI\Regions\Master\MasterViewModelTemplate.cs";
 	            }
 
-	            string dataItemName = string.Empty;
-
 	            ConfigurationItem configurationItem = _configuration.DataLayout
 	                .Where(t => string.IsNullOrEmpty(t.Parent) && t.IsPreFilterItem == false).FirstOrDefault();
-	            if (configurationItem != null)
-	            {
-	                dataItemName = configurationItem.Name;
-	            }
 
 	            Helpers.CreateFileFromPath(masterViewModelPath,
 	                _configuration.OutputPath + @"UI\Regions\Master\" + _configuration.DialogName + @"MasterViewModel.cs",
-	                new[] { "" }, dataItemName);
+	                new[] { "" }, configurationItem);
             }
 	        else
 	        {
-	            if (_configuration.DataLayout.Any(t => t.Name == "Version"))
+	            if (_configuration.DataLayout.Any(t => t.Name.EndsWith("Version")))
 	            {
 	                masterViewModelPath = _configuration.InputPath + @"UI\Regions\Master\MasterViewModelVersionTemplate.cs";
 	            }

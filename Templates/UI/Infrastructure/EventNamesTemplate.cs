@@ -8,6 +8,6 @@
 	/// <date></date>
 	public static class EventNames
 	{
-		//public static readonly string XXXEvent = "XXXEvent";
+		$specialContent1$
 	}
 }

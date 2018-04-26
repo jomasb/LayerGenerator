@@ -72,26 +72,28 @@ namespace PlusLayerCreator
 			return int.Parse(computedString);
 		}
 
-		public static string DoReplaces(string input, string item = "")
+		public static string DoReplaces(string input, ConfigurationItem item = null)
 		{
 			input = input.Replace("$PPRODUCT$", Configuration.Product.ToUpper());
 			input = input.Replace("$Product$", Configuration.Product);
 			input = input.Replace("$product$", ToPascalCase(Configuration.Product));
-			input = input.Replace("$Item$", item);
-			input = input.Replace("$item$", ToPascalCase(item));
-			input = input.Replace("$Dialog$", Configuration.DialogName);
+		    input = input.Replace("$Item$", item == null ? string.Empty : item.Name);
+		    input = input.Replace("$item$", item == null ? string.Empty : ToPascalCase(item.Name));
+			input = input.Replace("$Parent$", item == null ? string.Empty : item.Parent);
+            input = input.Replace("$parent$", item == null ? string.Empty : ToPascalCase(item.Parent));
+            input = input.Replace("$Dialog$", Configuration.DialogName);
 			input = input.Replace("$dialog$", ToPascalCase(Configuration.DialogName));
 		    input = input.Replace("$Handle$", Configuration.ControllerHandle);
 
             return input;
 		}
 
-		public static string DoReplaces2(string input, string name = "", string item = "", string type = "")
+		public static string DoReplaces2(string input, string name = "", ConfigurationItem item = null, string type = "")
 		{
 			input = input.Replace("$Product$", Configuration.Product);
 			input = input.Replace("$product$", ToPascalCase(Configuration.Product));
-			input = input.Replace("$Item$", item);
-			input = input.Replace("$item$", ToPascalCase(item));
+			input = input.Replace("$Item$", item == null ? string.Empty : item.Name);
+			input = input.Replace("$item$", item == null ? string.Empty : ToPascalCase(item.Name));
 		    input = input.Replace("$Dialog$", Configuration.DialogName);
 		    input = input.Replace("$dialog$", ToPascalCase(Configuration.DialogName));
             input = input.Replace("$Name$", name);
@@ -115,7 +117,7 @@ namespace PlusLayerCreator
 			return fileContent;
 		}
 
-	    public static void CreateFileFromString(string input, string output, string[] contents = null, string item = "")
+	    public static void CreateFileFromString(string input, string output, string[] contents = null, ConfigurationItem item = null)
 	    {
 	        string fileContent = input;
 
@@ -130,7 +132,7 @@ namespace PlusLayerCreator
 	        File.WriteAllText(fileInfo.FullName, fileContent);
 	    }
 
-        public static void CreateFileFromPath(string inputPath, string output, string[] contents = null, string item = "")
+        public static void CreateFileFromPath(string inputPath, string output, string[] contents = null, ConfigurationItem item = null)
 		{
 			string fileContent = File.ReadAllText(inputPath);
 
@@ -161,7 +163,7 @@ namespace PlusLayerCreator
 					filterPredicateResetContent = plusDataObject.Name + " = string.Empty;";
 					filterPredicatesContent = ".StartsWith(x => x." + plusDataObject.Name + filterSuffix + ", x => x." +
 											   plusDataObject.Name + ")";
-					filterXamlContent = DoReplaces(FilterTextBoxXamlTemplate, plusDataItem.Name);
+					filterXamlContent = DoReplaces(FilterTextBoxXamlTemplate, plusDataItem);
 				}
 
 				if (plusDataObject.FilterPropertyType == "ComboBox")

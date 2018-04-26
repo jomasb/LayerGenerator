@@ -1,0 +1,75 @@
+/// <summary>
+/// Activates the version asynchronous task.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="$item$">The version.</param>
+/// <returns></returns>
+/// <exception cref="RepositoryException">Version is already active!</exception>
+public async Task<CallResponse<bool>> Activate$Item$Async(IRepositoryCallContext callContext, $Product$$Item$DataItem $item$)
+{
+	if ($item$.IsActive)
+	{
+		throw new RepositoryException("Version is already active!");
+	}
+
+	$Product$$Parent$DataItem parentDataItem = $item$.Parent.Parent as $Product$$Parent$DataItem;
+
+	var response = await _$product$$Item$Service.ActivateVersionAsync(callContext, $parent$, $item$);
+	if (response.IsSuccess)
+	{
+		$Product$$Item$ $item$Dto = response.Result;
+
+		//Deactivate all versions
+		foreach (var $item$DataItem in parentDataItem.$Item$s.Where(t => t.IsActive))
+		{
+			$item$DataItem.IsChangeTrackingDisabled = true;
+			$item$DataItem.IsActive = false;
+			$item$DataItem.LupdTimestamp = $item$Dto.LupdTimestamp;
+			$item$DataItem.IsChangeTrackingDisabled = false;
+		}
+
+		//Activate selected version
+		$item$.IsChangeTrackingDisabled = true;
+		$item$.IsActive = $item$Dto.IsActive;
+		$item$.LupdTimestamp = $item$Dto.LupdTimestamp;
+		$item$.IsChangeTrackingDisabled = false;
+	}
+
+	return CallResponse.FromSuccessfulResult(response.IsSuccess);
+}
+
+/// <summary>
+/// Deactivates the version asynchronous.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="$item$">The version.</param>
+/// <returns></returns>
+/// <exception cref="RepositoryException">Version is already active!</exception>
+public async Task<CallResponse<bool>> Deactivate$Item$Async(IRepositoryCallContext callContext, $Product$$Item$DataItem $item$)
+{
+	if (!$item$.IsActive)
+	{
+		throw new RepositoryException("Version is already deactive!");
+	}
+
+	$Product$$Parent$DataItem parentDataItem = $item$.Parent.Parent as $Product$$Parent$DataItem;
+
+	var response = await _$product$$Item$Service.DeactivateVersionAsync(callContext, $parent$, $item$);
+	if (response.IsSuccess)
+	{
+		foreach (var $item$DataItem in parentDataItem.$Item$s)
+		{
+			$item$DataItem.IsChangeTrackingDisabled = true;
+			$item$DataItem.IsActive = false;
+			$item$DataItem.IsChangeTrackingDisabled = false;
+		}
+
+		$Product$$Item$ $item$Dto = response.Result;
+		$item$.IsChangeTrackingDisabled = true;
+		$item$.IsActive = $item$Dto.IsActive;
+		$item$.LupdTimestamp = $item$Dto.LupdTimestamp;
+		$item$.IsChangeTrackingDisabled = false;
+	}
+
+	return CallResponse.FromSuccessfulResult(response.IsSuccess);
+}

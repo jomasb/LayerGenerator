@@ -1,0 +1,15 @@
+/// <summary>
+/// Activates the version asynchronous task.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="versionDataItem">The version.</param>
+/// <returns></returns>
+Task<CallResponse<bool>> Activate$Item$Async(IRepositoryCallContext callContext, $Product$$Item$DataItem versionDataItem);
+
+/// <summary>
+/// Deactivates the version asynchronous.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="versionDataItem">The version.</param>
+/// <returns></returns>
+Task<CallResponse<bool>> Deactivate$Item$Async(IRepositoryCallContext callContext, $Product$$Item$DataItem versionDataItem);

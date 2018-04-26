@@ -12,13 +12,13 @@
 
 			<Setter Property="IsSelected" Value="{Binding MetaItem.IsSelected, Mode=TwoWay}" />
 
-			<Setter Property="plus:PlusSpinnerContainer.IsLoading" Value="{Binding Versions.IsLoading}" />
+			<Setter Property="plus:PlusSpinnerContainer.IsLoading" Value="{Binding $Item$Versions.IsLoading}" />
 
 			<Setter Property="IsExpanded">
 				<Setter.Value>
 					<MultiBinding Converter="{StaticResource MultiBoolAndConverter}" Mode="TwoWay">
 						<Binding Mode="TwoWay" Path="MetaItem.IsExpanded" />
-						<Binding Mode="TwoWay" Path="Versions.IsLoadingTriggered" />
+						<Binding Mode="TwoWay" Path="$Item$Versions.IsLoadingTriggered" />
 					</MultiBinding>
 				</Setter.Value>
 			</Setter>
@@ -44,11 +44,12 @@
 			<Setter Property="IsSelected" Value="{Binding MetaItem.IsSelected, Mode=TwoWay}" />
 		</Style>
 
-		<DataTemplate x:Key="DataTemplate.GridViewRow.Child" > <!-- DataType="{x:Type dataItems:BestLocatingProfileDataItem}" -->
+		<DataTemplate x:Key="DataTemplate.GridViewRow.Child"
+		              DataType="{x:Type dataItems:$Product$$Item$DataItem}">
 			<plus:PlusGridView
 				Margin="0 0 0 2"
 				AlternationCount="0"
-				ItemsSource="{Binding Versions}"
+				ItemsSource="{Binding $Item$Versions}"
 				RowStyle="{StaticResource GridViewRow.Child}"
 				ScrollViewer.VerticalScrollBarVisibility="Auto"
 				SelectionMode="Single"
@@ -90,7 +91,7 @@
 	<telerik:RadGridView.ChildTableDefinitions>
 		<telerik:GridViewTableDefinition>
 			<telerik:GridViewTableDefinition.Relation>
-				<telerik:PropertyRelation ParentPropertyName="Versions" />
+				<telerik:PropertyRelation ParentPropertyName="$Item$Versions" />
 			</telerik:GridViewTableDefinition.Relation>
 		</telerik:GridViewTableDefinition>
 	</telerik:RadGridView.ChildTableDefinitions>

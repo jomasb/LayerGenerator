@@ -66,7 +66,7 @@ namespace PlusLayerCreator.Configure
             _dataLayout = new ObservableCollection<ConfigurationItem>();
             
             StartCommand = new DelegateCommand(StartExecuted);
-            AddItemCommand = new DelegateCommand(AddItemCommandExecuted);
+            AddItemCommand = new DelegateCommand(AddItemCommandExecuted, AddItemCommandCanExecute);
             AddVersionCommand = new DelegateCommand(AddVersionCommandExecuted, AddVersionCommandCanExecute);
             DeleteItemCommand = new DelegateCommand(DeleteItemCommandExecuted, DeleteItemCommandCanExecute);
             AddItemPropertyCommand = new DelegateCommand(AddItemPropertyCommandExecuted, AddItemPropertyCommandCanExecute);
@@ -81,6 +81,7 @@ namespace PlusLayerCreator.Configure
 
         private void RaiseCanExecuteChanged()
 		{
+            AddItemCommand.RaiseCanExecuteChanged();
 			AddVersionCommand.RaiseCanExecuteChanged();
 			DeleteItemCommand.RaiseCanExecuteChanged();
 			AddItemPropertyCommand.RaiseCanExecuteChanged();
@@ -160,26 +161,33 @@ namespace PlusLayerCreator.Configure
 			}
 		}
 
-		#endregion Import/Export
+        #endregion Import/Export
 
-		private void AddItemCommandExecuted()
+        
+        private bool AddItemCommandCanExecute()
+        {
+            return DataLayout.Count < 2;
+        }
+
+        private void AddItemCommandExecuted()
 		{
 		    var item = new ConfigurationItem() {Properties = new ObservableCollection<ConfigurationProperty>()};
             DataLayout.Add(item);
 		    SelectedItem = item;
+            RaiseCanExecuteChanged();
 		}
 
 	    private bool AddVersionCommandCanExecute()
 	    {
-		    return SelectedItem != null;
+	        return SelectedItem != null && DataLayout.Count < 2 && DataLayout.All(t => t.Name != null && !t.Name.EndsWith("Version"));
 	    }
 
 		private void AddVersionCommandExecuted()
 		{
 		    var item = new ConfigurationItem()
 		    {
-			    Name = "Version",
-			    Translation = "Version",
+			    Name = SelectedItem.Name + "Version",
+			    Translation = SelectedItem.Translation + "Version",
 				CanClone = true,
 				CanDelete = true,
 				CanEdit = true,
@@ -214,12 +222,14 @@ namespace PlusLayerCreator.Configure
 		    };
             DataLayout.Add(item);
 		    SelectedItem = item;
+            RaiseCanExecuteChanged();
 		}
 
 		private void DeleteItemCommandExecuted()
 		{
 			DataLayout.Remove(SelectedItem);
-		}
+		    RaiseCanExecuteChanged();
+        }
 
 		private bool DeleteItemCommandCanExecute()
 		{
@@ -231,7 +241,8 @@ namespace PlusLayerCreator.Configure
 		    var property = new ConfigurationProperty();
             ActiveConfiguration.Properties.Add(property);
 		    SelectedPropertyItem = property;
-		}
+		    RaiseCanExecuteChanged();
+        }
 
 		private bool AddItemPropertyCommandCanExecute()
 		{
@@ -244,7 +255,8 @@ namespace PlusLayerCreator.Configure
 			{
 			    ActiveConfiguration.Properties.Remove(SelectedPropertyItem);
 			}
-		}
+		    RaiseCanExecuteChanged();
+        }
 
 		private bool DeleteItemPropertyCommandCanExecute()
 		{
@@ -331,7 +343,9 @@ namespace PlusLayerCreator.Configure
 
 			localizationPart.CreateLocalization();
 
-			MessageBox.Show("Done", "Info", MessageBoxButton.OK);
+		    RaiseCanExecuteChanged();
+
+            MessageBox.Show("Done", "Info", MessageBoxButton.OK);
 		}
 
 		#endregion Commands
