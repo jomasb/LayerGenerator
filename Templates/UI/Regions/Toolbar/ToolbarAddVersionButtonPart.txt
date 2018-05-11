@@ -1,0 +1,4 @@
+<plus:PlusButton
+	Command="{Binding AddVersionCommand}"
+	Content="{localization:Localize Key=$Product$$Dialog$_btnAdd$Item$, Source=$Product$Localizer}"
+	Icon="{StaticResource Icon.New.20}" />

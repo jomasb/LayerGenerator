@@ -1,0 +1,33 @@
+<plus:PlusGridView
+	x:Name="Filtered$Item$GridView"
+	Grid.Row="$specialContent2$"
+	VerticalAlignment="Stretch"
+	AlternateRowStyle="{StaticResource GridViewRow.Parent.Alternate}"
+	HierarchyChildTemplate="{StaticResource DataTemplate.GridViewRow.Child}"
+	IsSynchronizedWithCurrentItem="False"
+	ItemsSource="{Binding FilterCollection}"
+	RowStyle="{StaticResource GridViewRow.Parent}"
+	plus:PlusSpinnerContainer.IsLoading="{Binding $Product$$Item$DataItemsList.IsLoading}">
+
+	<i:Interaction.Behaviors>
+		<selection:SingleActiveItemBehavior ActiveItem="{Binding ActiveItem, Mode=TwoWay}" />
+	</i:Interaction.Behaviors>
+
+	<i:Interaction.Triggers>
+		<selection:RoutedEventTrigger RoutedEvent="selection:SelectionHelper.SelectionChanging">
+			<prism:InvokeCommandAction Command="{Binding SelectingActiveItemCommand}" TriggerParameterPath="CancelableSelectionArgs" />
+		</selection:RoutedEventTrigger>
+	</i:Interaction.Triggers>
+
+	<plus:PlusGridView.Columns>
+	$specialContent1$
+	</plus:PlusGridView.Columns>
+
+	<telerik:RadGridView.ChildTableDefinitions>
+		<telerik:GridViewTableDefinition>
+			<telerik:GridViewTableDefinition.Relation>
+				<telerik:PropertyRelation ParentPropertyName="$Item$Versions" />
+			</telerik:GridViewTableDefinition.Relation>
+		</telerik:GridViewTableDefinition>
+	</telerik:RadGridView.ChildTableDefinitions>
+</plus:PlusGridView>

@@ -16,5 +16,16 @@
              d:DesignWidth="1000"
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d">
-	$specialContent1$
+			 <UserControl.Resources>
+	<ResourceDictionary>
+		<ResourceDictionary.MergedDictionaries>
+			<ResourceDictionary Source="pack://application:,,,/Dcx.Plus.UI.WPF.FW.Shell;component/Themes/Generic.xaml" />
+			<!--<plus:PlusDesignTimeResourceDictionary Source="pack://application:,,,/Dcx.Plus.UI.WPF.FW.Shell;component/Themes/Generic.xaml" />-->
+		</ResourceDictionary.MergedDictionaries>
+			$specialContent2$	
+		</ResourceDictionary>
+</UserControl.Resources>
+	<Grid>
+		$specialContent1$
+	</Grid>
 </UserControl>

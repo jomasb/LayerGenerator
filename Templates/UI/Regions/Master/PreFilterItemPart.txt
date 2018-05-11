@@ -1,0 +1,12 @@
+<plus:PlusLabel
+	Margin="8"
+	Content="{localization:Localize Key=$Product$$Dialog$_lbl$Item$, Source=$Product$Localizer}"
+	DockPanel.Dock="Left" />
+<plus:PlusComboBox
+	Width="230"
+	VerticalAlignment="Center"
+	DisplayMemberPath="ComposedIdAndDescription"
+	DockPanel.Dock="Left"
+	ItemsSource="{Binding $Item$s.LoadedItems}"
+	SelectedItem="{Binding Selected$Item$}"
+	plus:PlusSpinnerContainer.IsLoading="{Binding $Item$s.IsLoading}" />

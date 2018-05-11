@@ -1,0 +1,11 @@
+<DockPanel>
+	$specialContent1$
+	<plus:PlusButton
+		Width="100"
+		Margin="8"
+		HorizontalAlignment="Left"
+		VerticalAlignment="Center"
+		Command="{Binding ApplyFilterCommand}"
+		Content="{localization:Localize Key=PlusPreFilterExpander_btnFilter, Source=PlusUIWPFLocalizer}"
+		DockPanel.Dock="Left" />
+</DockPanel>

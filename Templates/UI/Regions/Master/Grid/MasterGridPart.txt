@@ -1,5 +1,6 @@
 <plus:PlusDataGrid
 			x:Name="Filtered$Item$GridView"
+			Grid.Row="$specialContent2$"
 			IsSynchronizedWithCurrentItem="False"
 			ItemsSource="{Binding FilterCollection}"
 			SelectedItem="{Binding Selected$Item$DataItem}"

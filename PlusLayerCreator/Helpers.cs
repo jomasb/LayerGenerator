@@ -258,5 +258,12 @@ namespace PlusLayerCreator
 
 	        return propertyAssignments;
 	    }
-	}
+
+	    public static string GetLocalizedString(string input, bool multi = false)
+	    {
+	        string extension = multi ? "s" : string.Empty;
+	        return "{localization:Localize Key=" + Configuration.Product + Configuration.DialogName + "_lbl" + input + extension + ", Source=" + Configuration.Product +
+	               "Localizer}";
+	    }
+    }
 }

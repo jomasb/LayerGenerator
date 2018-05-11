@@ -169,6 +169,7 @@
 						ItemsSource="{Binding DataLayout, Mode=TwoWay}"
 						SelectedItem="{Binding SelectedItem}">
 						<plus:PlusGridView.Columns>
+                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Order}" Header="Order" />
 							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Name}" Header="Name" />
 							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Translation}" Header="Translation" />
 							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Parent}" Header="Parent" />

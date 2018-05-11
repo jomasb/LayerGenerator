@@ -7,11 +7,11 @@ public Task<CallResponse<IList<$Product$$Item$>>> Get$Item$sAsync(IServiceCallCo
 {
 	return Task.Factory.StartNew(() =>
 	{
-		$Product$$Item$s.Clear();
+		IList<$Product$$Item$> $product$$Item$s = new List<$Product$$Item$>();
 		
 		for (int i = 0; i < 10; i++)
 		{
-			$Product$$Item$s.Add(new $Product$$Item$()
+			$Product$$Item$s.Add(new $product$$Item$()
 			{
 				$specialContent1$
 				LupdTimestamp = new DateTime(2016, 1, 12),
@@ -20,7 +20,7 @@ public Task<CallResponse<IList<$Product$$Item$>>> Get$Item$sAsync(IServiceCallCo
 		}
 		
 		Thread.Sleep(500);
-		return CallResponse.FromSuccessfulResult($Product$$Item$s);
+		return CallResponse.FromSuccessfulResult($product$$Item$s);
 
 	});
 }

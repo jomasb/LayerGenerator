@@ -7,18 +7,14 @@ namespace PlusLayerCreator.Configure
 	public class RepositoryPart
 	{
 		private Configuration _configuration;
-		private string _createRepositoryDtoTemplateUpperPart;
-		private string _createRepositoryDtoTemplateLowerPart;
-		private string _createDataItemTemplateUpperPart;
-		private string _createDataItemTemplateLowerPart;
+		private string _createRepositoryDtoTemplatePart;
+		private string _createDataItemTemplatePart;
 
 		public RepositoryPart(Configuration configuration)
 		{
 			_configuration = configuration;
-			_createDataItemTemplateUpperPart = File.ReadAllText(configuration.InputPath + @"Repository\CreateDataItemUpperPart.txt");
-			_createDataItemTemplateLowerPart = File.ReadAllText(configuration.InputPath + @"Repository\CreateDataItemLowerPart.txt");
-			_createRepositoryDtoTemplateUpperPart = File.ReadAllText(configuration.InputPath + @"Repository\CreateDtoUpperPart.txt");
-			_createRepositoryDtoTemplateLowerPart = File.ReadAllText(configuration.InputPath + @"Repository\CreateDtoLowerPart.txt");
+		    _createRepositoryDtoTemplatePart = File.ReadAllText(configuration.InputPath + @"Repository\CreateDataItemPart.txt");
+		    _createDataItemTemplatePart = File.ReadAllText(configuration.InputPath + @"Repository\CreateDtoPart.txt");
 		}
 
 		#region Repository
@@ -269,12 +265,12 @@ namespace PlusLayerCreator.Configure
 			string factoryContent = string.Empty;
 			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
 			{
-				factoryContent += Helpers.DoReplaces(_createRepositoryDtoTemplateUpperPart + "\r\n", dataItem);
+			    string itemContent = string.Empty;
 				foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
 				{
-					factoryContent += plusDataObject.Name + " = dataItem." + plusDataObject.Name + ",\r\n";
+				    itemContent += plusDataObject.Name + " = dataItem." + plusDataObject.Name + ",\r\n";
 				}
-				factoryContent += Helpers.DoReplaces(_createRepositoryDtoTemplateLowerPart, dataItem) + "\r\n";
+				factoryContent += Helpers.ReplaceSpecialContent(Helpers.DoReplaces(_createRepositoryDtoTemplatePart, dataItem), new []{itemContent}) + "\r\n";
 			}
 
 			string dtoLayer = _configuration.IsUseBusinessServiceWithoutBo ? "BusinessServiceLocal" : "Gateway";
@@ -288,13 +284,13 @@ namespace PlusLayerCreator.Configure
 			string factoryContent = string.Empty;
 			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
 			{
-				factoryContent += Helpers.DoReplaces(_createDataItemTemplateUpperPart + "\r\n", dataItem);
+			    string itemContent = string.Empty;
 				foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
 				{
-					factoryContent += plusDataObject.Name + " = dto." + plusDataObject.Name + ",\r\n";
+				    itemContent += plusDataObject.Name + " = dto." + plusDataObject.Name + ",\r\n";
 				}
-				factoryContent += Helpers.DoReplaces(_createDataItemTemplateLowerPart, dataItem) + "\r\n";
-			}
+			    factoryContent += Helpers.ReplaceSpecialContent(Helpers.DoReplaces(_createDataItemTemplatePart, dataItem), new[] { itemContent }) + "\r\n";
+            }
 
 			string dtoLayer = _configuration.IsUseBusinessServiceWithoutBo ? "BusinessServiceLocal" : "Gateway";
 

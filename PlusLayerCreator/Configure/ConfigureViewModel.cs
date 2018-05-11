@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization.Json;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Win32;
 using PlusLayerCreator.Infrastructure;
@@ -38,7 +35,6 @@ namespace PlusLayerCreator.Configure
 		private string _dialogTranslationGerman;
 		
 		private string _inputhPath = @"C:\Projects\LayerGenerator\Templates\";
-		private string _commonPath = @"Common\";
 		private string _outputPath = @"C:\Output\";
 
 		private bool _isCreateDto = true;
@@ -166,12 +162,12 @@ namespace PlusLayerCreator.Configure
         
         private bool AddItemCommandCanExecute()
         {
-            return DataLayout.Count < 2;
+            return true; //DataLayout.Count < 2;
         }
 
         private void AddItemCommandExecuted()
 		{
-		    var item = new ConfigurationItem() {Properties = new ObservableCollection<ConfigurationProperty>()};
+		    var item = new ConfigurationItem() {Properties = new ObservableCollection<ConfigurationProperty>(), Order = DataLayout.Count};
             DataLayout.Add(item);
 		    SelectedItem = item;
             RaiseCanExecuteChanged();
@@ -380,7 +376,7 @@ namespace PlusLayerCreator.Configure
 		
 		private void GetTemplatesFromDisk()
 		{
-			Helpers.Configuration = GetConfiguration();
+		    Helpers.Configuration = GetConfiguration();
 
 			Helpers.FilterChildViewModelTemplate = File.ReadAllText(InputPath + @"UI\Regions\Filter\FilterViewModelChildTemplate.txt");
 			Helpers.FilterPropertyTemplate = File.ReadAllText(InputPath + @"UI\Regions\Filter\FilterProperty.txt");
@@ -483,7 +479,7 @@ namespace PlusLayerCreator.Configure
 			{
 				if (SetProperty(ref _selectedPropertyItem, value))
 				{
-				    if (_selectedPropertyItem != null && _selectedItem != null)
+				    if (_selectedPropertyItem != null)
 				    {
 				        SelectedItem = null;
 				        NavigateToDataItemPropertyDetail();

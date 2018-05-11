@@ -13,6 +13,13 @@ namespace PlusLayerCreator.Items
 			set;
 		}
 
+        [DataMember]
+		public int Order
+		{
+			get;
+			set;
+		}
+
 		[DataMember]
 		public string Translation
 		{

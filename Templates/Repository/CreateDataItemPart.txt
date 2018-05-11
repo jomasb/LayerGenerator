@@ -1,0 +1,15 @@
+/// <summary>
+/// Creates the $Product$$Item$DataItem from dto.
+/// </summary>
+/// <param name="dto">The dto.</param>
+public $Product$$Item$DataItem Create$Item$FromDto($Product$$Item$ dto)
+{
+	return FinalCreate(new $Product$$Item$DataItem()
+	{
+		IsChangeTrackingDisabled = true,
+		$specialContent1$
+		LupdUser = dto.LupdUser,
+		LupdTimestamp = dto.LupdTimestamp,
+		State = DataItemState.Persistent
+	});
+}

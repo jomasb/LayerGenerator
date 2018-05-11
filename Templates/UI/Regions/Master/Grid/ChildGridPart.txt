@@ -1,0 +1,41 @@
+<plus:PlusExpandableHeader
+	Grid.Row="$specialContent3$"
+	Count="{Binding ElementName=Filtered$Item$GridView, Path=Items.ItemCount, Mode=OneWay}"
+	CountVisibility="{Binding ElementName=Filtered$Item$GridView, Path=Visibility}"
+	Header="{localization:Localize Key=$Product$$Dialog$_lbl$Item$s, Source=$Product$Localizer}"
+	Style="{StaticResource ExpandableHeader.Detail}">
+
+	<plus:PlusExpandableHeader.HeaderAdditionalContent>
+		<StackPanel Orientation="Horizontal">
+			$specialContent2$
+			<!--<plus:PlusButton
+				Command="{Binding OpenSecondSettingsDialogCommand}"
+				Icon="{StaticResource Icon.Menu.Settings.White.30}"
+				Style="{StaticResource ExpandableHeader.Small.Button}" />-->
+		</StackPanel>
+	</plus:PlusExpandableHeader.HeaderAdditionalContent>
+
+	<plus:PlusSpinnerContainer IsLoading="{Binding IsBusy}">
+		<plus:PlusDataGrid
+			x:Name="Filtered$Item$GridView"
+			plus:PlusSpinnerContainer.IsLoading="{Binding Selected$Parent$DataItem.$Item$s.IsLoading}"
+			IsSynchronizedWithCurrentItem="False"
+			ItemsSource="{Binding $Item$FilterCollection}"
+			SelectedItem="{Binding Selected$Item$DataItem}">
+
+			<i:Interaction.Behaviors>
+				<selection:SingleActiveItemBehavior ActiveItem="{Binding Selected$Item$DataItem, Mode=TwoWay}" />
+			</i:Interaction.Behaviors>
+			
+			<i:Interaction.Triggers>
+				<selection:RoutedEventTrigger RoutedEvent="selection:SelectionHelper.SelectionChanging">
+					<prism:InvokeCommandAction Command="{Binding SelectingActiveItemCommand}" TriggerParameterPath="CancelableSelectionArgs" />
+				</selection:RoutedEventTrigger>
+			</i:Interaction.Triggers>
+
+			<plus:PlusDataGrid.Columns>
+				$specialContent1$
+			</plus:PlusDataGrid.Columns>
+		</plus:PlusDataGrid>
+	</plus:PlusSpinnerContainer>
+</plus:PlusExpandableHeader>

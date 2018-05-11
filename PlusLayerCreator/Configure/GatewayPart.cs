@@ -7,14 +7,12 @@ namespace PlusLayerCreator.Configure
 	public class GatewayPart
 	{
 		private Configuration _configuration;
-		private string _createGatewayDtoTemplateUpperPart;
-		private string _createGatewayDtoTemplateLowerPart;
+		private string _createGatewayDtoTemplatePart;
 
 		public GatewayPart(Configuration configuration)
 		{
 			_configuration = configuration;
-			_createGatewayDtoTemplateUpperPart = File.ReadAllText(configuration.InputPath + @"Gateway\CreateDtoUpperPart.txt");
-			_createGatewayDtoTemplateLowerPart = File.ReadAllText(configuration.InputPath + @"Gateway\CreateDtoLowerPart.txt");
+			_createGatewayDtoTemplatePart = File.ReadAllText(configuration.InputPath + @"Gateway\CreateDtoPart.txt");
 		}
 
 		public void CreateGateway()
@@ -151,20 +149,20 @@ namespace PlusLayerCreator.Configure
 			string factoryContent = string.Empty;
 			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
 			{
-				factoryContent += Helpers.DoReplaces(_createGatewayDtoTemplateUpperPart + "\r\n", dataItem);
-				foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
+			    string itemContent = string.Empty;
+                foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
 				{
 					if (plusDataObject.IsKey)
 					{
-						factoryContent += plusDataObject.Name + " = bo.Key." + plusDataObject.Name + ",\r\n";
+					    itemContent += plusDataObject.Name + " = bo.Key." + plusDataObject.Name + ",\r\n";
 					}
 					else
 					{
-						factoryContent += plusDataObject.Name + " = bo." + plusDataObject.Name + ",\r\n";
+					    itemContent += plusDataObject.Name + " = bo." + plusDataObject.Name + ",\r\n";
 					}
 				}
-				factoryContent += Helpers.DoReplaces(_createGatewayDtoTemplateLowerPart, dataItem);
-			}
+			    factoryContent += Helpers.ReplaceSpecialContent(Helpers.DoReplaces(_createGatewayDtoTemplatePart, dataItem), new[] { itemContent }) + "\r\n";
+            }
 
 			string[] contentsDtoFactory = {
 				factoryContent

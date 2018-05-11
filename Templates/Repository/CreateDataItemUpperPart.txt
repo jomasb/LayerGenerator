@@ -1,9 +1,0 @@
-/// <summary>
-/// Creates the $Product$$Item$DataItem from dto.
-/// </summary>
-/// <param name="dto">The dto.</param>
-public $Product$$Item$DataItem Create$Item$FromDto($Product$$Item$ dto)
-{
-	return FinalCreate(new $Product$$Item$DataItem()
-	{
-		IsChangeTrackingDisabled = true,

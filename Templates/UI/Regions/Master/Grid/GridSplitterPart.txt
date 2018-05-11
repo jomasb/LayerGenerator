@@ -1,0 +1,4 @@
+<GridSplitter
+	Grid.Row="$specialContent1$"
+	IsEnabled="False"
+	Style="{StaticResource GridSplitter.Vertical.Standard}" />

@@ -1,8 +1,0 @@
-<plus:PlusButton
-	Command="{Binding Add$Item$Command}"
-	Icon="{StaticResource Icon.New.White.16}"
-	Style="{StaticResource ExpandableHeader.Small.Button}" />
-<plus:PlusButton
-	Command="{Binding Delete$Item$Command}"
-	Icon="{StaticResource Icon.Delete.White.16}"
-	Style="{StaticResource ExpandableHeader.Small.Button}" />

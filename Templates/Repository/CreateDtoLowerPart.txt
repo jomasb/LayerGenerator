@@ -1,6 +1,0 @@
-		LupdUser = dataItem.LupdUser,
-		LupdTimestamp = dataItem.LupdTimestamp,
-	};
-	
-	return dto;
-}
