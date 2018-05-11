@@ -301,6 +301,7 @@ namespace PlusLayerCreator.Configure
 	    
 	    private void CreateUiViewMaster()
 	    {
+	        int startOrder = 0;
 	        int rowNumber = 0;
             string masterViewContent = string.Empty;
             string masterViewResourcesContent = string.Empty;
@@ -330,6 +331,7 @@ namespace PlusLayerCreator.Configure
                 string preFilterContent = File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\PreFilterPart.txt");
                 foreach (var preFilterItem in _configuration.DataLayout.Where(t => t.IsPreFilterItem))
                 {
+                    startOrder = preFilterItem.Order + 1;
                     preFilterItemContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\PreFilterItemPart.txt"), preFilterItem);
                 }
 
@@ -362,16 +364,35 @@ namespace PlusLayerCreator.Configure
 	        {
 	            int nextDataItem = 0;
 
-                if (_configuration.DataLayout.Any(t => t.Order == 1 && t.Name.EndsWith("Version")))
+                if (_configuration.DataLayout.Any(t => t.Name.EndsWith("Version")))
                 {
+
                     nextDataItem = 2;
-                    ConfigurationItem master = _configuration.DataLayout.First(t => t.Order == 0);
-	                ConfigurationItem version = _configuration.DataLayout.First(t => t.Order == 1);
+                    ConfigurationItem version = _configuration.DataLayout.First(t => t.Name.EndsWith("Version"));
+                    ConfigurationItem master = _configuration.DataLayout.First(t => t.Order == version.Order - 1);
+	                
                     masterViewCodeBehindContent += "viewModel.ColumnProvider = Filtered" + master.Name + "sGridView;\r\n\r\n";
 
 	                string gridContent = Helpers.DoReplaces(_masterGridVersionTemplate, master);
 	                masterViewContent += gridContent.Replace("$specialContent1$", GetGridXaml(master, true));
 	                masterViewResourcesContent = Helpers.DoReplaces(_masterGridVersionResourcesTemplate.Replace("$specialContent1$", GetGridXaml(version, true)), master);
+                }
+                else
+                {
+                    ConfigurationItem dataItem = _configuration.DataLayout.First(t => t.Order == startOrder);
+                    string gridTemplate;
+                    if (dataItem.CanEdit)
+                    {
+                        gridTemplate = _masterGridTemplate;
+                    }
+                    else
+                    {
+                        gridTemplate = _masterGridReadonlyTemplate;
+                    }
+                    string gridContent = Helpers.DoReplaces(gridTemplate, dataItem);
+                    masterViewContent += Helpers.ReplaceSpecialContent(gridContent, new[] { GetGridXaml(dataItem), rowNumber.ToString() });
+                    masterViewCodeBehindContent += "viewModel.ColumnProvider = Filtered" + dataItem.Name + "GridView;\r\n\r\n";
+                    nextDataItem = dataItem.Order + 1;
                 }
 
 	            for (int i = nextDataItem; i < _configuration.DataLayout.OrderBy(t => t.Order).Count(); i++)
