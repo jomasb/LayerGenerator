@@ -1,0 +1,47 @@
+/// <summary>
+		/// Gets or sets the data items list.
+		/// </summary>
+		/// <value>
+		/// Data items list.
+		/// </value>
+		public PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem> $Product$$Item$DataItemsList
+		{
+			get
+			{
+				return _$product$$Item$DataItemsList;
+			}
+			set
+			{
+				Set(ref _$product$$Item$DataItemsList, value);
+			}
+		}
+		
+		/// <summary>
+		/// Gets or sets the selected data item.
+		/// </summary>
+		/// <value>
+		/// The selected data item.
+		/// </value>
+		public $Product$$Item$DataItem Selected$Item$DataItem
+		{
+			get
+			{
+				return _selected$Item$DataItem;
+			}
+			set
+			{
+				if (Set(ref _selected$Item$DataItem, value))
+				{
+					if (_selected$Item$DataItem != null)
+					{
+						NavigateToDetail(_selected$Item$DataItem);
+					}
+					else
+					{
+						ResetNavigation();
+					}
+				}
+
+				RaiseCanExecuteChanged();
+			}
+		}

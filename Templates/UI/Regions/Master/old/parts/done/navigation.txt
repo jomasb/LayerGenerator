@@ -1,0 +1,9 @@
+/// <summary>
+		/// Navigates to .
+		/// </summary>
+		/// <param name="activeItem">The active item.</param>
+		private void NavigateToDetail($Product$$Item$DataItem activeItem)
+		{
+			BaseServices.NavigationService.Navigate(RegionNames.DetailRegion, ViewNames.DetailView,
+				ParameterNames.Selected$Item$DataItem, activeItem);
+		}

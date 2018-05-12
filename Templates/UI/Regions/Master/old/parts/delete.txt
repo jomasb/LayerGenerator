@@ -1,0 +1,23 @@
+private async Task DeleteCommandExecuted()
+		{
+			if (ShowDeletingMessage() == NlsMessageResult.YES)
+			{
+				IsBusy = true;
+				CallResponse<bool> response = await _$product$$Dialog$Repository.Delete$Item$Async(CreateNewCallContext(true), Selected$Item$DataItem, $Item$DataItemsList);
+				if (response.IsSuccess)
+				{
+					if ($Item$DataItemsList.Count > 0)
+					{
+						Selected$Item$DataItem = null;
+						Selected$Item$DataItem = FilterCollection.GetItemAt(0) as $Product$$Item$DataItem;
+					}
+				}
+				else
+				{
+					ResetNavigation();
+				}
+
+				RaiseCanExecuteChanged();
+				IsBusy = false;
+			}
+		}

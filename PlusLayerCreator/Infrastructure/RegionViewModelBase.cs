@@ -8,43 +8,41 @@ namespace PlusLayerCreator.Infrastructure
 {
     public abstract class RegionViewModelBase : BindableBase, INavigationAware, IActiveAware, IConfirmNavigationRequest
     {
-        private readonly IEventAggregator _eventAggregator;
-        private readonly INavigationService _navigationService;
         private string _displayName;
         private bool _isActive;
 
 
         public RegionViewModelBase(INavigationService navigationService, IEventAggregator eventAggregator)
         {
-            _navigationService = navigationService;
-            _eventAggregator = eventAggregator;
-            DisplayName = this.ToString();
+            NavigationService = navigationService;
+            EventAggregator = eventAggregator;
+            DisplayName = ToString();
         }
 
 
-        public IEventAggregator EventAggregator
-        {
-            get { return _eventAggregator; }
-        }
+        public IEventAggregator EventAggregator { get; }
 
-        public INavigationService NavigationService
-        {
-            get { return _navigationService; }
-        }
+        public INavigationService NavigationService { get; }
 
         public string DisplayName
         {
-            get { return _displayName; }
-            set { SetProperty(ref _displayName, value); }
+            get => _displayName;
+            set => SetProperty(ref _displayName, value);
         }
 
         public bool IsActive
         {
-            get { return _isActive; }
-            set { SetProperty(ref _isActive, value); }
+            get => _isActive;
+            set => SetProperty(ref _isActive, value);
         }
 
         public event EventHandler IsActiveChanged;
+
+        public virtual void ConfirmNavigationRequest(NavigationContext navigationContext,
+            Action<bool> continuationCallback)
+        {
+            continuationCallback(true);
+        }
 
         public virtual void OnNavigatedTo(NavigationContext navigationContext)
         {
@@ -57,11 +55,6 @@ namespace PlusLayerCreator.Infrastructure
 
         public virtual void OnNavigatedFrom(NavigationContext navigationContext)
         {
-        }
-
-        public virtual void ConfirmNavigationRequest(NavigationContext navigationContext, Action<bool> continuationCallback)
-        {
-            continuationCallback(true);
         }
     }
 }

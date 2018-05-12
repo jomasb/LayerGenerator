@@ -1,0 +1,20 @@
+public override bool SaveCommandCanExecute()
+{
+	return !IsInReadOnlyMode && IsDirty && !IsBusy;
+}
+
+private async Task<bool> SaveCommandExecuted()
+{
+	IsBusy = true;
+	RaiseCanExecuteChanged();
+
+	var response = await _$product$$Dialog$Repository.Save$Item$Async(CreateNewCallContext(true), Selected$Item$DataItem);
+	if (response.IsSuccess)
+	{
+		$Item$DataItemsList.Accept();
+	}
+	IsBusy = false;
+	RaiseCanExecuteChanged();
+	
+	return response.IsSuccess;
+}

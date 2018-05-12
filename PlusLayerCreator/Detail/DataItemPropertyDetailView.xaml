@@ -24,7 +24,8 @@
                 <plus:PlusComboBox ItemsSource="{Binding Types}" SelectedItem="{Binding Property.Type}" />
             </plus:PlusFormRow>
             <plus:PlusFormRow Label="Length">
-                <plus:PlusTextBox IsNumeric="True" Text="{Binding Property.Length, UpdateSourceTrigger=PropertyChanged}" />
+                <plus:PlusTextBox IsNumeric="True"
+                                  Text="{Binding Property.Length, UpdateSourceTrigger=PropertyChanged}" />
             </plus:PlusFormRow>
             <plus:PlusFormRow Label="IsReadOnly">
                 <plus:PlusCheckBox IsChecked="{Binding Property.IsReadOnly}" />

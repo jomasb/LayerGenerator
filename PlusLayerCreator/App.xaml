@@ -6,7 +6,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Dcx.Plus.UI.WPF.FW.Controls;component/Themes/Generic.xaml" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/Dcx.Plus.UI.WPF.FW.Controls;component/Themes/Generic.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

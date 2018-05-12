@@ -1,0 +1,17 @@
+private async Task CopyCommandExecuted()
+		{
+			IsBusy = true;
+			if (Selected$Item$DataItem != null)
+			{
+				CallResponse<$Product$$Item$DataItem> response = await _$product$$Dialog$Repository.Clone$Item$Async(CreateNewCallContext(true), Selected$Item$DataItem, $Product$$Item$DataItemsList);
+				if (response.IsSuccess)
+				{
+					$Product$$Item$DataItem new$Product$$Item$DataItem = response.Result;
+					Selected$Item$DataItem = new$Product$$Item$DataItem;
+					new$Product$$Item$DataItem.HasAnyChanges = true;
+					new$Product$$Item$DataItem.PropertyChanged += New$Product$$Item$DataItem_PropertyChanged;
+					RaiseCanExecuteChanged();
+				}
+			}
+			IsBusy = false;
+		}

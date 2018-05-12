@@ -1,0 +1,40 @@
+/// <summary>
+	    /// Selectings the active item command execute.
+	    /// </summary>
+	    /// <param name="args">The arguments.</param>
+	    private async void SelectingActiveItemCommandExecuted(CancelableSelectionArgs<object> args)
+	    {
+	        // If the user tries to select another item while there are any Changes We either Cancel
+	        // the Selection or allow selection and eigher save or discard the changes
+
+	        if (IsDirty && Selected$Item$DataItem != null && !Equals(Selected$Item$DataItem, args.Value))
+	        {
+	            args.Cancel = true;
+
+	            NlsMessageResult result = ShowSaveChangesMessage();
+
+	            if (result == NlsMessageResult.YES)
+	            {
+	                if (Selected$Item$DataItem.HasErrors)
+	                {
+	                    await BaseServices.PopupDialogService.ShowCheckYourInputMessageAsync();
+	                }
+	                else
+	                {
+	                    bool saveResponse = await SaveCommandExecuted();
+	                    // if save succeeded then change selection
+	                    if (saveResponse)
+	                        Selected$Item$DataItem = ($Product$$Item$DataItem)args.Value;
+	                }
+	            }
+	            if (result == NlsMessageResult.NO)
+	            {
+	                args.Cancel = false;
+	                await CancelCommandExecuted();
+	            }
+	            if (result == NlsMessageResult.CANCEL)
+	            {
+	                args.Cancel = true;
+	            }
+	        }
+	    }

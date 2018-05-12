@@ -1,0 +1,12 @@
+/// <summary>
+		/// Refreshes this instance.
+		/// </summary>
+		/// <returns></returns>
+		private async Task Refresh()
+		{
+			IsBusy = true;
+			IsInitialLoadingCompleted = false;
+			RaiseCanExecuteChanged();
+			$Product$$Item$DataItemsList.Reload();
+			await $Product$$Item$DataItemsList.CurrentLoadingTask;
+		}

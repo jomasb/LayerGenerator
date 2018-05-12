@@ -3,7 +3,7 @@
 /// </summary>
 /// <param name="serviceCallContext">The service call context.</param>
 /// <returns></returns>
-public Task<CallResponse<IList<$Product$$Item$>>> Get$Item$sAsync(IServiceCallContext serviceCallContext)
+public Task<CallResponse<IList<$Product$$Item$>>> Get$Item$sAsync(IServiceCallContext serviceCallContext$specialContent2$)
 {
 	return Task.Factory.StartNew(() =>
 	{

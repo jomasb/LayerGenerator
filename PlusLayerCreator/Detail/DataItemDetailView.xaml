@@ -25,20 +25,11 @@
             <plus:PlusFormRow Label="IsPreFilterItem">
                 <plus:PlusCheckBox x:Name="IsPreFilterItemCheckBox" IsChecked="{Binding DataItem.IsPreFilterItem}" />
             </plus:PlusFormRow>
-            <plus:PlusFormRow Label="CanRead">
-                <plus:PlusCheckBox IsChecked="{Binding DataItem.CanRead}" />
-            </plus:PlusFormRow>
             <plus:PlusFormRow Label="CanEdit">
-                <plus:PlusCheckBox
-                    x:Name="CanEditCheckBox"
-                    IsChecked="{Binding DataItem.CanEdit}"
-                    IsEnabled="{Binding ElementName=IsPreFilterItemCheckBox, Path=IsChecked, Converter={StaticResource InvertBoolConverter}}" />
+                <plus:PlusCheckBox x:Name="CanEditCheckBox" IsChecked="{Binding DataItem.CanEdit}" IsEnabled="{Binding ElementName=IsPreFilterItemCheckBox, Path=IsChecked, Converter={StaticResource InvertBoolConverter}}" />
             </plus:PlusFormRow>
             <plus:PlusFormRow Label="CanEditMultiple">
-                <plus:PlusCheckBox
-                    x:Name="CanEditMultipleCheckBox"
-                    IsChecked="{Binding DataItem.CanEditMultiple}"
-                    IsEnabled="{Binding ElementName=CanEditCheckBox, Path=IsChecked}" />
+                <plus:PlusCheckBox x:Name="CanEditMultipleCheckBox" IsChecked="{Binding DataItem.CanEditMultiple}" IsEnabled="{Binding ElementName=CanEditCheckBox, Path=IsChecked}" />
             </plus:PlusFormRow>
             <plus:PlusFormRow Label="CanDelete">
                 <plus:PlusCheckBox IsChecked="{Binding DataItem.CanDelete}" IsEnabled="{Binding ElementName=IsPreFilterItemCheckBox, Path=IsChecked, Converter={StaticResource InvertBoolConverter}}" />

@@ -3,14 +3,13 @@ using Prism.Regions;
 
 namespace PlusLayerCreator.Infrastructure
 {
-    public class NavigationService: INavigationService
+    public class NavigationService : INavigationService
     {
-
         // Navigation Pipeline
         // https://blogs.msdn.microsoft.com/kashiffl/2010/10/04/prism-v4-region-navigation-pipeline/
 
 
-        private  IRegionManager _regionManager;
+        private readonly IRegionManager _regionManager;
 
         public NavigationService(IRegionManager regionManager)
         {
@@ -18,14 +17,12 @@ namespace PlusLayerCreator.Infrastructure
         }
 
 
-
         public void Navigate(string regionName, string viewName)
         {
-
             _regionManager.RequestNavigate(
                 regionName,
-                new Uri(viewName, UriKind.Relative));     
-            
+                new Uri(viewName, UriKind.Relative));
+
             //Navigate(regionName, viewName, null);
         }
 
@@ -34,7 +31,7 @@ namespace PlusLayerCreator.Infrastructure
             _regionManager.RequestNavigate(
                 regionName,
                 new Uri(viewName, UriKind.Relative),
-                parameters);            
+                parameters);
         }
 
         public void Navigate(string regionName, string viewName, string parameterName, object parameter)
@@ -50,12 +47,7 @@ namespace PlusLayerCreator.Infrastructure
             var views = region.Views;
 
             // Unload the views
-            foreach (var view in views)
-            {
-                region.Remove(view);
-            }
+            foreach (var view in views) region.Remove(view);
         }
-
-
     }
 }

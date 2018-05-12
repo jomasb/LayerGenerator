@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using PlusLayerCreator.Infrastructure;
 using PlusLayerCreator.Items;
 using Prism.Events;
-using Prism.Mvvm;
 using Prism.Regions;
 
 namespace PlusLayerCreator.Detail
@@ -14,18 +9,10 @@ namespace PlusLayerCreator.Detail
     public class DataItemPropertyDetailViewModel : RegionViewModelBase
     {
         private ConfigurationProperty _property;
-        public ConfigurationProperty Property
-        {
-            get { return _property; }
-            set { SetProperty(ref _property, value); }
-        }
-
-        public List<string> Types { get; set; }
-
-        public List<string> FilterTypes { get; set; }
 
 
-        public DataItemPropertyDetailViewModel(INavigationService navigationService, IEventAggregator eventAggregator) : base(navigationService, eventAggregator)
+        public DataItemPropertyDetailViewModel(INavigationService navigationService, IEventAggregator eventAggregator) :
+            base(navigationService, eventAggregator)
         {
             Types = new List<string>();
             Types.Add("string");
@@ -39,6 +26,16 @@ namespace PlusLayerCreator.Detail
             FilterTypes.Add("CheckBox");
             FilterTypes.Add("DateTimePicker");
         }
+
+        public ConfigurationProperty Property
+        {
+            get => _property;
+            set => SetProperty(ref _property, value);
+        }
+
+        public List<string> Types { get; set; }
+
+        public List<string> FilterTypes { get; set; }
 
         public override void OnNavigatedTo(NavigationContext navigationContext)
         {

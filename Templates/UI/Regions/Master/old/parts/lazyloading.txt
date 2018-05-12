@@ -1,0 +1,55 @@
+/// <summary>
+		/// Called when [loaded].
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		public void OnRegisteredLazyCollectionLoaded(object sender)
+		{
+			if (sender is ILazyLoadingObservableCollection<$Product$$Item$DataItem>)
+			{
+				IsInitialLoadingCompleted = true;
+				On$Product$$Item$DataItemListLoaded();
+			}
+
+			IsBusy = false;
+			RaiseCanExecuteChanged();
+		}
+		
+		/// <summary>
+		/// Called when [$Product$$Item$DataItemList loaded].
+		/// </summary>
+		private void On$Product$$Item$DataItemListLoaded()
+		{
+			_isDirtyObserver = new PropertyObserver<PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem>>($Product$$Item$DataItemsList);
+			_isDirtyObserver.RegisterHandler(x => x.HasAnyChanges, OnCollectionHasAnyChanges);
+
+			RaiseSourceCollectionChanged($Product$$Item$DataItemsList);
+
+			ResetNavigation();
+
+			if ($Product$$Item$DataItemsList.Count > 0)
+			{
+				Selected$Item$DataItem = null;
+				Selected$Item$DataItem = FilterCollection.GetItemAt(0) as $Product$$Item$DataItem;
+			}
+		}
+		
+		/// <summary>
+		/// Called when [has changed changed].
+		/// </summary>
+		private void OnCollectionHasAnyChanges(PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem> collection)
+		{
+			IsDirty = collection.HasAnyChanges;
+			RaiseCanExecuteChanged();
+		}
+
+		/// <summary>
+		/// Called when [loading exception].
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="exception">The exception.</param>
+		public void OnRegisteredLazyCollectionException(object sender, Exception exception)
+		{
+			IsBusy = false;
+			IsInitialLoadingCompleted = false;
+			RaiseCanExecuteChanged();
+		}

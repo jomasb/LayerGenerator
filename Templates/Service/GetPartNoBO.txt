@@ -3,10 +3,10 @@
 /// </summary>
 /// <param name="serviceCallContext">The service call context.</param>
 /// <returns></returns>
-public Task<CallResponse<IList<$Product$$Item$>>> Get$Item$sAsync(IServiceCallContext serviceCallContext)
+public Task<CallResponse<IList<$Product$$Item$>>> Get$Item$sAsync(IServiceCallContext serviceCallContext$specialContent1$)
 {
 	ServiceCallContext = serviceCallContext;
-	return GetDataTandemResponseAsync(() => Get$Item$s(serviceCallContext), serviceCallContext);
+	return GetDataTandemResponseAsync(() => Get$Item$s(serviceCallContext$specialContent2$), serviceCallContext);
 }
 
 /// <summary>
@@ -14,7 +14,7 @@ public Task<CallResponse<IList<$Product$$Item$>>> Get$Item$sAsync(IServiceCallCo
 /// </summary>
 /// <param name="callContext">The call context.</param>
 /// <returns></returns>
-private CallResponse<IList<$Product$$Item$>> Get$Item$s(IServiceCallContext callContext)
+private CallResponse<IList<$Product$$Item$>> Get$Item$s(IServiceCallContext callContext$specialContent1$)
 {
 	using (TraceLog.Log(this, options: TraceLogOptions.All))
 	{		
@@ -22,6 +22,7 @@ private CallResponse<IList<$Product$$Item$>> Get$Item$s(IServiceCallContext call
 
 		IDictionary<string, object> arguments = new Dictionary<string, object>();
 		arguments.Add("$Item$s", $product$$Item$s);
+		$specialContent3$
 		if (!DataAdapter.Execute<I$Product$$Item$Service>(this, "Get$Item$List", ref arguments))
 		{
 			return CallResponse.FromFailedResult($product$$Item$s);

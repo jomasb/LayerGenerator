@@ -15,7 +15,8 @@
 
         <ContentControl regions:RegionManager.RegionName="{x:Static infrastructure:RegionNames.MainRegion}" />
         <GridSplitter Grid.Column="1" Style="{StaticResource GridSplitter.Standard}" />
-        <ContentControl Grid.Column="2" regions:RegionManager.RegionName="{x:Static infrastructure:RegionNames.DetailRegion}" />
+        <ContentControl Grid.Column="2"
+                        regions:RegionManager.RegionName="{x:Static infrastructure:RegionNames.DetailRegion}" />
     </Grid>
 
 </Window>

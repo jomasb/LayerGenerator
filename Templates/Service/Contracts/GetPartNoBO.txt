@@ -3,4 +3,4 @@
 /// </summary>
 /// <param name="serviceCallContext">The service call context.</param>
 /// <returns></returns>
-Task<CallResponse<IList<$Product$$Item$>>> Get$Item$sAsync(IServiceCallContext serviceCallContext);
+Task<CallResponse<IList<$Product$$Item$>>> Get$Item$sAsync(IServiceCallContext serviceCallContext$specialContent1$);

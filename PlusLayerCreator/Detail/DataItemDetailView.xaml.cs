@@ -3,7 +3,7 @@
 namespace PlusLayerCreator.Detail
 {
     /// <summary>
-    /// Interaction logic for DataItemDetailView.xaml
+    ///     Interaction logic for DataItemDetailView.xaml
     /// </summary>
     public partial class DataItemDetailView : UserControl
     {

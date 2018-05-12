@@ -4,171 +4,173 @@ using PlusLayerCreator.Items;
 
 namespace PlusLayerCreator.Configure
 {
-	public class GatewayPart
-	{
-		private Configuration _configuration;
-		private string _createGatewayDtoTemplatePart;
+    public class GatewayPart
+    {
+        private readonly Configuration _configuration;
+        private readonly string _createGatewayDtoTemplatePart;
 
-		public GatewayPart(Configuration configuration)
-		{
-			_configuration = configuration;
-			_createGatewayDtoTemplatePart = File.ReadAllText(configuration.InputPath + @"Gateway\CreateDtoPart.txt");
-		}
+        public GatewayPart(Configuration configuration)
+        {
+            _configuration = configuration;
+            _createGatewayDtoTemplatePart = File.ReadAllText(configuration.InputPath + @"Gateway\CreateDtoPart.txt");
+        }
 
-		public void CreateGateway()
-		{
-			string interfaceReadContent = string.Empty;
-			string interfaceSaveContent = string.Empty;
+        public void CreateGateway()
+        {
+            var interfaceReadContent = string.Empty;
+            var interfaceSaveContent = string.Empty;
 
-			string gatewayReadContent = string.Empty;
-			string gatewaySaveContent = string.Empty;
+            var gatewayReadContent = string.Empty;
+            var gatewaySaveContent = string.Empty;
 
-			string key = string.Empty;
-			string identifier = string.Empty;
-			string readOnlyMappingDto = string.Empty;
-			string readOnlyMappingBo = string.Empty;
+            var key = string.Empty;
+            var identifier = string.Empty;
+            var readOnlyMappingDto = string.Empty;
+            var readOnlyMappingBo = string.Empty;
 
-			//Random rnd = new Random();
-			//string mock = string.Empty;
+            //Random rnd = new Random();
+            //string mock = string.Empty;
 
-			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
-			{
-				if (dataItem.CanRead)
-				{
-					if (string.IsNullOrEmpty(dataItem.Parent))
-					{
-						interfaceReadContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\GetPart.txt"), dataItem) + "\r\n\r\n";
-						gatewayReadContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\GetPart.txt"), dataItem) + "\r\n\r\n";
-					}
-					else
-					{
-						string content = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\GetChildPart.txt"), dataItem) +
-										 "\r\n\r\n";
-						content = Helpers.ReplaceSpecialContent(content, new[] { _configuration.Product + dataItem.Parent });
-						interfaceReadContent += content;
+            foreach (var dataItem in _configuration.DataLayout)
+            {
+                if (string.IsNullOrEmpty(dataItem.Parent))
+                {
+                    interfaceReadContent +=
+                        File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\GetPart.txt")
+                            .DoReplaces(dataItem) + "\r\n\r\n";
+                    gatewayReadContent +=
+                        File.ReadAllText(_configuration.InputPath + @"Gateway\GetPart.txt").DoReplaces(dataItem) +
+                        "\r\n\r\n";
+                }
+                else
+                {
+                    var content = File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\GetChildPart.txt")
+                                        .DoReplaces(dataItem) +
+                                    "\r\n\r\n";
+                    content = content.ReplaceSpecialContent(new[] {_configuration.Product + dataItem.Parent});
+                    interfaceReadContent += content;
 
 
-						content = Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\GetChildPart.txt"), dataItem) +
-								  "\r\n\r\n";
-						content = Helpers.ReplaceSpecialContent(content, new[] { _configuration.Product + dataItem.Parent });
-						gatewayReadContent += content;
-					}
-				}
+                    content = File.ReadAllText(_configuration.InputPath + @"Gateway\GetChildPart.txt")
+                                    .DoReplaces(dataItem) +
+                                "\r\n\r\n";
+                    content = content.ReplaceSpecialContent(new[] {_configuration.Product + dataItem.Parent});
+                    gatewayReadContent += content;
+                }
 
-				if (dataItem.CanEdit && !dataItem.CanEditMultiple)
-				{
-					if (string.IsNullOrEmpty(dataItem.Parent))
-					{
-						interfaceSaveContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\SavePart.txt"), dataItem) + "\r\n\r\n";
-						gatewaySaveContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\SavePart.txt"), dataItem) + "\r\n\r\n";
-					}
-				}
-				if (dataItem.CanEdit && dataItem.CanEditMultiple)
-				{
-					if (string.IsNullOrEmpty(dataItem.Parent))
-					{
-						interfaceSaveContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\SaveMultiPart.txt"), dataItem) + "\r\n\r\n";
-						gatewaySaveContent += Helpers.DoReplaces(File.ReadAllText(_configuration.InputPath + @"Gateway\SaveMultiPart.txt"), dataItem) + "\r\n\r\n";
-					}
-				}
+                if (dataItem.CanEdit && !dataItem.CanEditMultiple)
+                    if (string.IsNullOrEmpty(dataItem.Parent))
+                    {
+                        interfaceSaveContent +=
+                            File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\SavePart.txt")
+                                .DoReplaces(dataItem) + "\r\n\r\n";
+                        gatewaySaveContent +=
+                            File.ReadAllText(_configuration.InputPath + @"Gateway\SavePart.txt").DoReplaces(dataItem) +
+                            "\r\n\r\n";
+                    }
 
-				foreach (ConfigurationProperty plusDataObject in dataItem.Properties.Where(t => t.IsKey))
-				{
-					key += Helpers.ToPascalCase(dataItem.Name) + "." + plusDataObject.Name + ", ";
-					identifier += "x.Key." + plusDataObject.Name + ".Equals(dto." + plusDataObject.Name + ") &&";
-					//if (plusDataObject.Type == "string")
-					//{
-					//	mock += Helpers.ToPascalCase(dataItem.Name) + "." + plusDataObject.Name + " = " + plusDataObject.Name + " + i,\r\n";
-					//}
-					//if (plusDataObject.Type == "int")
-					//{
-					//	mock += Helpers.ToPascalCase(dataItem.Name) + "." + plusDataObject.Name + " = " +
-					//			rnd.Next(1, Helpers.GetMaxValue(plusDataObject.Length)) + ",\r\n";
-					//}
-					//if (plusDataObject.Type == "bool")
-					//{
-					//	mock += Helpers.ToPascalCase(dataItem.Name) + "." + plusDataObject.Name + " = true,\r\n";
-					//}
-					//if (plusDataObject.Type == "DateTime")
-					//{
-					//	mock += Helpers.ToPascalCase(dataItem.Name) + "." + plusDataObject.Name + " = new DateTime(2016, 12, 25),\r\n";
-					//}
-					if (plusDataObject.IsReadOnly)
-					{
-						readOnlyMappingDto +=
-							Helpers.ToPascalCase(dataItem.Name) + "Dto." + plusDataObject.Name + " = " + Helpers.ToPascalCase(dataItem.Name) + "." +
-							plusDataObject.Name + ";\r\n";
-						readOnlyMappingBo +=
-							Helpers.ToPascalCase(dataItem.Name) + "." + plusDataObject.Name + " = " + Helpers.ToPascalCase(dataItem.Name) + "Dto." +
-							plusDataObject.Name + ";\r\n";
-					}
-				}
+                if (dataItem.CanEdit && dataItem.CanEditMultiple)
+                    if (string.IsNullOrEmpty(dataItem.Parent))
+                    {
+                        interfaceSaveContent +=
+                            File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\SaveMultiPart.txt")
+                                .DoReplaces(dataItem) + "\r\n\r\n";
+                        gatewaySaveContent +=
+                            File.ReadAllText(_configuration.InputPath + @"Gateway\SaveMultiPart.txt")
+                                .DoReplaces(dataItem) + "\r\n\r\n";
+                    }
 
-				if (key.Length > 0)
-				{
-					key = key.Substring(0, key.Length - 2);
-				}
+                foreach (var plusDataObject in dataItem.Properties.Where(t => t.IsKey))
+                {
+                    key += dataItem.Name.ToPascalCase() + "." + plusDataObject.Name + ", ";
+                    identifier += "x.Key." + plusDataObject.Name + ".Equals(dto." + plusDataObject.Name + ") &&";
+                    //if (plusDataObject.Type == "string")
+                    //{
+                    //	mock += Helpers.ToPascalCase(dataItem.Name) + "." + plusDataObject.Name + " = " + plusDataObject.Name + " + i,\r\n";
+                    //}
+                    //if (plusDataObject.Type == "int")
+                    //{
+                    //	mock += Helpers.ToPascalCase(dataItem.Name) + "." + plusDataObject.Name + " = " +
+                    //			rnd.Next(1, Helpers.GetMaxValue(plusDataObject.Length)) + ",\r\n";
+                    //}
+                    //if (plusDataObject.Type == "bool")
+                    //{
+                    //	mock += Helpers.ToPascalCase(dataItem.Name) + "." + plusDataObject.Name + " = true,\r\n";
+                    //}
+                    //if (plusDataObject.Type == "DateTime")
+                    //{
+                    //	mock += Helpers.ToPascalCase(dataItem.Name) + "." + plusDataObject.Name + " = new DateTime(2016, 12, 25),\r\n";
+                    //}
+                    if (plusDataObject.IsReadOnly)
+                    {
+                        readOnlyMappingDto +=
+                            dataItem.Name.ToPascalCase() + "Dto." + plusDataObject.Name + " = " +
+                            dataItem.Name.ToPascalCase() + "." +
+                            plusDataObject.Name + ";\r\n";
+                        readOnlyMappingBo +=
+                            dataItem.Name.ToPascalCase() + "." + plusDataObject.Name + " = " +
+                            dataItem.Name.ToPascalCase() + "Dto." +
+                            plusDataObject.Name + ";\r\n";
+                    }
+                }
 
-				if (identifier.Length > 0)
-				{
-					identifier = identifier.Substring(0, identifier.Length - 3);
-				}
+                if (key.Length > 0) key = key.Substring(0, key.Length - 2);
 
-				//special content in gateway
-				gatewaySaveContent = Helpers.ReplaceSpecialContent(gatewaySaveContent,
-					new[] { key, identifier, readOnlyMappingDto, readOnlyMappingBo });
+                if (identifier.Length > 0) identifier = identifier.Substring(0, identifier.Length - 3);
 
-				Helpers.CreateFileFromPath(_configuration.InputPath + @"Gateway\Contracts\IGatewayTemplate.cs",
-					_configuration.OutputPath + @"Gateway\Contracts\I" + _configuration.Product + dataItem.Name + "Gateway.cs", new[] { interfaceReadContent, interfaceSaveContent }, dataItem);
-				Helpers.CreateFileFromPath(_configuration.InputPath + @"Gateway\GatewayTemplate.cs",
-					_configuration.OutputPath + @"Gateway\" + _configuration.Product + dataItem.Name + "Gateway.cs", new[] { gatewayReadContent, gatewaySaveContent }, dataItem);
+                //special content in gateway
+                gatewaySaveContent = gatewaySaveContent.ReplaceSpecialContent(new[]
+                    {key, identifier, readOnlyMappingDto, readOnlyMappingBo});
 
-			}
-		}
+                Helpers.CreateFileFromPath(_configuration.InputPath + @"Gateway\Contracts\IGatewayTemplate.cs",
+                    _configuration.OutputPath + @"Gateway\Contracts\I" + _configuration.Product + dataItem.Name +
+                    "Gateway.cs", new[] {interfaceReadContent, interfaceSaveContent}, dataItem);
+                Helpers.CreateFileFromPath(_configuration.InputPath + @"Gateway\GatewayTemplate.cs",
+                    _configuration.OutputPath + @"Gateway\" + _configuration.Product + dataItem.Name + "Gateway.cs",
+                    new[] {gatewayReadContent, gatewaySaveContent}, dataItem);
+            }
+        }
 
-		public void CreateDto(bool withBO)
-		{
-			string layer = withBO ? "Gateway" : "Service";
+        public void CreateDto(bool withBO)
+        {
+            var layer = withBO ? "Gateway" : "Service";
 
-			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
-			{
-				string dtoContent = string.Empty;
+            foreach (var dataItem in _configuration.DataLayout)
+            {
+                var dtoContent = string.Empty;
 
-				foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
-				{
-					dtoContent += "public " + plusDataObject.Type + " " + plusDataObject.Name + " {get; set;}\r\n\r\n";
-				}
+                foreach (var plusDataObject in dataItem.Properties)
+                    dtoContent += "public " + plusDataObject.Type + " " + plusDataObject.Name + " {get; set;}\r\n\r\n";
 
-				Helpers.CreateFileFromPath(_configuration.InputPath + layer + @"\Dtos\DtoTemplate.cs",
-					_configuration.OutputPath + layer + @"\Dtos\" + _configuration.Product + dataItem.Name + ".cs", new[] { dtoContent }, dataItem);
-			}
-		}
+                Helpers.CreateFileFromPath(_configuration.InputPath + layer + @"\Dtos\DtoTemplate.cs",
+                    _configuration.OutputPath + layer + @"\Dtos\" + _configuration.Product + dataItem.Name + ".cs",
+                    new[] {dtoContent}, dataItem);
+            }
+        }
 
-		public void CreateDtoFactory()
-		{
-			string factoryContent = string.Empty;
-			foreach (ConfigurationItem dataItem in _configuration.DataLayout)
-			{
-			    string itemContent = string.Empty;
-                foreach (ConfigurationProperty plusDataObject in dataItem.Properties)
-				{
-					if (plusDataObject.IsKey)
-					{
-					    itemContent += plusDataObject.Name + " = bo.Key." + plusDataObject.Name + ",\r\n";
-					}
-					else
-					{
-					    itemContent += plusDataObject.Name + " = bo." + plusDataObject.Name + ",\r\n";
-					}
-				}
-			    factoryContent += Helpers.ReplaceSpecialContent(Helpers.DoReplaces(_createGatewayDtoTemplatePart, dataItem), new[] { itemContent }) + "\r\n";
+        public void CreateDtoFactory()
+        {
+            var factoryContent = string.Empty;
+            foreach (var dataItem in _configuration.DataLayout)
+            {
+                var itemContent = string.Empty;
+                foreach (var plusDataObject in dataItem.Properties)
+                    if (plusDataObject.IsKey)
+                        itemContent += plusDataObject.Name + " = bo.Key." + plusDataObject.Name + ",\r\n";
+                    else
+                        itemContent += plusDataObject.Name + " = bo." + plusDataObject.Name + ",\r\n";
+                factoryContent +=
+                    _createGatewayDtoTemplatePart.DoReplaces(dataItem).ReplaceSpecialContent(new[] {itemContent}) +
+                    "\r\n";
             }
 
-			string[] contentsDtoFactory = {
-				factoryContent
-			};
+            string[] contentsDtoFactory =
+            {
+                factoryContent
+            };
 
-			Helpers.CreateFileFromPath(_configuration.InputPath + @"Gateway\DtoFactoryTemplate.cs", _configuration.OutputPath + @"Gateway\" + _configuration.Product + "DtoFactory.cs", contentsDtoFactory);
-		}
-	}
+            Helpers.CreateFileFromPath(_configuration.InputPath + @"Gateway\DtoFactoryTemplate.cs",
+                _configuration.OutputPath + @"Gateway\" + _configuration.Product + "DtoFactory.cs", contentsDtoFactory);
+        }
+    }
 }

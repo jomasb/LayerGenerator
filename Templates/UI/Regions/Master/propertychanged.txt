@@ -1,0 +1,4 @@
+private void New$Product$$Item$DataItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			RaiseCanExecuteChanged();
+		}

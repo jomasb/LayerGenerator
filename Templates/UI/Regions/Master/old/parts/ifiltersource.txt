@@ -1,0 +1,19 @@
+/// <summary>
+		/// Raises the source collection changed.
+		/// </summary>
+		/// <param name="sourceCollection">The source collection.</param>
+		private void RaiseSourceCollectionChanged(IList<$Product$$Item$DataItem> sourceCollection)
+		{
+			if (SourceCollectionChanged != null)
+			{
+				SourceCollectionChanged.Invoke(this, new SourceCollectionChangedEventArgs<$Product$$Item$DataItem>()
+				{
+					SourceCollection = sourceCollection
+				});
+			}
+		}
+
+		/// <summary>
+		/// Occurs when [source collection changed].
+		/// </summary>
+		public event EventHandler<SourceCollectionChangedEventArgs<$Product$$Item$DataItem>> SourceCollectionChanged;

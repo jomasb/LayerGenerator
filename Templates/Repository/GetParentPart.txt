@@ -3,13 +3,13 @@
 /// </summary>
 /// <param name="callContext">The call context.</param>
 /// <returns></returns>
-public async Task<CallResponse<IList<$Product$$Item$DataItem>>> Get$Item$sAsync(IRepositoryCallContext callContext)
+public async Task<CallResponse<IList<$Product$$Item$DataItem>>> Get$Item$sAsync(IRepositoryCallContext callContext$specialContent1$)
 {
 	try
 	{
 		IList<$Product$$Item$DataItem> $item$DataItems = new List<$Product$$Item$DataItem>();
 
-		var callResponse = await _$product$$Item$Service.Get$Item$sAsync(callContext).ConfigureAwait(false);
+		var callResponse = await _$product$$Item$Service.Get$Item$sAsync(callContext$specialContent2$).ConfigureAwait(false);
 
 		if (callResponse.IsSuccess)
 		{
@@ -37,9 +37,9 @@ public async Task<CallResponse<IList<$Product$$Item$DataItem>>> Get$Item$sAsync(
 /// </summary>
 /// <param name="callContext">The call context.</param>
 /// <returns></returns>
-public PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem> Get$Item$s(IRepositoryCallContext callContext)
+public PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem> Get$Item$s(IRepositoryCallContext callContext$specialContent1$)
 {
-	return new PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem>(() => Get$Item$sAsync(callContext))
+	return new PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem>(() => Get$Item$sAsync(callContext$specialContent3$))
 	{
 		AutoAcceptAfterSuccessfullyLoading = true
 	};
