@@ -1,4 +1,0 @@
-private readonly I$Product$$Dialog$Repository _$product$$Dialog$Repository;
-		private PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem> _$product$$Item$DataItemsList;
-		private $Product$$Item$DataItem _selected$Item$DataItem;
-		private PropertyObserver<PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem>> _isDirtyObserver;

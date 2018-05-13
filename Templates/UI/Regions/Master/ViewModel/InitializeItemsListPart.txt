@@ -1,0 +1,9 @@
+$Product$$Item$DataItemsList = _$product$$Dialog$Repository.Get$Item$s(CreateNewCallContext());
+$Product$$Item$DataItemsList.RegisterLoadingHandler(this);
+$Product$$Item$DataItemsList.Load();
+
+FilterCollection = (CollectionView)CollectionViewSource.GetDefaultView($Product$$Item$DataItemsList.LoadedItems);
+(FilterCollection as ICollectionView).CollectionChanged += (sender, args) =>
+{
+	UpdateDisplayName();
+};

@@ -1,0 +1,17 @@
+/// <summary>
+/// Gets or sets the data items list.
+/// </summary>
+/// <value>
+/// Data items list.
+/// </value>
+public PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem> $Product$$Item$DataItemsList
+{
+	get
+	{
+		return _$product$$Item$DataItemsList;
+	}
+	set
+	{
+		Set(ref _$product$$Item$DataItemsList, value);
+	}
+}

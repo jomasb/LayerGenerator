@@ -1,0 +1,19 @@
+private bool Add$Item$CommandCanExecute()
+{
+	return $specialContent1$;
+}
+
+private async Task Add$Item$CommandExecuted()
+{
+	IsBusy = true;
+	CallResponse<$Product$$Item$DataItem> response = await _$product$$Dialog$Repository.AddNew$Item$Async(CreateNewCallContext(true), $Product$$Item$DataItemsList);
+	if (response.IsSuccess)
+	{
+		$Product$$Item$DataItem new$Product$$Item$DataItem = response.Result;
+		Selected$Item$DataItem = new$Product$$Item$DataItem;
+		new$Product$$Item$DataItem.HasAnyChanges = true;
+		new$Product$$Item$DataItem.PropertyChanged += New$Product$$Item$DataItem_PropertyChanged;
+		RaiseCanExecuteChanged();
+	}
+	IsBusy = false;
+}

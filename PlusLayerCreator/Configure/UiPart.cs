@@ -23,6 +23,19 @@ namespace PlusLayerCreator.Configure
         private readonly string _masterViewModelNavigation;
         private readonly string _masterViewModelSave;
         private readonly string _masterViewModelSaveMulti;
+        private readonly string _masterViewModelAdd;
+        private readonly string _masterViewModelAddVersion;
+        private readonly string _masterViewModelAddChild;
+        private readonly string _masterViewModelCancel;
+        private readonly string _masterViewModelDelete;
+        private readonly string _masterViewModelDeleteChild;
+        private readonly string _masterViewModelClone;
+        private readonly string _masterViewModelInitializeItemsList;
+        private readonly string _masterViewModelItemsList;
+        private readonly string _masterViewModelSelectedItem;
+        private readonly string _masterViewModelActiveItem;
+        private readonly string _masterViewModelFilterSourceProvider;
+        
 
         private readonly string _readOnlyTemplate = " IsReadOnly=\"True\"";
 
@@ -51,6 +64,30 @@ namespace PlusLayerCreator.Configure
                 File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\SavePart.txt");
             _masterViewModelSaveMulti =
                 File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\SaveMultiPart.txt");
+            _masterViewModelAdd =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\AddPart.txt");
+            _masterViewModelAddVersion =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\AddVersionPart.txt");
+            _masterViewModelAddChild =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\AddChildPart.txt");
+            _masterViewModelCancel =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\CancelPart.txt");
+            _masterViewModelDelete =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\DeletePart.txt");
+            _masterViewModelDeleteChild =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\DeleteChildPart.txt");
+            _masterViewModelClone =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\ClonePart.txt");
+            _masterViewModelSelectedItem =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\SeletedItemPart.txt");
+            _masterViewModelActiveItem =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\ActiveItemPart.txt");
+            _masterViewModelItemsList =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\ItemsListPart.txt");
+            _masterViewModelInitializeItemsList =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\InitializeItemsListPart.txt");
+            _masterViewModelFilterSourceProvider =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\IFilterSourceProviderPart.txt");
 
         }
 
@@ -509,11 +546,20 @@ namespace PlusLayerCreator.Configure
 
         private void CreateUiMasterViewModel()
         {
+            ConfigurationItem masterItem = _configuration.GetMasterItem();
+            string masterViewModelTemplate;
             string membersContent = string.Empty; //1
             string initializeContent = string.Empty; //2
+            string propertiesContent = string.Empty; //3
+            string methodsContent = string.Empty; //3
             string filterParamContent = string.Empty; //5
             string commandContent = string.Empty; //6
             string navigationContent = string.Empty; //7
+            string filterSourceProviderContent = string.Empty; //8
+
+            initializeContent += "CommandService.SubscribeCommand(GlobalCommandNames.OpenSettingsDialogCommand, OpenSettingsDialogCommandExecuted);";
+            initializeContent += "CommandService.SubscribeCommand(GlobalCommandNames.RefreshCommand, RefreshCommandExecuted, RefreshCommandCanExecute);";
+            membersContent += "private readonly I$Product$$Dialog$Repository _$product$$Dialog$Repository;".DoReplaces();
 
             foreach (var configurationItem in _configuration.DataLayout)
             {
@@ -521,35 +567,155 @@ namespace PlusLayerCreator.Configure
                 {
                     filterParamContent += ", IFilterSourceProvider<" + _configuration.Product + configurationItem.Name + "DataItem>";
                     navigationContent += _masterViewModelNavigation.DoReplaces(configurationItem);
+
+                    if (!configurationItem.Name.EndsWith("Version"))
+                    {
+                        membersContent += "private $Product$$Item$DataItem _selected$Item$DataItem;\r\n".DoReplaces(configurationItem);
+                        propertiesContent += _masterViewModelSelectedItem.DoReplaces(configurationItem);
+                        if (string.IsNullOrEmpty(configurationItem.Parent))
+                        {
+                            if (configurationItem.CanEdit)
+                            {
+                                initializeContent += "CommandService.SubscribeAsyncCommand(GlobalCommandNames.AddCommand, AddCommandExecuted, AddCommandCanExecute);\r\n";
+                                commandContent += GetAddCommand(configurationItem);
+                            }
+                            if (configurationItem.CanDelete)
+                            {
+                                initializeContent += "CommandService.SubscribeAsyncCommand(GlobalCommandNames.DeleteCommand, DeleteCommandExecuted, DeleteCommandCanExecute);";
+                                commandContent += GetDeleteCommand(configurationItem);
+                            }
+                        }
+                        else
+                        {
+                            if (configurationItem.CanEdit)
+                            {
+                                initializeContent += "CommandService.SubscribeAsyncCommand(CommandNames.Add$Item$Command, Add$Item$CommandExecuted, Add$Item$CommandCanExecute);\r\n" .DoReplaces(configurationItem);
+                                commandContent += GetAddCommand(configurationItem);
+                                propertiesContent += "public IPlusCommand Add$Item$Command { get; set; }\r\n".DoReplaces(configurationItem);
+                            }
+                            if (configurationItem.CanDelete)
+                            {
+                                initializeContent += "CommandService.SubscribeAsyncCommand(CommandNames.Delete$Item$Command, Delete$Item$CommandExecuted, Delete$Item$CommandCanExecute);";
+                                commandContent += GetDeleteCommand(configurationItem);
+                                propertiesContent += "public IPlusCommand Delete$Item$Command { get; set; }\r\n".DoReplaces(configurationItem);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        membersContent += "private PlusStateDataItem _activeItem;\r\n".DoReplaces(configurationItem);
+                        initializeContent += "CommandService.SubscribeAsyncCommand(GlobalCommandNames.AddVersionCommand, AddVersionCommandExecuted, AddVersionCommandCanExecute);\r\n";
+                        commandContent += GetAddCommand(configurationItem);
+                        propertiesContent += _masterViewModelActiveItem.DoReplaces(_configuration.DataLayout.First(t => t.Name == configurationItem.Parent));
+                    }
+
+                    if (configurationItem.Properties.Any(t => t.IsFilterProperty))
+                    {
+                        filterSourceProviderContent +=
+                            _masterViewModelFilterSourceProvider.DoReplaces(configurationItem);
+                    }
                 }
 
                 if (string.IsNullOrEmpty(configurationItem.Parent))
                 {
-                    if (configurationItem.CanEditMultiple)
-                    {
-                        commandContent += _masterViewModelSaveMulti.DoReplaces(configurationItem);
-                    }
-                    else
-                    {
-                        commandContent += _masterViewModelSave.DoReplaces(configurationItem);
-                    }
+                    membersContent +=
+                        "private PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem> _$product$$Item$DataItemsList;\r\n"
+                            .DoReplaces(configurationItem);
+                    propertiesContent += _masterViewModelItemsList.DoReplaces(configurationItem);
                 }
 
-                if (_configuration.DataLayout.Any(t => t.CanEdit))
-                {
 
+            }
+
+            if (_configuration.DataLayout.Any(t => t.CanEdit))
+            {
+                membersContent += "private PropertyObserver<PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem>> _isDirtyObserver;\r\n".DoReplaces(masterItem);
+                initializeContent += "CommandService.SubscribeAsyncCommand(GlobalCommandNames.CancelCommand, CancelCommandExecuted, CancelCommandCanExecute);\r\n";
+                initializeContent += "CommandService.SubscribeAsyncCommand(GlobalCommandNames.SaveCommand, SaveCommandExecuted, SaveCommandCanExecute);\r\n";
+                commandContent += _masterViewModelCancel.DoReplaces(masterItem);
+                if (masterItem.CanEditMultiple)
+                {
+                    commandContent += _masterViewModelSaveMulti.DoReplaces(masterItem);
                 }
-
-                if (_configuration.DataLayout.Any(t => t.CanDelete))
+                else
                 {
-
-                }
-
-                if (_configuration.DataLayout.Any(t => t.CanClone))
-                {
-
+                    commandContent += _masterViewModelSave.DoReplaces(masterItem);
                 }
             }
+
+            if (_configuration.DataLayout.Any(t => t.CanClone))
+            {
+                initializeContent += "CommandService.SubscribeAsyncCommand(GlobalCommandNames.CopyCommand, CopyCommandExecuted, CopyCommandCanExecute);";
+                commandContent += GetCloneCommand();
+            }
+
+            if (masterItem.CanEdit && !masterItem.CanEditMultiple)
+            {
+                initializeContent += "SelectingActiveItemCommand = new PlusCommand<CancelableSelectionArgs<object>>(SelectingActiveItemCommandExecuted);";
+            }
+
+            if (!_configuration.DataLayout.Any(t => t.IsPreFilterItem))
+            {
+                initializeContent += _masterViewModelInitializeItemsList.DoReplaces(masterItem);
+            }
+            else
+            {
+                //todo read prefilterlists here
+            }
+
+
+            if (masterItem.CanEditMultiple)
+            {
+                masterViewModelTemplate = Files.MasterViewModelTemplate;
+            }
+            else
+            {
+                masterViewModelTemplate = Files.MasterViewModelMultiTemplate;
+            }
+
+            Helpers.CreateFileFromPath(masterViewModelTemplate,
+                _configuration.OutputPath + @"UI\Regions\Master\" + _configuration.DialogName + @"MasterViewModel.cs",
+                new[] { membersContent, initializeContent, propertiesContent, methodsContent, filterParamContent, commandContent, navigationContent, filterSourceProviderContent });
+
+        }
+
+        private string GetAddCommand(ConfigurationItem item)
+        {
+            string content = string.Empty;
+            if (item.Name == _configuration.GetMasterItem().Name)
+            {
+                content = _masterViewModelAdd;
+            }
+            else if (item.Name.EndsWith("Version"))
+            {
+                content = _masterViewModelAddVersion;
+            }
+            else
+            {
+                content = _masterViewModelAddChild;
+            }
+
+            return content.DoReplaces(item);
+        }
+
+        private string GetDeleteCommand(ConfigurationItem item)
+        {
+            string content = string.Empty;
+            if (item.Name == _configuration.GetMasterItem().Name || item.Name.EndsWith("Version"))
+            {
+                content = _masterViewModelDelete;
+            }
+            else
+            {
+                content = _masterViewModelDeleteChild;
+            }
+
+            return content.DoReplaces(item);
+        }
+
+        private string GetCloneCommand()
+        {
+            return _masterViewModelClone;
         }
 
         #endregion Master

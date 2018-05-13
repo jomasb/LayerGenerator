@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace PlusLayerCreator.Items
@@ -43,5 +44,10 @@ namespace PlusLayerCreator.Items
         [DataMember] public string ControllerHandle { get; set; }
 
         [DataMember] public IList<ConfigurationItem> DataLayout { get; set; }
+
+        public ConfigurationItem GetMasterItem()
+        {
+            return DataLayout.FirstOrDefault(t => string.IsNullOrEmpty(t.Parent) && !t.IsPreFilterItem);
+        }
     }
 }

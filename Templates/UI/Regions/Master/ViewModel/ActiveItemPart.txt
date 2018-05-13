@@ -1,0 +1,30 @@
+public PlusStateDataItem ActiveItem
+{
+	get
+	{
+		return _activeItem;
+	}
+	set
+	{
+		if (Set(ref _activeItem, value))
+		{
+			if (_activeItem != null)
+			{
+				if (_activeItem is $Product$$Item$DataItem)
+				{
+					NavigateTo$Item$Detail(($Product$$Item$DataItem)_activeItem);
+				}
+				if (_activeItem is $Product$$Version$DataItem)
+				{
+					NavigateTo$Version$Detail(($Product$$Version$DataItem)_activeItem);
+				}
+			}
+			else
+			{
+				ResetNavigation();
+			}
+		}
+
+		RaiseCanExecuteChanged();
+	}
+}

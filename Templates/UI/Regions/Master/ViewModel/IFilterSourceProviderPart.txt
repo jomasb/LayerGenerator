@@ -1,0 +1,32 @@
+/// <summary>
+/// The component action source collection changed
+/// </summary>
+private EventHandler<SourceCollectionChangedEventArgs<$Product$$Item$DataItem>> _$item$SourceCollectionChanged;
+
+/// <summary>
+/// Occurs when [source collection changed].
+/// </summary>
+event EventHandler<SourceCollectionChangedEventArgs<$Product$$Item$DataItem>> IFilterSourceProvider<$Product$$Item$DataItem>.SourceCollectionChanged
+{
+	add
+	{
+		_$item$SourceCollectionChanged += value;
+
+	}
+	remove
+	{
+		if (_$item$SourceCollectionChanged != null)
+			_$item$SourceCollectionChanged -= value;
+	}
+}
+
+/// <summary>
+/// Raises the <see cref="E:SiteSourceCollectionChanged" /> event.
+/// </summary>
+/// <param name="e">The <see cref="SourceCollectionChangedEventArgs{$Product$$Item$DataItem}"/> instance containing the event data.</param>
+protected void On$Item$SourceCollectionChanged(SourceCollectionChangedEventArgs<$Product$$Item$DataItem> e)
+{
+	var handler = _$item$SourceCollectionChanged;
+	if (handler != null)
+		handler(this, e);
+}

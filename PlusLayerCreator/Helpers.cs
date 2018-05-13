@@ -62,6 +62,8 @@ namespace PlusLayerCreator
             input = input.Replace("$product$", ToPascalCase(Configuration.Product));
             input = input.Replace("$Item$", item == null ? string.Empty : item.Name);
             input = input.Replace("$item$", item == null ? string.Empty : ToPascalCase(item.Name));
+            input = input.Replace("$Version$", item == null ? string.Empty : item.Name + "Version");
+            input = input.Replace("$version$", item == null ? string.Empty : ToPascalCase(item.Name + "Version"));
             input = input.Replace("$Parent$", item == null ? string.Empty : item.Parent);
             input = input.Replace("$parent$", item == null ? string.Empty : ToPascalCase(item.Parent));
             input = input.Replace("$Dialog$", Configuration.DialogName);

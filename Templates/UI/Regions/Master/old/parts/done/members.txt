@@ -1,0 +1,4 @@
+
+		
+		
+		private PropertyObserver<PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem>> _isDirtyObserver;
