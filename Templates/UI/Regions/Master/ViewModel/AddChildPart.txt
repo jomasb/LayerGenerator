@@ -1,12 +1,12 @@
 private bool Add$Item$CommandCanExecute()
 {
-	return $specialContent1$;
+	return !IsInReadOnlyMode && !IsBusy && IsInitialLoadingCompleted && Selected$Parent$DataItem != null;
 }
 
 private async Task Add$Item$CommandExecuted()
 {
 	IsBusy = true;
-	CallResponse<$Product$$Item$DataItem> response = await _$product$$Dialog$Repository.AddNew$Item$Async(CreateNewCallContext(true), $Product$$Item$DataItemsList);
+	CallResponse<$Product$$Item$DataItem> response = await _$product$$Dialog$Repository.AddNew$Item$Async(CreateNewCallContext(true), Selected$Parent$DataItem.$Item$s);
 	if (response.IsSuccess)
 	{
 		$Product$$Item$DataItem new$Product$$Item$DataItem = response.Result;

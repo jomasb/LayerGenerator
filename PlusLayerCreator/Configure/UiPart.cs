@@ -22,6 +22,7 @@ namespace PlusLayerCreator.Configure
         private readonly string _masterGridVersionTemplate;
 
         private readonly string _masterViewModelNavigation;
+        private readonly string _masterViewModelSort;
         private readonly string _masterViewModelSave;
         private readonly string _masterViewModelSaveCommand;
         private readonly string _masterViewModelSaveVersionCommand;
@@ -31,6 +32,7 @@ namespace PlusLayerCreator.Configure
         private readonly string _masterViewModelAddChild;
         private readonly string _masterViewModelCancel;
         private readonly string _masterViewModelDelete;
+        private readonly string _masterViewModelDeleteVersion;
         private readonly string _masterViewModelDeleteChild;
         private readonly string _masterViewModelClone;
         private readonly string _masterViewModelInitializeItemsList;
@@ -69,6 +71,8 @@ namespace PlusLayerCreator.Configure
 
             _masterViewModelNavigation =
                 File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\NavigationPart.txt");
+            _masterViewModelSort =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\SortPart.txt");
             _masterViewModelSave =
                 File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\SavePart.txt");
             _masterViewModelSaveCommand =
@@ -87,6 +91,8 @@ namespace PlusLayerCreator.Configure
                 File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\CancelPart.txt");
             _masterViewModelDelete =
                 File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\DeletePart.txt");
+            _masterViewModelDeleteVersion =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\DeleteVersionPart.txt");
             _masterViewModelDeleteChild =
                 File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\DeleteChildPart.txt");
             _masterViewModelClone =
@@ -666,6 +672,15 @@ namespace PlusLayerCreator.Configure
                     {
                         lazyLoadingCollectionContent += _masterViewModelLazyLoadingChildCollection.ReplaceSpecialContent(new[] { string.Empty }).DoReplaces(configurationItem);
                     }
+
+                    if (configurationItem.CanSort)
+                    {
+                        initializeContent += "CommandService.SubscribeAsyncCommand(CommandNames.Sort$Item$UpCommand, Sort$Item$UpCommandExecuted, Sort$Item$UpCommandCanExecute);\r\n".DoReplaces(configurationItem);
+                        initializeContent += "CommandService.SubscribeAsyncCommand(CommandNames.Sort$Item$DownCommand, Sort$Item$DownCommandExecuted, Sort$Item$DownCommandCanExecute);\r\n".DoReplaces(configurationItem);
+                        propertiesContent += "public IPlusCommand Sort$Item$UpCommand { get; set; }\r\n".DoReplaces(configurationItem);
+                        propertiesContent += "public IPlusCommand Sort$Item$DownCommand { get; set; }\r\n".DoReplaces(configurationItem);
+                        commandContent += GetSortCommand(configurationItem);
+                    }
                 }
 
                 if (string.IsNullOrEmpty(configurationItem.Parent))
@@ -744,6 +759,12 @@ namespace PlusLayerCreator.Configure
             return content.DoReplaces(item);
         }
 
+        private string GetSortCommand(ConfigurationItem item)
+        {
+            string content = _masterViewModelSort;
+            return content;
+        }
+
         private string GetSaveCommand()
         {
             string content = _masterViewModelSave;
@@ -796,9 +817,16 @@ namespace PlusLayerCreator.Configure
         private string GetDeleteCommand(ConfigurationItem item)
         {
             string content = string.Empty;
-            if (item.Name == _configuration.GetMasterItem().Name || item.Name.EndsWith("Version"))
+            if (item.Name == _configuration.GetMasterItem().Name)
             {
-                content = _masterViewModelDelete;
+                if (_configuration.DataLayout.Any(t => t.Name.EndsWith("Version")))
+                {
+                    content = _masterViewModelDeleteVersion;
+                }
+                else
+                {
+                    content = _masterViewModelDelete;
+                }
             }
             else
             {

@@ -1,0 +1,29 @@
+private bool Sort$Item$DataItemUpCommandCanExecute()
+{
+	return !IsBusy && !IsInReadOnlyMode && Provisional$Item$DataItems != null && Provisional$Item$DataItems.Count > 1 && Selected$Item$DataItem != null && Selected$Item$DataItem.Id > Provisional$Item$DataItems.Min(x => x.Id);
+}
+
+private async Task Sort$Item$DataItemUpCommandExecute()
+{
+	CallResponse<$Product$$Item$DataItem> response = await _$product$$Dialog$Repository.Move$Item$OrderUpAsync(CreateNewCallContext(), Provisional$Item$DataItems, Selected$Item$DataItem);
+	Resort(response.Result);
+
+}
+
+private bool Sort$Item$DataItemDownCommandCanExecute()
+{
+	return !IsBusy && !IsInReadOnlyMode && Selected$Item$DataItem != null && Provisional$Item$DataItems != null && Selected$Item$DataItem.Id < Provisional$Item$DataItems.Count;
+}
+
+private async Task Sort$Item$DataItemDownCommandExecute()
+{
+	CallResponse<$Product$$Item$DataItem> response = await _$product$$Dialog$Repository.Move$Item$OrderDownAsync(CreateNewCallContext(), Provisional$Item$DataItems, Selected$Item$DataItem);
+	Resort(response.Result);
+}
+
+private void Resort($Product$$Item$DataItem toBeSelectedItem)
+{
+	FilterCollection.Refresh();
+	Selected$Item$DataItem = toBeSelectedItem;
+	RaiseCanExecuteChanged();
+}

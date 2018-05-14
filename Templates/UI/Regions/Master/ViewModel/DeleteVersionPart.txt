@@ -1,0 +1,43 @@
+protected override bool DeleteCommandCanExecute()
+{
+	return !IsInReadOnlyMode && !IsBusy && IsInitialLoadingCompleted && ActiveItem != null;
+}
+
+private async Task DeleteCommandExecuted()
+{
+	if (ActiveItem is $Product$$Item$DataItem)
+	{
+		if (ShowDeletingMessage() == NlsMessageResult.YES)
+		{
+			IsGlobalBusy = true;
+
+			CallResponse<bool> response = await _$product$$Dialog$Repository.Delete$Item$Async(CreateNewCallContext(), ($Product$$Item$DataItem)ActiveItem, $Item$DataItemsList);
+			if (response.IsSuccess)
+			{
+				$Item$s.Accept();
+				ActiveItem = NextSelected$Item$;
+				Selected$Version$ = null;
+			}
+
+			await Refresh();
+		}
+	}
+
+	if (ActiveItem is $Product$$Item$VersionDataItem)
+	{
+		if (ShowDeletingMessage() == NlsMessageResult.YES)
+			{
+			IsGlobalBusy = true;
+
+			var version = ($Product$$Item$VersionDataItem)ActiveItem;
+			var $item$ = ($Product$$Item$DataItem)version.Parent.Parent;
+			
+			CallResponse<bool> response = await _$product$$Dialog$Repository.Delete$Item$VersionAsync(CreateNewCallContext(), version, $item$.Versions);						
+
+			Selected$Version$ = null;
+		}
+	}
+
+	RaiseCanExecuteChanged();
+	IsGlobalBusy = false;
+}

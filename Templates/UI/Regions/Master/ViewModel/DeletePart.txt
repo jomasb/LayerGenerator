@@ -1,6 +1,6 @@
 private bool DeleteCommandCanExecute()
 {
-	return $specialContent1$;
+	return !IsInReadOnlyMode && !IsBusy && IsInitialLoadingCompleted && Selected$Item$DataItem != null;
 }
 
 private async Task DeleteCommandExecuted()
