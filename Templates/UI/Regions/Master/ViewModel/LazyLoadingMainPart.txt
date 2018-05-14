@@ -1,0 +1,23 @@
+/// <summary>
+/// Called when [loaded].
+/// </summary>
+/// <param name="sender">The sender.</param>
+public void OnRegisteredLazyCollectionLoaded(object sender)
+{
+	$specialContent1$
+
+	IsBusy = false;
+	RaiseCanExecuteChanged();
+}
+
+/// <summary>
+/// Called when [loading exception].
+/// </summary>
+/// <param name="sender">The sender.</param>
+/// <param name="exception">The exception.</param>
+public void OnRegisteredLazyCollectionException(object sender, Exception exception)
+{
+	IsBusy = false;
+	IsInitialLoadingCompleted = false;
+	RaiseCanExecuteChanged();
+}

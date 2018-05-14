@@ -1,0 +1,8 @@
+/// <summary>
+/// Called when [has changed changed].
+/// </summary>
+private void OnCollectionHasAnyChanges(PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem> collection)
+{
+	IsDirty = collection.HasAnyChanges;
+	RaiseCanExecuteChanged();
+}

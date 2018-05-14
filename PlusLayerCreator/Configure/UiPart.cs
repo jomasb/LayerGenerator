@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using PlusLayerCreator.Items;
 
@@ -22,6 +23,8 @@ namespace PlusLayerCreator.Configure
 
         private readonly string _masterViewModelNavigation;
         private readonly string _masterViewModelSave;
+        private readonly string _masterViewModelSaveCommand;
+        private readonly string _masterViewModelSaveVersionCommand;
         private readonly string _masterViewModelSaveMulti;
         private readonly string _masterViewModelAdd;
         private readonly string _masterViewModelAddVersion;
@@ -35,8 +38,14 @@ namespace PlusLayerCreator.Configure
         private readonly string _masterViewModelSelectedItem;
         private readonly string _masterViewModelActiveItem;
         private readonly string _masterViewModelFilterSourceProvider;
+        private readonly string _masterViewModelLazyLoadingMain;
+        private readonly string _masterViewModelMainCollectionHasAnyChanges;
+        private readonly string _masterViewModelLazyLoadingCollection;
+        private readonly string _masterViewModelLazyLoadingCollectionSelect;
+        private readonly string _masterViewModelLazyLoadingCollectionSelectVersion;
+        private readonly string _masterViewModelLazyLoadingChildCollection;
+        private readonly string _masterViewModelLazyLoadingFilter;
         
-
         private readonly string _readOnlyTemplate = " IsReadOnly=\"True\"";
 
         #endregion Members
@@ -62,6 +71,10 @@ namespace PlusLayerCreator.Configure
                 File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\NavigationPart.txt");
             _masterViewModelSave =
                 File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\SavePart.txt");
+            _masterViewModelSaveCommand =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\SaveCommandPart.txt");
+            _masterViewModelSaveVersionCommand =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\SaveVersionCommandPart.txt");
             _masterViewModelSaveMulti =
                 File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\SaveMultiPart.txt");
             _masterViewModelAdd =
@@ -88,6 +101,20 @@ namespace PlusLayerCreator.Configure
                 File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\InitializeItemsListPart.txt");
             _masterViewModelFilterSourceProvider =
                 File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\IFilterSourceProviderPart.txt");
+            _masterViewModelLazyLoadingMain =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\LazyLoadingMainPart.txt");
+            _masterViewModelMainCollectionHasAnyChanges =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\MainCollectionHasAnyChangesPart.txt");
+            _masterViewModelLazyLoadingCollection =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\LazyLoadingCollectionPart.txt");
+            _masterViewModelLazyLoadingChildCollection =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\LazyLoadingChildCollectionPart.txt");
+            _masterViewModelLazyLoadingFilter =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\LazyLoadingFilterPart.txt");
+            _masterViewModelLazyLoadingCollectionSelect =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\LazyLoadingCollectionSelectPart.txt");
+            _masterViewModelLazyLoadingCollectionSelectVersion =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\LazyLoadingCollectionSelectVersionPart.txt");
 
         }
 
@@ -220,18 +247,27 @@ namespace PlusLayerCreator.Configure
 
             foreach (var dataItem in _configuration.DataLayout.Where(t =>
                 string.IsNullOrEmpty(t.Parent) && t.IsPreFilterItem == false && !t.Name.EndsWith("Version")))
+            {
                 if (dataItem.CanEdit)
+                {
                     toolbarViewContent +=
                         (File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarAddButtonPart.txt") +
                          "\r\n").DoReplaces(dataItem);
+                    
+                }
+                
+            }
 
-            foreach (var dataItem in _configuration.DataLayout.Where(t =>
-                string.IsNullOrEmpty(t.Parent) && t.IsPreFilterItem == false && t.Name.EndsWith("Version")))
+            foreach (var dataItem in _configuration.DataLayout.Where(t => t.IsPreFilterItem == false && t.Name.EndsWith("Version")))
+            {
                 if (dataItem.CanEdit)
+                {
                     toolbarViewContent +=
                         (File.ReadAllText(_configuration.InputPath +
                                           @"UI\Regions\Toolbar\ToolbarAddVersionButtonPart.txt") + "\r\n")
                         .DoReplaces(dataItem);
+                }
+            }
 
             if (_configuration.DataLayout.Any(t => t.CanEdit))
                 toolbarViewContent +=
@@ -251,7 +287,7 @@ namespace PlusLayerCreator.Configure
                     File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarCancelButtonPart.txt") +
                     "\r\n";
 
-            Helpers.CreateFileFromPath(Files.ToolbarViewCodeBehindTemplate,
+            Helpers.CreateFileFromPath(Files.ToolbarViewModelTemplate,
                 _configuration.OutputPath + @"UI\Regions\Toolbar\ToolbarViewModel.cs");
             Helpers.CreateFileFromPath(Files.ToolbarViewTemplate,
                 _configuration.OutputPath + @"UI\Regions\Toolbar\ToolbarView.xaml", new[] {toolbarViewContent});
@@ -469,7 +505,8 @@ namespace PlusLayerCreator.Configure
                         "viewModel.ColumnProvider = Filtered" + master.Name + "sGridView;\r\n\r\n";
 
                     var gridContent = _masterGridVersionTemplate.DoReplaces(master);
-                    masterViewContent += gridContent.Replace("$specialContent1$", GetGridXaml(master, true));
+                    masterViewContent +=
+                        gridContent.ReplaceSpecialContent(new[] {GetGridXaml(master, true), rowNumber.ToString()});
                     masterViewResourcesContent = _masterGridVersionResourcesTemplate
                         .Replace("$specialContent1$", GetGridXaml(version, true)).DoReplaces(master);
                 }
@@ -556,15 +593,19 @@ namespace PlusLayerCreator.Configure
             string commandContent = string.Empty; //6
             string navigationContent = string.Empty; //7
             string filterSourceProviderContent = string.Empty; //8
+            string lazyLoadingContent = string.Empty;
+            string lazyLoadingCollectionContent = string.Empty;
 
-            initializeContent += "CommandService.SubscribeCommand(GlobalCommandNames.OpenSettingsDialogCommand, OpenSettingsDialogCommandExecuted);";
-            initializeContent += "CommandService.SubscribeCommand(GlobalCommandNames.RefreshCommand, RefreshCommandExecuted, RefreshCommandCanExecute);";
+            initializeContent += "CommandService.SubscribeCommand(GlobalCommandNames.OpenSettingsDialogCommand, OpenSettingsDialogCommandExecuted);\r\n";
+            initializeContent += "CommandService.SubscribeCommand(GlobalCommandNames.RefreshCommand, RefreshCommandExecuted, RefreshCommandCanExecute);\r\n";
             membersContent += "private readonly I$Product$$Dialog$Repository _$product$$Dialog$Repository;".DoReplaces();
 
             foreach (var configurationItem in _configuration.DataLayout)
             {
                 if (!configurationItem.IsPreFilterItem)
                 {
+                    lazyLoadingContent += GetLazyLoadingPart(configurationItem);
+
                     filterParamContent += ", IFilterSourceProvider<" + _configuration.Product + configurationItem.Name + "DataItem>";
                     navigationContent += _masterViewModelNavigation.DoReplaces(configurationItem);
 
@@ -574,6 +615,12 @@ namespace PlusLayerCreator.Configure
                         propertiesContent += _masterViewModelSelectedItem.DoReplaces(configurationItem);
                         if (string.IsNullOrEmpty(configurationItem.Parent))
                         {
+                            string selectPart = _configuration.DataLayout.Any(t => t.Name.EndsWith("Version"))
+                                ? _masterViewModelLazyLoadingCollectionSelectVersion
+                                : _masterViewModelLazyLoadingCollectionSelect;
+
+                            lazyLoadingCollectionContent += _masterViewModelLazyLoadingCollection.ReplaceSpecialContent(new []{selectPart}).DoReplaces(configurationItem);
+
                             if (configurationItem.CanEdit)
                             {
                                 initializeContent += "CommandService.SubscribeAsyncCommand(GlobalCommandNames.AddCommand, AddCommandExecuted, AddCommandCanExecute);\r\n";
@@ -581,7 +628,7 @@ namespace PlusLayerCreator.Configure
                             }
                             if (configurationItem.CanDelete)
                             {
-                                initializeContent += "CommandService.SubscribeAsyncCommand(GlobalCommandNames.DeleteCommand, DeleteCommandExecuted, DeleteCommandCanExecute);";
+                                initializeContent += "CommandService.SubscribeAsyncCommand(GlobalCommandNames.DeleteCommand, DeleteCommandExecuted, DeleteCommandCanExecute);\r\n";
                                 commandContent += GetDeleteCommand(configurationItem);
                             }
                         }
@@ -589,13 +636,13 @@ namespace PlusLayerCreator.Configure
                         {
                             if (configurationItem.CanEdit)
                             {
-                                initializeContent += "CommandService.SubscribeAsyncCommand(CommandNames.Add$Item$Command, Add$Item$CommandExecuted, Add$Item$CommandCanExecute);\r\n" .DoReplaces(configurationItem);
+                                initializeContent += "CommandService.SubscribeAsyncCommand(CommandNames.Add$Item$Command, Add$Item$CommandExecuted, Add$Item$CommandCanExecute);\r\n".DoReplaces(configurationItem);
                                 commandContent += GetAddCommand(configurationItem);
                                 propertiesContent += "public IPlusCommand Add$Item$Command { get; set; }\r\n".DoReplaces(configurationItem);
                             }
                             if (configurationItem.CanDelete)
                             {
-                                initializeContent += "CommandService.SubscribeAsyncCommand(CommandNames.Delete$Item$Command, Delete$Item$CommandExecuted, Delete$Item$CommandCanExecute);";
+                                initializeContent += "CommandService.SubscribeAsyncCommand(CommandNames.Delete$Item$Command, Delete$Item$CommandExecuted, Delete$Item$CommandCanExecute);\r\n".DoReplaces(configurationItem);
                                 commandContent += GetDeleteCommand(configurationItem);
                                 propertiesContent += "public IPlusCommand Delete$Item$Command { get; set; }\r\n".DoReplaces(configurationItem);
                             }
@@ -611,8 +658,13 @@ namespace PlusLayerCreator.Configure
 
                     if (configurationItem.Properties.Any(t => t.IsFilterProperty))
                     {
-                        filterSourceProviderContent +=
-                            _masterViewModelFilterSourceProvider.DoReplaces(configurationItem);
+                        filterSourceProviderContent += _masterViewModelFilterSourceProvider.DoReplaces(configurationItem);
+                        string filter = _masterViewModelLazyLoadingFilter.DoReplaces(configurationItem);
+                        lazyLoadingCollectionContent += _masterViewModelLazyLoadingChildCollection.ReplaceSpecialContent(new[] { filter }).DoReplaces(configurationItem);
+                    }
+                    else
+                    {
+                        lazyLoadingCollectionContent += _masterViewModelLazyLoadingChildCollection.ReplaceSpecialContent(new[] { string.Empty }).DoReplaces(configurationItem);
                     }
                 }
 
@@ -623,12 +675,11 @@ namespace PlusLayerCreator.Configure
                             .DoReplaces(configurationItem);
                     propertiesContent += _masterViewModelItemsList.DoReplaces(configurationItem);
                 }
-
-
             }
 
             if (_configuration.DataLayout.Any(t => t.CanEdit))
             {
+                methodsContent += _masterViewModelMainCollectionHasAnyChanges;
                 membersContent += "private PropertyObserver<PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem>> _isDirtyObserver;\r\n".DoReplaces(masterItem);
                 initializeContent += "CommandService.SubscribeAsyncCommand(GlobalCommandNames.CancelCommand, CancelCommandExecuted, CancelCommandCanExecute);\r\n";
                 initializeContent += "CommandService.SubscribeAsyncCommand(GlobalCommandNames.SaveCommand, SaveCommandExecuted, SaveCommandCanExecute);\r\n";
@@ -639,19 +690,19 @@ namespace PlusLayerCreator.Configure
                 }
                 else
                 {
-                    commandContent += _masterViewModelSave.DoReplaces(masterItem);
+                    commandContent += GetSaveCommand();
                 }
             }
 
             if (_configuration.DataLayout.Any(t => t.CanClone))
             {
-                initializeContent += "CommandService.SubscribeAsyncCommand(GlobalCommandNames.CopyCommand, CopyCommandExecuted, CopyCommandCanExecute);";
+                initializeContent += "CommandService.SubscribeAsyncCommand(GlobalCommandNames.CopyCommand, CopyCommandExecuted, CopyCommandCanExecute);\r\n";
                 commandContent += GetCloneCommand();
             }
 
             if (masterItem.CanEdit && !masterItem.CanEditMultiple)
             {
-                initializeContent += "SelectingActiveItemCommand = new PlusCommand<CancelableSelectionArgs<object>>(SelectingActiveItemCommandExecuted);";
+                initializeContent += "SelectingActiveItemCommand = new PlusCommand<CancelableSelectionArgs<object>>(SelectingActiveItemCommandExecuted);\r\n";
             }
 
             if (!_configuration.DataLayout.Any(t => t.IsPreFilterItem))
@@ -663,8 +714,12 @@ namespace PlusLayerCreator.Configure
                 //todo read prefilterlists here
             }
 
+            lazyLoadingContent = _masterViewModelLazyLoadingMain.ReplaceSpecialContent(new[] {lazyLoadingContent});
 
-            if (masterItem.CanEditMultiple)
+            methodsContent += lazyLoadingContent;
+            methodsContent += lazyLoadingCollectionContent;
+            
+            if (!masterItem.CanEditMultiple)
             {
                 masterViewModelTemplate = Files.MasterViewModelTemplate;
             }
@@ -677,6 +732,46 @@ namespace PlusLayerCreator.Configure
                 _configuration.OutputPath + @"UI\Regions\Master\" + _configuration.DialogName + @"MasterViewModel.cs",
                 new[] { membersContent, initializeContent, propertiesContent, methodsContent, filterParamContent, commandContent, navigationContent, filterSourceProviderContent });
 
+        }
+
+        private string GetLazyLoadingPart(ConfigurationItem item)
+        {
+            string content = "if (sender is ILazyLoadingObservableCollection<$Product$$Item$DataItem>)" +
+                             "{" +
+                             "    On$Product$$Item$DataItemListLoaded();" +
+                             "}\r\n";
+
+            return content.DoReplaces(item);
+        }
+
+        private string GetSaveCommand()
+        {
+            string content = _masterViewModelSave;
+            string commandContent = string.Empty;
+            foreach (var item in _configuration.DataLayout.Where(t => t.CanEdit && !t.CanEditMultiple).OrderByDescending(t => t.Order))
+            {
+                string acceptPoint;
+
+                if (string.IsNullOrEmpty(item.Parent))
+                {
+                    acceptPoint = item.Name + "sList";
+                    commandContent += _masterViewModelSaveCommand.ReplaceSpecialContent(new[] { acceptPoint }).DoReplaces(item);
+                }
+                else if (!item.Name.EndsWith("Version"))
+                {
+                    acceptPoint = "Selected" + item.Parent + "DataItem." + item.Name + "s";
+                    commandContent += _masterViewModelSaveCommand.ReplaceSpecialContent(new[] { acceptPoint }).DoReplaces(item);
+                    commandContent += " else ";
+                }
+                else
+                {
+                    commandContent += _masterViewModelSaveVersionCommand.DoReplaces(item);
+                    break;
+                }
+                
+            }
+
+            return content.DoReplaces().ReplaceSpecialContent(new []{commandContent});
         }
 
         private string GetAddCommand(ConfigurationItem item)

@@ -1,0 +1,20 @@
+if (ActiveItem is $Product$$Parent$DataItem)
+{
+	var response = await _$product$$Dialog$Repository.Save$Parent$Async(CreateNewCallContext(true), ($Product$$Parent$DataItem)ActiveItem);
+	if (response.IsSuccess)
+	{
+		$Product$$Parent$DataItemsList.Accept();
+	}
+
+	result = response.IsSuccess;
+}
+if (ActiveItem is $Product$$Item$DataItem)
+{
+	var response = await _$product$$Dialog$Repository.Save$Item$Async(CreateNewCallContext(true), ($Product$$Item$DataItem)ActiveItem);
+	if (response.IsSuccess)
+	{
+		(($Product$$Parent$DataItem)ActiveItem.Parent.Parent).Accept();
+	}
+
+	result = response.IsSuccess;
+}

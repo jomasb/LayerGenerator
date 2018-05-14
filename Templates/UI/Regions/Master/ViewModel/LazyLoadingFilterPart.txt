@@ -1,0 +1,4 @@
+On$Item$SourceCollectionChanged(new SourceCollectionChangedEventArgs<$Product$$Item$DataItem>()
+{
+	SourceCollection = Selected$Parent$DataItem.$Items$s.LoadedItems
+});

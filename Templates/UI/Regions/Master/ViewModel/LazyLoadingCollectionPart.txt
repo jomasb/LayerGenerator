@@ -1,0 +1,16 @@
+private void On$Product$$Item$DataItemListLoaded()
+{
+	IsInitialLoadingCompleted = true;
+
+	_isDirtyObserver = new PropertyObserver<PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem>>($Product$DataItemsList);
+	_isDirtyObserver.RegisterHandler(x => x.HasAnyChanges, OnCollectionHasAnyChanges);
+
+	On$Item$SourceCollectionChanged(new SourceCollectionChangedEventArgs<$Product$$Item$DataItem>()
+	{
+		SourceCollection = $Product$DataItemsList.LoadedItems
+	});
+
+	ResetNavigation();
+
+	$specialContent1$
+}

@@ -1,0 +1,8 @@
+if (Selected$Item$DataItem != null)
+{
+	var response = await _$product$$Dialog$Repository.Save$Item$Async(CreateNewCallContext(true), Selected$Item$DataItem);
+	if (response.IsSuccess)
+	{
+		$specialContent1$.Accept();
+	}
+}

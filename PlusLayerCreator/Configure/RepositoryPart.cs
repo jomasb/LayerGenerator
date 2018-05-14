@@ -145,16 +145,15 @@ namespace PlusLayerCreator.Configure
                         "\r\n\r\n";
 
                     if (!dataItem.CanEditMultiple)
-                        if (string.IsNullOrEmpty(dataItem.Parent) || dataItem.Name.EndsWith("Version"))
-                        {
-                            interfaceContent +=
-                                File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\SavePart.txt")
-                                    .DoReplaces(dataItem) + "\r\n\r\n";
-                            var content = File.ReadAllText(_configuration.InputPath + @"Repository\SavePart.txt")
-                                              .DoReplaces(dataItem) + "\r\n\r\n";
-                            content = content.ReplaceSpecialContent(new[] {identifier, readOnly});
-                            repositoryContent += content;
-                        }
+                    {
+                        interfaceContent +=
+                            File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\SavePart.txt")
+                                .DoReplaces(dataItem) + "\r\n\r\n";
+                        var content = File.ReadAllText(_configuration.InputPath + @"Repository\SavePart.txt")
+                                            .DoReplaces(dataItem) + "\r\n\r\n";
+                        content = content.ReplaceSpecialContent(new[] {identifier, readOnly});
+                        repositoryContent += content;
+                    }
 
                     if (dataItem.CanEditMultiple)
                         if (string.IsNullOrEmpty(dataItem.Parent))

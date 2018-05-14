@@ -1,0 +1,4 @@
+private void On$Product$$Item$DataItemListLoaded()
+{
+	$specialContent1$
+}
