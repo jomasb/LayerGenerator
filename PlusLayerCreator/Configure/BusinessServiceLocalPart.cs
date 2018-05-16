@@ -54,14 +54,14 @@ namespace PlusLayerCreator.Configure
                         File.ReadAllText(_configuration.InputPath + @"Service\Contracts\GetChildPart" +
                                             fileNameExtension + ".txt").DoReplaces(dataItem) +
                         "\r\n\r\n";
-                    content = content.ReplaceSpecialContent(new[] {_configuration.Product + dataItem.Parent});
+                    content = content.ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param") });
                     interfaceReadContent += content;
 
 
                     content = File.ReadAllText(_configuration.InputPath + @"Service\GetChildPart" +
                                                 fileNameExtension + ".txt").DoReplaces(dataItem) +
                                 "\r\n\r\n";
-                    content = content.ReplaceSpecialContent(new[] {_configuration.Product + dataItem.Parent});
+                    content = content.ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param"), GetParentParameter(dataItem, "call"), GetParentParameter(dataItem, "") });
                     serviceReadContent += content;
 
                     if (!withBo)
@@ -69,46 +69,53 @@ namespace PlusLayerCreator.Configure
                         var propertyAssignments = Helpers.GetBusinessServiceLocalGetMock(dataItem);
                         serviceMockReadContent +=
                             File.ReadAllText(_configuration.InputPath + @"Service\GetChildPartNoBOMock.txt")
-                                .Replace("$specialContent1$", dataItem.Parent)
-                                .Replace("$specialContent2$", propertyAssignments).DoReplaces(dataItem) +
+                                .ReplaceSpecialContent(new []{ GetParentParameter(dataItem, "param"), propertyAssignments})
+                                .DoReplaces(dataItem) +
                             "\r\n\r\n";
                     }
                 }
 
                 if (dataItem.CanEdit && !dataItem.CanEditMultiple)
-                    if (string.IsNullOrEmpty(dataItem.Parent))
-                    {
-                        interfaceSaveContent +=
-                            File.ReadAllText(_configuration.InputPath + @"Service\Contracts\SavePart" +
-                                             fileNameExtension + ".txt").DoReplaces(dataItem) + "\r\n\r\n";
-                        serviceSaveContent +=
-                            File.ReadAllText(
-                                    _configuration.InputPath + @"Service\SavePart" + fileNameExtension + ".txt")
-                                .DoReplaces(dataItem) + "\r\n\r\n";
+                { 
+                    interfaceSaveContent +=
+                        File.ReadAllText(_configuration.InputPath + @"Service\Contracts\SavePart" +
+                                            fileNameExtension + ".txt")
+                            .ReplaceSpecialContent(new []{ GetParentParameter(dataItem, "param") })
+                            .DoReplaces(dataItem) + "\r\n\r\n";
+                    serviceSaveContent +=
+                        File.ReadAllText(
+                                _configuration.InputPath + @"Service\SavePart" + fileNameExtension + ".txt")
+                            .ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param"), GetParentParameter(dataItem, "call"), GetParentParameter(dataItem, "") })
+                            .DoReplaces(dataItem) + "\r\n\r\n";
 
-                        if (!withBo)
-                            serviceMockSaveContent +=
-                                File.ReadAllText(_configuration.InputPath + @"Service\SavePartNoBOMock.txt")
-                                    .DoReplaces(dataItem) + "\r\n\r\n";
-                    }
+                    if (!withBo)
+                        serviceMockSaveContent +=
+                            File.ReadAllText(_configuration.InputPath + @"Service\SavePartNoBOMock.txt")
+                                .ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param") })
+                                .DoReplaces(dataItem) + "\r\n\r\n";
+                }
 
                 if (dataItem.CanEdit && dataItem.CanEditMultiple)
-                    if (string.IsNullOrEmpty(dataItem.Parent))
-                    {
-                        interfaceSaveContent +=
-                            File.ReadAllText(_configuration.InputPath + @"Service\Contracts\SaveMultiPart" +
-                                             fileNameExtension + ".txt").DoReplaces(dataItem) + "\r\n\r\n";
-                        serviceSaveContent +=
-                            File.ReadAllText(_configuration.InputPath + @"Service\SaveMultiPart" + fileNameExtension +
-                                             ".txt").DoReplaces(dataItem) + "\r\n\r\n";
+                {
+                    interfaceSaveContent +=
+                        File.ReadAllText(_configuration.InputPath + @"Service\Contracts\SaveMultiPart" +
+                                            fileNameExtension + ".txt")
+                            .ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param") })
+                            .DoReplaces(dataItem) + "\r\n\r\n";
+                    serviceSaveContent +=
+                        File.ReadAllText(_configuration.InputPath + @"Service\SaveMultiPart" + fileNameExtension +
+                                            ".txt")
+                            .ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param"), GetParentParameter(dataItem, "call"), GetParentParameter(dataItem, "") })
+                            .DoReplaces(dataItem) + "\r\n\r\n";
 
-                        if (!withBo)
-                            serviceMockSaveContent +=
-                                File.ReadAllText(_configuration.InputPath + @"Service\SaveMultiPartNoBOMock.txt")
-                                    .DoReplaces(dataItem) + "\r\n\r\n";
-                    }
+                    if (!withBo)
+                        serviceMockSaveContent +=
+                            File.ReadAllText(_configuration.InputPath + @"Service\SaveMultiPartNoBOMock.txt")
+                                .ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param") })
+                                .DoReplaces(dataItem) + "\r\n\r\n";
+                }
 
-                if (dataItem.Name == "Version")
+                if (dataItem.Name.EndsWith("Version"))
                     if (!string.IsNullOrEmpty(dataItem.Parent))
                     {
                         interfaceSaveContent +=
@@ -148,6 +155,30 @@ namespace PlusLayerCreator.Configure
             }
         }
 
+        private string GetParentParameter(ConfigurationItem item, string type)
+        {
+            string retValue = string.Empty;
+
+            if (!string.IsNullOrEmpty(item.Parent))
+            {
+                if (type == "param")
+            {
+                retValue = ", " + _configuration.Product + item.Parent + " parent" + item.Parent;
+            }
+            else if (type == "call")
+            {
+                retValue = ", parent" + item.Parent;
+            }
+            else
+            {
+                retValue = "arguments.Add(\""+ item.Parent +"\", parent" + item.Parent + ");\r\n";
+            }
+                return GetParentParameter(_configuration.DataLayout.First(t => t.Name == item.Parent), type) + retValue;
+            }
+
+            return retValue;
+        }
+
         private string GetPreFilterInformation(ConfigurationItem item, string information)
         {
             if (item.IsPreFilterItem)
@@ -166,7 +197,7 @@ namespace PlusLayerCreator.Configure
 
                 if (information == "arguments")
                 {
-                    filterParameter += "arguments.Add(\"" + configurationItem.Name + "\", " +
+                    filterParameter += "arguments.Add(\"" + _configuration.Product + configurationItem.Name + "\", " +
                                        configurationItem.Name.ToPascalCase() + ");";
                 }
 

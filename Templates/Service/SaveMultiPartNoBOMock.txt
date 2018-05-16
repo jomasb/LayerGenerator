@@ -4,34 +4,32 @@
 /// <param name="serviceCallContext">The service call context.</param>
 /// <param name="$item$Dtos">The $item$ dtos.</param>
 /// <returns></returns>
-public Task<CallResponse<IList<$Product$$Item$>>> Save$Item$sAsync(IServiceCallContext serviceCallContext, IList<$Product$$Item$> $item$Dtos)
+public Task<CallResponse<IList<$Product$$Item$>>> Save$Item$sAsync(IServiceCallContext serviceCallContext, IList<$Product$$Item$> $item$Dtos$specialContent1$, DateTime maxLupdTimestamp)
 {
 	return Task.Factory.StartNew(() =>
 	{
-		$Product$$Item$s.Clear();
-
-		var $items$ = from $item$Dto in $item$Dtos
+		var $item$s = from $item$Dto in $item$Dtos
 			where $item$Dto.SaveFlag.Equals(SaveFlag.New) || $item$Dto.SaveFlag.Equals(SaveFlag.Delete) ||
 				  $item$Dto.SaveFlag.Equals(SaveFlag.Modified)
 			select $item$Dto;
 
-		var $items$ToSave = $items$ as IList<$Product$$Item$> ?? $items$.ToList();
+		var $item$sToSave = $item$s as IList<$Product$$Item$> ?? $item$s.ToList();
 
-		foreach (var dto in $items$ToSave.Where(t => t.SaveFlag == SaveFlag.New))
+		foreach (var dto in $item$sToSave.Where(t => t.SaveFlag == SaveFlag.New))
 		{
 			dto.LupdTimestamp = DateTime.Now;
 			dto.LupdUser = "JMAN";
 			dto.SaveFlag = SaveFlag.Persistent;
 		}
 
-		foreach (var dto in $items$ToSave.Where(t => t.SaveFlag == SaveFlag.Modified))
+		foreach (var dto in $item$sToSave.Where(t => t.SaveFlag == SaveFlag.Modified))
 		{
 			dto.LupdTimestamp = DateTime.Now;
 			dto.LupdUser = "JMAM";
 			dto.SaveFlag = SaveFlag.Persistent;
 		}
 
-		return CallResponse.FromSuccessfulResult($items$ToSave);
+		return CallResponse.FromSuccessfulResult($item$sToSave);
 
 	});
 }

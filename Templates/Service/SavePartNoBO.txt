@@ -4,10 +4,10 @@
 /// <param name="serviceCallContext">The service call context.</param>
 /// <param name="$item$Dto">The $item$ dto.</param>
 /// <returns></returns>
-public Task<CallResponse<$Product$$Item$>> Save$Item$Async(IServiceCallContext serviceCallContext, $Product$$Item$ $item$Dto)
+public Task<CallResponse<$Product$$Item$>> Save$Item$Async(IServiceCallContext serviceCallContext, $Product$$Item$ $item$Dto$specialContent1$)
 {
 	ServiceCallContext = serviceCallContext;
-	return GetDataTandemResponseAsync(() => Save$Item$($item$Dto), serviceCallContext);
+	return GetDataTandemResponseAsync(() => Save$Item$($item$Dto$specialContent2$), serviceCallContext);
 }
 
 /// <summary>
@@ -15,13 +15,13 @@ public Task<CallResponse<$Product$$Item$>> Save$Item$Async(IServiceCallContext s
 /// </summary>
 /// <param name="$item$Dto">The $item$ dto.</param>
 /// <returns></returns>
-private CallResponse<$Product$$Item$> Save$Item$($Product$$Item$ $item$Dto)
+private CallResponse<$Product$$Item$> Save$Item$($Product$$Item$ $item$Dto$specialContent1$)
 {
 	using (TraceLog.Log(this, options: TraceLogOptions.All))
 	{
 		IDictionary<string, object> arguments = new Dictionary<string, object>();
 		arguments.Add("$Item$ToSave", $item$Dto);
-
+		$specialContent3$
 		if (!DataAdapter.Execute<I$Product$$Item$Service>(this, "Save$Item$", ref arguments))
 		{
 			return CallResponse.FromFailedResult($item$Dto);

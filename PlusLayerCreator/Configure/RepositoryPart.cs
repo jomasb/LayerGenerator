@@ -13,9 +13,8 @@ namespace PlusLayerCreator.Configure
         public RepositoryPart(Configuration configuration)
         {
             _configuration = configuration;
-            _createRepositoryDtoTemplatePart =
-                File.ReadAllText(configuration.InputPath + @"Repository\CreateDataItemPart.txt");
-            _createDataItemTemplatePart = File.ReadAllText(configuration.InputPath + @"Repository\CreateDtoPart.txt");
+            _createRepositoryDtoTemplatePart = File.ReadAllText(configuration.InputPath + @"Repository\CreateDtoPart.txt");
+            _createDataItemTemplatePart = File.ReadAllText(configuration.InputPath + @"Repository\CreateDataItemPart.txt");
         }
 
         #region Repository
@@ -285,20 +284,30 @@ namespace PlusLayerCreator.Configure
                     if (plusDataObject.IsRequired || plusDataObject.Length != string.Empty)
                     {
                         dataItemContent += "[";
-                        if (plusDataObject.IsRequired) dataItemContent += "Required";
-
-                        if (plusDataObject.IsRequired || plusDataObject.Length != string.Empty) dataItemContent += ", ";
+                        if (plusDataObject.IsRequired)
+                        {
+                            dataItemContent += "Required, ";
+                        }
 
                         if (!string.IsNullOrEmpty(plusDataObject.Length))
                         {
                             if (plusDataObject.Type == "int")
-                                dataItemContent +=
-                                    "NumericRange(0, " + Helpers.GetMaxValue(plusDataObject.Length) + ")";
+                            {
+                                dataItemContent += "NumericRange(0, " + Helpers.GetMaxValue(plusDataObject.Length) + "), ";
+                            }
+
                             if (plusDataObject.Type == "string")
-                                dataItemContent += "MaxLength(" + plusDataObject.Length + ")";
+                            {
+                                dataItemContent += "MaxLength(" + plusDataObject.Length + "), ";
+                            }
                         }
 
-                        dataItemContent += "]\r\n";
+                        dataItemContent = dataItemContent.Substring(0, dataItemContent.Length - 2);
+
+                        if (dataItemContent.Length > 0)
+                        {
+                            dataItemContent += "]\r\n";
+                        }
                     }
 
                     dataItemContent += "public " + plusDataObject.Type + " " + plusDataObject.Name + "\r\n" +
@@ -311,12 +320,13 @@ namespace PlusLayerCreator.Configure
                                        "        Set<" + plusDataObject.Type + ">(value);\r\n" +
                                        "    }}\r\n\r\n";
 
-                    foreach (var childDataItem in _configuration.DataLayout.Where(t => t.Parent == dataItem.Name))
-                        dataItemContent +=
-                            File.ReadAllText(_configuration.InputPath +
-                                             @"Repository\DataItems\DataItemCollectionPart.txt")
-                                .DoReplaces(childDataItem) + "\r\n";
                 }
+
+                foreach (var childDataItem in _configuration.DataLayout.Where(t => t.Parent == dataItem.Name))
+                    dataItemContent +=
+                        File.ReadAllText(_configuration.InputPath +
+                                         @"Repository\DataItems\DataItemCollectionPart.txt")
+                            .DoReplaces(childDataItem) + "\r\n";
 
                 Helpers.CreateFileFromPath(_configuration.InputPath + @"Repository\DataItems\DataItemTemplate.cs",
                     _configuration.OutputPath + @"Repository\DataItems\" + _configuration.Product + dataItem.Name +

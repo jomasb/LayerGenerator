@@ -4,4 +4,4 @@
 /// <param name="serviceCallContext">The service call context.</param>
 /// <param name="parentDto">The parent dto</param>
 /// <returns></returns>
-Task<CallResponse<IList<$Product$$Item$>>> Get$Item$sAsync(IServiceCallContext serviceCallContext, $specialContent1$ parentDto);
+Task<CallResponse<IList<$Product$$Item$>>> Get$Item$sAsync(IServiceCallContext serviceCallContext$specialContent1$);

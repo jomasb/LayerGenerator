@@ -5,4 +5,4 @@
 /// <param name="$item$Dtos">The $Item$ dtos.</param>
 /// <param name="maxLupdTimestamp">The maximum lupd timestamp.</param>
 /// <returns></returns>
-Task<CallResponse<IList<$Product$$Item$>>> Save$Item$sAsync(IServiceCallContext serviceCallContext, IList<$Product$$Item$> $item$Dtos, DateTime maxLupdTimestamp);
+Task<CallResponse<IList<$Product$$Item$>>> Save$Item$sAsync(IServiceCallContext serviceCallContext, IList<$Product$$Item$> $item$Dtos$specialContent1$, DateTime maxLupdTimestamp);

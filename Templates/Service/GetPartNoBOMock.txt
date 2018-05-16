@@ -11,7 +11,7 @@ public Task<CallResponse<IList<$Product$$Item$>>> Get$Item$sAsync(IServiceCallCo
 		
 		for (int i = 0; i < 10; i++)
 		{
-			$Product$$Item$s.Add(new $product$$Item$()
+			$product$$Item$s.Add(new $Product$$Item$()
 			{
 				$specialContent1$
 				LupdTimestamp = new DateTime(2016, 1, 12),

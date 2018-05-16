@@ -231,7 +231,7 @@ namespace PlusLayerCreator
                 {
                     var ran = random.Next(1, 9);
                     var val = ran % 2 == 0;
-                    propertyAssignments += property.Name + " = " + val + ",\r\n";
+                    propertyAssignments += property.Name + " = " + val.ToString().ToLower() + ",\r\n";
                 }
 
                 if (property.Type == "DateTime")

@@ -4,7 +4,7 @@
 /// <param name="serviceCallContext">The service call context.</param>
 /// <param name="parentDto">The parent dto</param>
 /// <returns></returns>
-public Task<CallResponse<IList<$Product$$Item$>>> Get$Item$sAsync(IServiceCallContext serviceCallContext, $specialContent1$ parentDto)
+public Task<CallResponse<IList<$Product$$Item$>>> Get$Item$sAsync(IServiceCallContext serviceCallContext$specialContent1$)
 {
-	return GetGatewayResponseAsync(r => r.Get$Item$s(serviceCallContext, parentDto), serviceCallContext);
+	return GetGatewayResponseAsync(r => r.Get$Item$s(serviceCallContext$specialContent2$), serviceCallContext);
 }
