@@ -6,3 +6,4 @@ if (Selected$Item$DataItem != null)
 		$specialContent1$.Accept();
 	}
 }
+

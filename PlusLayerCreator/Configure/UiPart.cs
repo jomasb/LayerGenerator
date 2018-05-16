@@ -762,7 +762,19 @@ namespace PlusLayerCreator.Configure
         private string GetSortCommand(ConfigurationItem item)
         {
             string content = _masterViewModelSort;
-            return content;
+            string acceptPoint;
+
+            if (string.IsNullOrEmpty(item.Parent))
+            {
+                acceptPoint = item.Name + "sList";
+            }
+            else
+            {
+                acceptPoint = "Selected" + item.Parent + "DataItem." + item.Name + "s";
+            }
+
+
+            return content.ReplaceSpecialContent(new []{ acceptPoint}).DoReplaces(item);
         }
 
         private string GetSaveCommand()

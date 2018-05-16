@@ -27,3 +27,4 @@ public $Product$$Item$DataItem Selected$Item$DataItem
 		RaiseCanExecuteChanged();
 	}
 }
+

@@ -5,3 +5,4 @@ private async Task CancelCommandExecuted()
 	RaiseCanExecuteChanged();
 	BaseServices.EventAggregator.Publish(GlobalEventNames.CancelExecuted);
 }
+

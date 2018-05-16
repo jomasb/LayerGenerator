@@ -19,3 +19,4 @@ private async Task Delete$Item$CommandExecuted()
 		IsGlobalBusy = false;
 	}
 }
+

@@ -7,3 +7,4 @@ FilterCollection = (CollectionView)CollectionViewSource.GetDefaultView($Product$
 {
 	UpdateDisplayName();
 };
+

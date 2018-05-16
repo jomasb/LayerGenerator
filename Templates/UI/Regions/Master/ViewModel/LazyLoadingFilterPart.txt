@@ -2,3 +2,4 @@ On$Item$SourceCollectionChanged(new SourceCollectionChangedEventArgs<$Product$$I
 {
 	SourceCollection = Selected$Parent$DataItem.$Items$s.LoadedItems
 });
+

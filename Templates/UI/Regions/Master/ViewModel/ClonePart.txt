@@ -3,7 +3,6 @@ protectetd override bool CopyCommandCanExecute()
 	return $specialContent1$;
 }
 
-
 private async Task CopyCommandExecuted()
 {
 	IsBusy = true;
@@ -21,3 +20,4 @@ private async Task CopyCommandExecuted()
 	}
 	IsBusy = false;
 }
+

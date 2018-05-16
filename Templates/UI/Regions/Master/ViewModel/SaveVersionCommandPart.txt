@@ -18,3 +18,4 @@ if (ActiveItem is $Product$$Item$DataItem)
 
 	result = response.IsSuccess;
 }
+

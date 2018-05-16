@@ -26,3 +26,4 @@ private async Task DeleteCommandExecuted()
 		IsBusy = false;
 	}
 }
+

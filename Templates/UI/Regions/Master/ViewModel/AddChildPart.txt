@@ -17,3 +17,4 @@ private async Task Add$Item$CommandExecuted()
 	}
 	IsBusy = false;
 }
+

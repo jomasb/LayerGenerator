@@ -21,3 +21,4 @@ public void OnRegisteredLazyCollectionException(object sender, Exception excepti
 	IsInitialLoadingCompleted = false;
 	RaiseCanExecuteChanged();
 }
+

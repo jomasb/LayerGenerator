@@ -30,3 +30,4 @@ protected void On$Item$SourceCollectionChanged(SourceCollectionChangedEventArgs<
 	if (handler != null)
 		handler(this, e);
 }
+

@@ -3,3 +3,4 @@ if ($Product$DataItemsList.Count > 0)
 	Selected$Item$DataItem = null;
 	Selected$Item$DataItem = FilterCollection.GetItemAt(0) as $Product$$Item$DataItem;
 }
+

@@ -6,3 +6,4 @@ private void OnCollectionHasAnyChanges(PlusLazyLoadingAsyncObservableCollection<
 	IsDirty = collection.HasAnyChanges;
 	RaiseCanExecuteChanged();
 }
+
