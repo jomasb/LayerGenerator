@@ -2,15 +2,14 @@
 /// Gets the $Item$s asynchronous.
 /// </summary>
 /// <param name="callContext">The call context.</param>
-/// <param name="parentDataItem">The parent data item</param>
 /// <returns></returns>
-public async Task<CallResponse<IList<$Product$$Item$DataItem>>> Get$Item$sAsync(IRepositoryCallContext callContext, $specialContent1$DataItem parentDataItem)
+public async Task<CallResponse<IList<$Product$$Item$DataItem>>> Get$Item$sAsync(IRepositoryCallContext callContext$specialContent1$$specialContent2$)
 {
 	try
 	{
 		IList<$Product$$Item$DataItem> $item$DataItems = new List<$Product$$Item$DataItem>();
 
-		var callResponse = await _$product$$Item$Service.Get$Item$sAsync(callContext, $specialContent2$(parentDataItem)).ConfigureAwait(false);
+		var callResponse = await _$product$$Item$Service.Get$Item$sAsync(callContext$specialContent3$$specialContent4$).ConfigureAwait(false);
 
 		if (callResponse.IsSuccess)
 		{
@@ -18,6 +17,7 @@ public async Task<CallResponse<IList<$Product$$Item$DataItem>>> Get$Item$sAsync(
 			foreach ($Product$$Item$ $item$ in $item$s)
 			{
 				$Product$$Item$DataItem $item$DataItem = _$product$DataItemFactory.Create$Item$FromDto($item$);
+				$specialContent5$
 				$item$DataItem.IsChangeTrackingDisabled = false;
 				$item$DataItem.Accept();
 				$item$DataItems.Add($item$DataItem);
@@ -31,3 +31,6 @@ public async Task<CallResponse<IList<$Product$$Item$DataItem>>> Get$Item$sAsync(
 		return CallResponse.FromException<IList<$Product$$Item$DataItem>>(ex);
 	}
 }
+
+
+

@@ -2,6 +2,6 @@
 /// Gets the $Item$s asynchronous.
 /// </summary>
 /// <param name="callContext">The call context.</param>
-/// <param name="parentDataItem">The parent data item</param>
 /// <returns></returns>
-Task<CallResponse<IList<$Product$$Item$DataItem>>> Get$Item$sAsync(IRepositoryCallContext callContext, $specialContent1$DataItem parentDataItem);
+Task<CallResponse<IList<$Product$$Item$DataItem>>> Get$Item$sAsync(IRepositoryCallContext callContext$specialContent1$);
+

@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using System.Text;
 using PlusLayerCreator.Items;
 
 namespace PlusLayerCreator.Configure
@@ -13,8 +14,9 @@ namespace PlusLayerCreator.Configure
         public RepositoryPart(Configuration configuration)
         {
             _configuration = configuration;
-            _createRepositoryDtoTemplatePart = File.ReadAllText(configuration.InputPath + @"Repository\CreateDtoPart.txt");
-            _createDataItemTemplatePart = File.ReadAllText(configuration.InputPath + @"Repository\CreateDataItemPart.txt");
+            _createRepositoryDtoTemplatePart =
+                File.ReadAllText(configuration.InputPath + @"Repository\CreateDataItemPart.txt");
+            _createDataItemTemplatePart = File.ReadAllText(configuration.InputPath + @"Repository\CreateDtoPart.txt");
         }
 
         #region Repository
@@ -48,61 +50,19 @@ namespace PlusLayerCreator.Configure
                 var identifier = GetIdentifier(dataItem);
                 var readOnly = GetReadOnly(dataItem);
 
+                string template = string.Empty;
                 if (string.IsNullOrEmpty(dataItem.Parent))
                 {
-                    if (_configuration.DataLayout.Any(t => t.Parent == dataItem.Name))
-                    {
-                        //parent
-                        interfaceContent +=
-                            File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\GetParentPart.txt")
-                                .DoReplaces(dataItem).ReplaceSpecialContent(new []{ GetPreFilterInformation(dataItem, "parameter") }) + "\r\n\r\n";
-
-                        var childDataItem = _configuration.DataLayout.FirstOrDefault(t => t.Parent == dataItem.Name)
-                            .Name;
-                        var getChild = childDataItem +
-                                       "s = new PlusLazyLoadingAsyncObservableCollection<" + _configuration.Product +
-                                       childDataItem + "DataItem>(" +
-                                       "() => Get" + childDataItem + "sAsync(callContext, " +
-                                       dataItem.Name.ToPascalCase() + "DataItem))" +
-                                       "{ AutoAcceptAfterSuccessfullyLoading = true, AutoOverwriteParent = true };";
-
-                        var content =
-                            File.ReadAllText(_configuration.InputPath + @"Repository\GetParentPart.txt")
-                                .DoReplaces(dataItem).ReplaceSpecialContent(new[] { GetPreFilterInformation(dataItem, "parameter"), GetPreFilterInformation(dataItem, "mainCall"), GetPreFilterInformation(dataItem, "listCall") }) +
-                            "\r\n\r\n";
-                        content = content.ReplaceSpecialContent(new[] {getChild});
-                        repositoryContent += content;
-                    }
-                    else
-                    {
-                        //single
-                        interfaceContent +=
-                            File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\GetPart.txt")
-                                .DoReplaces(dataItem).ReplaceSpecialContent(new[] { GetPreFilterInformation(dataItem, "parameter") }) + "\r\n\r\n";
-                        repositoryContent +=
-                            File.ReadAllText(_configuration.InputPath + @"Repository\GetPart.txt")
-                                .DoReplaces(dataItem).ReplaceSpecialContent(new[] { GetPreFilterInformation(dataItem, "parameter"), GetPreFilterInformation(dataItem, "mainCall"), GetPreFilterInformation(dataItem, "listCall") }) + "\r\n\r\n";
-                    }
+                    template = "GetPart.txt";
                 }
                 else
                 {
-                    //child
-                    var transformParent = "_" + _configuration.Product.ToPascalCase() + "DtoFactory.Create" +
-                                          dataItem.Parent + "FromDataItem";
-                    var content =
-                        File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\GetChildPart.txt")
-                            .DoReplaces(dataItem) +
-                        "\r\n\r\n";
-                    content = content.ReplaceSpecialContent(new[] {_configuration.Product + dataItem.Parent});
-                    interfaceContent += content;
-
-                    content = File.ReadAllText(_configuration.InputPath + @"Repository\GetChildPart.txt")
-                                  .DoReplaces(dataItem) +
-                              "\r\n\r\n";
-                    content = content.ReplaceSpecialContent(new[]
-                        {_configuration.Product + dataItem.Parent, transformParent});
-                    repositoryContent += content;
+                    template = "GetChildPart.txt";
                 }
+
+                interfaceContent += GetInterfaceGetPart(dataItem, template);
+                repositoryContent += GetRepositoryGetPart(dataItem, template);
+                
 
                 if (dataItem.CanClone)
                 {
@@ -144,15 +104,16 @@ namespace PlusLayerCreator.Configure
                         "\r\n\r\n";
 
                     if (!dataItem.CanEditMultiple)
-                    {
-                        interfaceContent +=
-                            File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\SavePart.txt")
-                                .DoReplaces(dataItem) + "\r\n\r\n";
-                        var content = File.ReadAllText(_configuration.InputPath + @"Repository\SavePart.txt")
-                                            .DoReplaces(dataItem) + "\r\n\r\n";
-                        content = content.ReplaceSpecialContent(new[] {identifier, readOnly});
-                        repositoryContent += content;
-                    }
+                        if (string.IsNullOrEmpty(dataItem.Parent) || dataItem.Name.EndsWith("Version"))
+                        {
+                            interfaceContent +=
+                                File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\SavePart.txt")
+                                    .DoReplaces(dataItem) + "\r\n\r\n";
+                            var content = File.ReadAllText(_configuration.InputPath + @"Repository\SavePart.txt")
+                                              .DoReplaces(dataItem) + "\r\n\r\n";
+                            content = content.ReplaceSpecialContent(new[] { identifier, readOnly });
+                            repositoryContent += content;
+                        }
 
                     if (dataItem.CanEditMultiple)
                         if (string.IsNullOrEmpty(dataItem.Parent))
@@ -162,7 +123,7 @@ namespace PlusLayerCreator.Configure
                                     .DoReplaces(dataItem) + "\r\n\r\n";
                             var content = File.ReadAllText(_configuration.InputPath + @"Repository\SaveMultiPart.txt")
                                               .DoReplaces(dataItem) + "\r\n\r\n";
-                            content = content.ReplaceSpecialContent(new[] {identifier, readOnly});
+                            content = content.ReplaceSpecialContent(new[] { identifier, readOnly });
                             repositoryContent += content;
                         }
                 }
@@ -175,12 +136,17 @@ namespace PlusLayerCreator.Configure
                                 .DoReplaces(dataItem) + "\r\n\r\n";
                         var content = File.ReadAllText(_configuration.InputPath + @"Repository\VersionPart.txt")
                                           .DoReplaces(dataItem) + "\r\n\r\n";
-                        content = content.ReplaceSpecialContent(new[] {identifier, readOnly});
+                        content = content.ReplaceSpecialContent(new[] { identifier, readOnly });
                         repositoryContent += content;
                     }
 
                 interfaceContent += "#endregion " + dataItem.Name + "\r\n\r\n";
                 repositoryContent += "#endregion " + dataItem.Name + "\r\n\r\n";
+
+
+
+
+
             }
 
             var dtoLayer = _configuration.IsUseBusinessServiceWithoutBo ? "BusinessServiceLocal" : "Gateway";
@@ -196,6 +162,116 @@ namespace PlusLayerCreator.Configure
                     repositoryServiceMemberContent, repositoryServiceParameterContent,
                     repositoryServiceConstructorContent, repositoryContent, dtoLayer
                 });
+        }
+
+        private string GetInterfaceGetPart(ConfigurationItem item, string template)
+        {
+            return File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\" + template)
+                .ReplaceSpecialContent(new[] { GetPreFilterInformation(item, "parameter"), GetGetItemsInformation(item, 1) })
+                .DoReplaces(item) + "\r\n\r\n";
+
+        }
+
+        private string GetRepositoryGetPart(ConfigurationItem item, string template)
+        {
+            string getChild = string.Empty;
+            if (_configuration.DataLayout.Any(t => t.Parent == item.Name))
+            {
+                var childDataItem = _configuration.DataLayout.FirstOrDefault(t => t.Parent == item.Name).Name;
+                getChild = item.Name.ToPascalCase() + "DataItem." + childDataItem +
+                               "s = new PlusLazyLoadingAsyncObservableCollection<" + _configuration.Product +
+                               childDataItem + "DataItem>(" +
+                               "() => Get" + childDataItem + "sAsync(callContext, " +
+                               item.Name.ToPascalCase() + "DataItem))" +
+                               "{ AutoAcceptAfterSuccessfullyLoading = true, AutoOverwriteParent = true };";
+            }
+
+            return File.ReadAllText(_configuration.InputPath + @"Repository\" + template)
+                    .ReplaceSpecialContent(new[]
+                    {
+                        GetPreFilterInformation(item, "parameter"),
+                        GetGetItemsInformation(item, 1),
+                        GetPreFilterInformation(item, "mainCall"),
+                        GetGetItemsInformation(item, 2),
+                        getChild,
+                        GetPreFilterInformation(item, "listCall"),
+                        GetGetItemsInformation(item, 3)
+                    })
+                    .DoReplaces(item) + "\r\n\r\n";
+        }
+
+        private string GetGetItemsInformation(ConfigurationItem item, int part)
+        {
+            if (string.IsNullOrEmpty(item.Parent))
+            {
+                return string.Empty;
+            }
+
+            string retValue = string.Empty;
+
+            switch (part)
+            {
+                case 1:
+                {
+                    retValue += ", " + _configuration.Product + item.Parent + "DataItem " + item.Parent.ToPascalCase() + "DataItem";
+                    break;
+                }
+                case 2:
+                {
+                    //retValue += ", _" + _configuration.Product.ToLower() + "DtoFactory.Create" + item.Parent +
+                    //                   "FromDataItem(" + item.Parent.ToPascalCase() + "DataItem)";
+                    retValue += GetParentParameter(item);
+                        break;
+                }
+                case 3:
+                {
+                    retValue += ", " + item.Parent.ToPascalCase() + "DataItem";
+                        break;
+                }
+            }
+
+            return retValue;
+        }
+
+        private string GetParentParameter(ConfigurationItem item)
+        {
+            string retValue = string.Empty;
+
+            if (!string.IsNullOrEmpty(item.Parent))
+            {
+                retValue += ", _" + _configuration.Product.ToLower() + "DtoFactory.Create" + item.Parent +
+                            "FromDataItem(" + GetParentString(item) + ")";
+                return GetParentParameter(_configuration.DataLayout.First(t => t.Name == item.Parent)) + retValue;
+            }
+
+            return retValue;
+        }
+
+        private string GetParentString(ConfigurationItem item)
+        {
+            string retValue = string.Empty;
+            retValue += item.Parent.ToPascalCase() + "DataItem";
+
+            ConfigurationItem parent = GetParent(item);
+            if (parent != null && !string.IsNullOrEmpty(parent.Parent))
+            {
+                StringBuilder builder = new StringBuilder();
+                builder.Append("(").Append(_configuration.Product).Append(parent.Parent).Append(")")
+                    .Append(parent.Name.ToPascalCase()).Append("DataItem.Parent.Parent");
+                retValue = builder.ToString();
+            }
+
+            return retValue;
+        }
+
+        private ConfigurationItem GetParent(ConfigurationItem item)
+        {
+            if (string.IsNullOrEmpty(item.Parent))
+            {
+                return null;
+            }
+
+            return _configuration.DataLayout.First(t => t.Name == item.Parent);
         }
 
         private string GetPreFilterInformation(ConfigurationItem item, string information)
@@ -284,30 +360,20 @@ namespace PlusLayerCreator.Configure
                     if (plusDataObject.IsRequired || plusDataObject.Length != string.Empty)
                     {
                         dataItemContent += "[";
-                        if (plusDataObject.IsRequired)
-                        {
-                            dataItemContent += "Required, ";
-                        }
+                        if (plusDataObject.IsRequired) dataItemContent += "Required";
+
+                        if (plusDataObject.IsRequired || plusDataObject.Length != string.Empty) dataItemContent += ", ";
 
                         if (!string.IsNullOrEmpty(plusDataObject.Length))
                         {
                             if (plusDataObject.Type == "int")
-                            {
-                                dataItemContent += "NumericRange(0, " + Helpers.GetMaxValue(plusDataObject.Length) + "), ";
-                            }
-
+                                dataItemContent +=
+                                    "NumericRange(0, " + Helpers.GetMaxValue(plusDataObject.Length) + ")";
                             if (plusDataObject.Type == "string")
-                            {
-                                dataItemContent += "MaxLength(" + plusDataObject.Length + "), ";
-                            }
+                                dataItemContent += "MaxLength(" + plusDataObject.Length + ")";
                         }
 
-                        dataItemContent = dataItemContent.Substring(0, dataItemContent.Length - 2);
-
-                        if (dataItemContent.Length > 0)
-                        {
-                            dataItemContent += "]\r\n";
-                        }
+                        dataItemContent += "]\r\n";
                     }
 
                     dataItemContent += "public " + plusDataObject.Type + " " + plusDataObject.Name + "\r\n" +
@@ -320,13 +386,12 @@ namespace PlusLayerCreator.Configure
                                        "        Set<" + plusDataObject.Type + ">(value);\r\n" +
                                        "    }}\r\n\r\n";
 
+                    foreach (var childDataItem in _configuration.DataLayout.Where(t => t.Parent == dataItem.Name))
+                        dataItemContent +=
+                            File.ReadAllText(_configuration.InputPath +
+                                             @"Repository\DataItems\DataItemCollectionPart.txt")
+                                .DoReplaces(childDataItem) + "\r\n";
                 }
-
-                foreach (var childDataItem in _configuration.DataLayout.Where(t => t.Parent == dataItem.Name))
-                    dataItemContent +=
-                        File.ReadAllText(_configuration.InputPath +
-                                         @"Repository\DataItems\DataItemCollectionPart.txt")
-                            .DoReplaces(childDataItem) + "\r\n";
 
                 Helpers.CreateFileFromPath(_configuration.InputPath + @"Repository\DataItems\DataItemTemplate.cs",
                     _configuration.OutputPath + @"Repository\DataItems\" + _configuration.Product + dataItem.Name +

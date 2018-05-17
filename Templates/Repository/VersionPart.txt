@@ -14,7 +14,9 @@ public async Task<CallResponse<bool>> Activate$Item$Async(IRepositoryCallContext
 
 	$Product$$Parent$DataItem parentDataItem = $item$.Parent.Parent as $Product$$Parent$DataItem;
 
-	var response = await _$product$$Item$Service.ActivateVersionAsync(callContext, $parent$, $item$);
+	var response = await _$product$$Item$Service.ActivateVersionAsync(callContext,
+							_$product$DtoFactory.Create$Parent$FromDataItem(parentDataItem),
+							_$product$DtoFactory.Create$Item$FromDataItem($item$));
 	if (response.IsSuccess)
 	{
 		$Product$$Item$ $item$Dto = response.Result;
@@ -54,7 +56,9 @@ public async Task<CallResponse<bool>> Deactivate$Item$Async(IRepositoryCallConte
 
 	$Product$$Parent$DataItem parentDataItem = $item$.Parent.Parent as $Product$$Parent$DataItem;
 
-	var response = await _$product$$Item$Service.DeactivateVersionAsync(callContext, $parent$, $item$);
+	var response = await _$product$$Item$Service.DeactivateVersionAsync(callContext,
+							_$product$DtoFactory.Create$Parent$FromDataItem(parentDataItem),
+							_$product$DtoFactory.Create$Item$FromDataItem($item$));
 	if (response.IsSuccess)
 	{
 		foreach (var $item$DataItem in parentDataItem.$Item$s)
