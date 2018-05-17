@@ -2,12 +2,12 @@ private void On$Product$$Item$DataItemListLoaded()
 {
 	IsInitialLoadingCompleted = true;
 
-	_isDirtyObserver = new PropertyObserver<PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem>>($Product$DataItemsList);
+	_isDirtyObserver = new PropertyObserver<PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem>>($Product$$Item$DataItemsList);
 	_isDirtyObserver.RegisterHandler(x => x.HasAnyChanges, OnCollectionHasAnyChanges);
 
 	On$Item$SourceCollectionChanged(new SourceCollectionChangedEventArgs<$Product$$Item$DataItem>()
 	{
-		SourceCollection = $Product$DataItemsList.LoadedItems
+		SourceCollection = $Product$$Item$DataItemsList.LoadedItems
 	});
 
 	ResetNavigation();
@@ -15,3 +15,7 @@ private void On$Product$$Item$DataItemListLoaded()
 	$specialContent1$
 }
 
+private void New$Product$$Item$DataItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
+{
+	RaiseCanExecuteChanged();
+}

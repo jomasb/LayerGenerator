@@ -7,6 +7,7 @@ using Dcx.Plus.Infrastructure.Contracts.Application;
 using Dcx.Plus.Localization;
 using Dcx.Plus.Repository.FW.Collections;
 using Dcx.Plus.Repository.FW.Contracts;
+using Dcx.Plus.Repository.FW.DataItems;
 using Dcx.Plus.Repository.Modules.$Product$.Contracts;
 using Dcx.Plus.Repository.Modules.$Product$.DataItems;
 using Dcx.Plus.UI.WPF.FW.Shell.Infrastructure;
@@ -96,6 +97,19 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 		#endregion Command Handler
 		
 		#region Navigation
+		
+		/// <summary>
+		/// Resets the navigation.
+		/// </summary>
+		private void ResetNavigation()
+		{
+			BaseServices.NavigationService.Unload(RegionNames.DetailRegion);
+			
+			// if (Selected$MasterDataItem$DataItem != null)
+			// {
+				// Selected$MasterDataItem$DataItem.PropertyChanged -= New$Product$DataItem_PropertyChanged;
+			// }
+		}
 
 		#endregion Navigation
 		

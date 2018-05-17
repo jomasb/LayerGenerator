@@ -3,3 +3,7 @@ private void On$Product$$Item$DataItemListLoaded()
 	$specialContent1$
 }
 
+private void New$Product$$Item$DataItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
+{
+	RaiseCanExecuteChanged();
+}

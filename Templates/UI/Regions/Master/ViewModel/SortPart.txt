@@ -1,21 +1,21 @@
-private bool Sort$Item$DataItemUpCommandCanExecute()
+private bool Sort$Item$UpCommandCanExecute()
 {
 	return !IsBusy && !IsInReadOnlyMode && $specialContent1$ != null && $specialContent1$.Count > 1 && Selected$Item$DataItem != null && Selected$Item$DataItem.Id > $specialContent1$.Min(x => x.Id);
 }
 
-private async Task Sort$Item$DataItemUpCommandExecute()
+private async Task Sort$Item$UpCommandExecuted()
 {
 	CallResponse<$Product$$Item$DataItem> response = await _$product$$Dialog$Repository.Move$Item$OrderUpAsync(CreateNewCallContext(), $specialContent1$, Selected$Item$DataItem);
 	Resort(response.Result);
 
 }
 
-private bool Sort$Item$DataItemDownCommandCanExecute()
+private bool Sort$Item$DownCommandCanExecute()
 {
 	return !IsBusy && !IsInReadOnlyMode && Selected$Item$DataItem != null && $specialContent1$ != null && Selected$Item$DataItem.Id < $specialContent1$.Count;
 }
 
-private async Task Sort$Item$DataItemDownCommandExecute()
+private async Task Sort$Item$DownCommandExecuted()
 {
 	CallResponse<$Product$$Item$DataItem> response = await _$product$$Dialog$Repository.Move$Item$OrderDownAsync(CreateNewCallContext(), $specialContent1$, Selected$Item$DataItem);
 	Resort(response.Result);

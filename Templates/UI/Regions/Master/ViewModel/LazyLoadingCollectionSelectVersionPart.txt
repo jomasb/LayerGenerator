@@ -1,4 +1,4 @@
-if ($Product$DataItemsList.Count > 0)
+if ($Product$$Item$DataItemsList.Count > 0)
 {
 	ActiveItem = null;
 	ActiveItem = FilterCollection.GetItemAt(0) as $Product$$Item$DataItem;

@@ -104,31 +104,30 @@ namespace PlusLayerCreator.Configure
                         "\r\n\r\n";
 
                     if (!dataItem.CanEditMultiple)
-                        if (string.IsNullOrEmpty(dataItem.Parent) || dataItem.Name.EndsWith("Version"))
-                        {
-                            interfaceContent +=
-                                File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\SavePart.txt")
-                                    .DoReplaces(dataItem) + "\r\n\r\n";
-                            var content = File.ReadAllText(_configuration.InputPath + @"Repository\SavePart.txt")
-                                              .DoReplaces(dataItem) + "\r\n\r\n";
-                            content = content.ReplaceSpecialContent(new[] { identifier, readOnly });
-                            repositoryContent += content;
-                        }
+                    {
+                        interfaceContent +=
+                            File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\SavePart.txt")
+                                .DoReplaces(dataItem) + "\r\n\r\n";
+                        var content = File.ReadAllText(_configuration.InputPath + @"Repository\SavePart.txt")
+                                            .DoReplaces(dataItem) + "\r\n\r\n";
+                        content = content.ReplaceSpecialContent(new[] { identifier, readOnly, GetParentParameter(dataItem, 1)});
+                        repositoryContent += content;
+                    }
 
                     if (dataItem.CanEditMultiple)
-                        if (string.IsNullOrEmpty(dataItem.Parent))
-                        {
-                            interfaceContent +=
-                                File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\SaveMultiPart.txt")
-                                    .DoReplaces(dataItem) + "\r\n\r\n";
-                            var content = File.ReadAllText(_configuration.InputPath + @"Repository\SaveMultiPart.txt")
-                                              .DoReplaces(dataItem) + "\r\n\r\n";
-                            content = content.ReplaceSpecialContent(new[] { identifier, readOnly });
-                            repositoryContent += content;
-                        }
+                    {
+                        interfaceContent +=
+                            File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\SaveMultiPart.txt")
+                                .DoReplaces(dataItem) + "\r\n\r\n";
+                        var content = File.ReadAllText(_configuration.InputPath + @"Repository\SaveMultiPart.txt")
+                                            .DoReplaces(dataItem) + "\r\n\r\n";
+                        content = content.ReplaceSpecialContent(new[] { identifier, readOnly, GetParentParameter(dataItem, 1) });
+                        repositoryContent += content;
+                    }
                 }
 
                 if (dataItem.Name.EndsWith("Version"))
+                {
                     if (!string.IsNullOrEmpty(dataItem.Parent))
                     {
                         interfaceContent +=
@@ -139,6 +138,7 @@ namespace PlusLayerCreator.Configure
                         content = content.ReplaceSpecialContent(new[] { identifier, readOnly });
                         repositoryContent += content;
                     }
+                }
 
                 interfaceContent += "#endregion " + dataItem.Name + "\r\n\r\n";
                 repositoryContent += "#endregion " + dataItem.Name + "\r\n\r\n";
@@ -233,32 +233,41 @@ namespace PlusLayerCreator.Configure
             return retValue;
         }
 
-        private string GetParentParameter(ConfigurationItem item)
+        private string GetParentParameter(ConfigurationItem item, int startLevel = 0)
         {
             string retValue = string.Empty;
+            int counter = startLevel;
 
-            if (!string.IsNullOrEmpty(item.Parent))
+            ConfigurationItem parent = GetParent(item);
+            ConfigurationItem ii = item;
+            while (parent != null)
             {
-                retValue += ", _" + _configuration.Product.ToLower() + "DtoFactory.Create" + item.Parent +
-                            "FromDataItem(" + GetParentString(item) + ")";
-                return GetParentParameter(_configuration.DataLayout.First(t => t.Name == item.Parent)) + retValue;
+                retValue = ", _" + _configuration.Product.ToLower() + "DtoFactory.Create" + parent.Name +
+                            "FromDataItem(" + GetParentString(ii, counter) + ")" + retValue;
+                ii = parent;
+                parent = GetParent(parent);
+                counter++;
             }
 
             return retValue;
         }
 
-        private string GetParentString(ConfigurationItem item)
+        private string GetParentString(ConfigurationItem item, int level)
         {
             string retValue = string.Empty;
-            retValue += item.Parent.ToPascalCase() + "DataItem";
-
-            ConfigurationItem parent = GetParent(item);
-            if (parent != null && !string.IsNullOrEmpty(parent.Parent))
+            if (level == 0)
+            {
+                retValue = item.Parent.ToPascalCase() + "DataItem";
+            }
+            else
             {
                 StringBuilder builder = new StringBuilder();
-                builder.Append("(").Append(_configuration.Product).Append(parent.Parent).Append(")")
-                    .Append(parent.Name.ToPascalCase()).Append("DataItem.Parent.Parent");
-                retValue = builder.ToString();
+                builder.Append("(").Append(_configuration.Product).Append(item.Parent).Append("DataItem)")
+                    .Append(item.Name.ToPascalCase()).Append("DataItem");
+                for (int i = 0; i < level; i++)
+                {
+                    retValue = builder.Append(".Parent.Parent").ToString();
+                }
             }
 
             return retValue;

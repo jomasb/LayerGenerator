@@ -12,7 +12,7 @@ public async Task<CallResponse<$Product$$Item$DataItem>> Save$Item$Async(IReposi
 		$item$Dto.SaveFlag = SaveFlag.New;
 		
 		
-		CallResponse<$Product$$Item$> response = await _$product$$Item$Service.Save$Item$Async(callContext, $item$Dto);
+		CallResponse<$Product$$Item$> response = await _$product$$Item$Service.Save$Item$Async(callContext, $item$Dto$specialContent3$);
 		if (response.IsSuccess)
 		{
 			var dto = response.Result;

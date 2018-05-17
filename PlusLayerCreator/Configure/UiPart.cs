@@ -450,14 +450,14 @@ namespace PlusLayerCreator.Configure
             var layoutDependedDataItems =
                 _configuration.DataLayout.Count(t => !t.Name.EndsWith("Version") && !t.IsPreFilterItem);
             if (_configuration.DataLayout.Any(t => t.IsPreFilterItem))
-                masterViewContent += "<RowDefinition Height=\"Auto\">\r\n";
+                masterViewContent += "<RowDefinition Height=\"Auto\"/>\r\n";
 
-            masterViewContent += "<RowDefinition Height=\"*\" MinHeight=\"170\">\r\n";
+            masterViewContent += "<RowDefinition Height=\"*\" MinHeight=\"170\"/>\r\n";
 
             for (var i = 1; i < layoutDependedDataItems; i++)
             {
-                masterViewContent += "<RowDefinition Height=\"2\">\r\n";
-                masterViewContent += "<RowDefinition Height=\"*\" MinHeight=\"170\">\r\n";
+                masterViewContent += "<RowDefinition Height=\"2\"/>\r\n";
+                masterViewContent += "<RowDefinition Height=\"*\" MinHeight=\"170\"/>\r\n";
             }
 
             masterViewContent += "</Grid.RowDefinitions>\r\n";
@@ -615,15 +615,16 @@ namespace PlusLayerCreator.Configure
                     filterParamContent += ", IFilterSourceProvider<" + _configuration.Product + configurationItem.Name + "DataItem>";
                     navigationContent += _masterViewModelNavigation.DoReplaces(configurationItem);
 
+                    membersContent += "private $Product$$Item$DataItem _selected$Item$DataItem;\r\n".DoReplaces(configurationItem);
+                    propertiesContent += _masterViewModelSelectedItem.DoReplaces(configurationItem);
+
                     if (!configurationItem.Name.EndsWith("Version"))
                     {
-                        membersContent += "private $Product$$Item$DataItem _selected$Item$DataItem;\r\n".DoReplaces(configurationItem);
-                        propertiesContent += _masterViewModelSelectedItem.DoReplaces(configurationItem);
                         if (string.IsNullOrEmpty(configurationItem.Parent))
                         {
                             string selectPart = _configuration.DataLayout.Any(t => t.Name.EndsWith("Version"))
-                                ? _masterViewModelLazyLoadingCollectionSelectVersion
-                                : _masterViewModelLazyLoadingCollectionSelect;
+                                ? _masterViewModelLazyLoadingCollectionSelectVersion.DoReplaces(configurationItem)
+                                : _masterViewModelLazyLoadingCollectionSelect.DoReplaces(configurationItem);
 
                             lazyLoadingCollectionContent += _masterViewModelLazyLoadingCollection.ReplaceSpecialContent(new []{selectPart}).DoReplaces(configurationItem);
 
@@ -668,7 +669,7 @@ namespace PlusLayerCreator.Configure
                         string filter = _masterViewModelLazyLoadingFilter.DoReplaces(configurationItem);
                         lazyLoadingCollectionContent += _masterViewModelLazyLoadingChildCollection.ReplaceSpecialContent(new[] { filter }).DoReplaces(configurationItem);
                     }
-                    else
+                    else if(configurationItem.Name != masterItem.Name)
                     {
                         lazyLoadingCollectionContent += _masterViewModelLazyLoadingChildCollection.ReplaceSpecialContent(new[] { string.Empty }).DoReplaces(configurationItem);
                     }
@@ -694,7 +695,7 @@ namespace PlusLayerCreator.Configure
 
             if (_configuration.DataLayout.Any(t => t.CanEdit))
             {
-                methodsContent += _masterViewModelMainCollectionHasAnyChanges;
+                methodsContent += _masterViewModelMainCollectionHasAnyChanges.DoReplaces(masterItem);
                 membersContent += "private PropertyObserver<PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem>> _isDirtyObserver;\r\n".DoReplaces(masterItem);
                 initializeContent += "CommandService.SubscribeAsyncCommand(GlobalCommandNames.CancelCommand, CancelCommandExecuted, CancelCommandCanExecute);\r\n";
                 initializeContent += "CommandService.SubscribeAsyncCommand(GlobalCommandNames.SaveCommand, SaveCommandExecuted, SaveCommandCanExecute);\r\n";
@@ -712,7 +713,7 @@ namespace PlusLayerCreator.Configure
             if (_configuration.DataLayout.Any(t => t.CanClone))
             {
                 initializeContent += "CommandService.SubscribeAsyncCommand(GlobalCommandNames.CopyCommand, CopyCommandExecuted, CopyCommandCanExecute);\r\n";
-                commandContent += GetCloneCommand();
+                commandContent += GetCloneCommand(masterItem);
             }
 
             if (masterItem.CanEdit && !masterItem.CanEditMultiple)
@@ -745,7 +746,7 @@ namespace PlusLayerCreator.Configure
 
             Helpers.CreateFileFromPath(masterViewModelTemplate,
                 _configuration.OutputPath + @"UI\Regions\Master\" + _configuration.DialogName + @"MasterViewModel.cs",
-                new[] { membersContent, initializeContent, propertiesContent, methodsContent, filterParamContent, commandContent, navigationContent, filterSourceProviderContent });
+                new[] { membersContent, initializeContent, propertiesContent, methodsContent, filterParamContent, commandContent, navigationContent, filterSourceProviderContent }, masterItem);
 
         }
 
@@ -848,9 +849,9 @@ namespace PlusLayerCreator.Configure
             return content.DoReplaces(item);
         }
 
-        private string GetCloneCommand()
+        private string GetCloneCommand(ConfigurationItem item)
         {
-            return _masterViewModelClone;
+            return _masterViewModelClone.DoReplaces(item);
         }
 
         #endregion Master
@@ -891,6 +892,7 @@ namespace PlusLayerCreator.Configure
 
         public void CreateUiInfrastructure()
         {
+            var parameterNamesContent = string.Empty;
             var moduleContent = string.Empty;
             var moduleContent2 = string.Empty;
             var commandNamesContent = string.Empty;
@@ -912,6 +914,9 @@ namespace PlusLayerCreator.Configure
 
                 viewNamesContent += "public static readonly string " + dataItem.Name + "DetailView = \"" +
                                     dataItem.Name + "DetailView\";\r\n";
+
+                parameterNamesContent += "public static readonly string Selected" + dataItem.Name + "DataItem = \"Selected" + dataItem.Name +
+                                         "DataItem\";\r\n";
 
                 if (!string.IsNullOrEmpty(dataItem.Parent) && !dataItem.Name.EndsWith("Version"))
                 {
@@ -957,7 +962,7 @@ namespace PlusLayerCreator.Configure
             Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Infrastructure\EventNamesTemplate.cs",
                 _configuration.OutputPath + @"UI\Infrastructure\EventNames.cs", new[] {eventNamesContent});
             Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Infrastructure\ParameterNamesTemplate.cs",
-                _configuration.OutputPath + @"UI\Infrastructure\ParameterNames.cs");
+                _configuration.OutputPath + @"UI\Infrastructure\ParameterNames.cs", new[] { parameterNamesContent });
             Helpers.CreateFileFromPath(_configuration.InputPath + @"UI\Infrastructure\ViewNamesTemplate.cs",
                 _configuration.OutputPath + @"UI\Infrastructure\ViewNames.cs", new[] {viewNamesContent});
         }

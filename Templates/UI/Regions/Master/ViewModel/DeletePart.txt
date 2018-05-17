@@ -1,4 +1,4 @@
-private bool DeleteCommandCanExecute()
+public override bool DeleteCommandCanExecute()
 {
 	return !IsInReadOnlyMode && !IsBusy && IsInitialLoadingCompleted && Selected$Item$DataItem != null;
 }

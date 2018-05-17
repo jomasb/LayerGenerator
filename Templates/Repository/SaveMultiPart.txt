@@ -34,7 +34,7 @@ public async Task<CallResponse<PlusObservableCollection<$Product$$Item$DataItem>
 			$item$Dtos.Add(create$Item$);
 		}
 		
-		CallResponse<IList<$Product$$Item$>> response = await _$product$$Item$Service.Save$Item$sAsync(callContext, $item$Dtos);
+		CallResponse<IList<$Product$$Item$>> response = await _$product$$Item$Service.Save$Item$sAsync(callContext, $item$Dtos$specialContent3$);
 		if (response.IsSuccess)
 		{
 			foreach ($Product$$Item$ dto in response.Result)

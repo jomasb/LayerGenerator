@@ -8,6 +8,6 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Infrastructure
 	/// <date></date>
 	public class ParameterNames
 	{
-		public static readonly string SelectedDataItem = "SelectedDataItem";
+		$specialContent1$
 	}
 }

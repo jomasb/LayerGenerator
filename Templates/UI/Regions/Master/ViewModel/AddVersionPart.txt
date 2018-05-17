@@ -2,7 +2,7 @@
 /// Adds the $item$ version command can execute.
 /// </summary>
 /// <returns></returns>
-private bool Add$Version$CommandCanExecute()
+private bool AddVersionCommandCanExecute()
 {
 	if (_activeItem != null && _activeItem.HasAnyChanges && !IsBusy)
 	{
@@ -23,20 +23,20 @@ private bool Add$Version$CommandCanExecute()
 /// Adds the $item$ version command executed.
 /// </summary>
 /// <exception cref="System.NotImplementedException"></exception>
-private async Task Add$Version$CommandExecute()
+private async Task AddVersionCommandExecuted()
 {
 	$Product$$Item$DataItem $item$ = ActiveItem as $Product$$Item$DataItem;
 
 	if ($item$ == null && _activeItem != null)
 	{
-		$item$ = _activeItem.Parent.Parent as $Product$$Item$DataItem;
+		$item$ = _activeItem.Parent.Parent as $Product$$Parent$DataItem;
 	}
 
 	if ($item$ != null)
 	{
-		if (!$item$.$Version$s.IsLoadingCompleted)
+		if (!$item$.Versions.IsLoadingCompleted)
 		{
-			$item$.$Version$s.Load();
+			$item$.Versions.Load();
 		}
 
 		CallResponse<$Product$$Version$DataItem> response = await _$product$$Dialog$Repository.AddNew$Version$Async(CreateNewCallContext(), $item$);
@@ -47,7 +47,7 @@ private async Task Add$Version$CommandExecute()
 			ActiveItem = new$Version$;
 			new$Version$.HasAnyChanges = true;
 			new$Version$.PropertyChanged += New$Version$_PropertyChanged;
-			$Item$s.HasAnyChanges = true;
+			$item$.Versions.HasAnyChanges = true;
 			RaiseCanExecuteChanged();
 		}
 	}

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using Dcx.Plus.Infrastructure.Contracts.Application;
 using Dcx.Plus.Localization;
 using Dcx.Plus.Repository.FW.Collections;
 using Dcx.Plus.Repository.FW.Contracts;
+using Dcx.Plus.Repository.FW.DataItems;
 using Dcx.Plus.Repository.Modules.$Product$.Contracts;
 using Dcx.Plus.Repository.Modules.$Product$.DataItems;
 using Dcx.Plus.UI.WPF.FW.Shell.Infrastructure;
@@ -95,9 +97,35 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 			await Refresh();
 		}
 		
+		/// <summary>
+		/// Refreshes this instance.
+		/// </summary>
+		/// <returns></returns>
+		private async Task Refresh()
+		{
+			IsBusy = true;
+			IsInitialLoadingCompleted = false;
+			RaiseCanExecuteChanged();
+			$Product$$Item$DataItemsList.Reload();
+			await $Product$$Item$DataItemsList.CurrentLoadingTask;
+		}
+		
 		#endregion Command Handler
 		
 		#region Navigation
+		
+		/// <summary>
+		/// Resets the navigation.
+		/// </summary>
+		private void ResetNavigation()
+		{
+			BaseServices.NavigationService.Unload(RegionNames.DetailRegion);
+			
+			// if (Selected$MasterDataItem$DataItem != null)
+			// {
+				// Selected$MasterDataItem$DataItem.PropertyChanged -= New$Product$DataItem_PropertyChanged;
+			// }
+		}
 
 		$specialContent7$
 		
