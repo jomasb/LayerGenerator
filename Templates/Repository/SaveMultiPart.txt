@@ -4,7 +4,7 @@
 /// <param name="callContext">The call context.</param>
 /// <param name="$item$DataItems">The $Item$s.</param>
 /// <returns></returns>
-public async Task<CallResponse<PlusObservableCollection<$Product$$Item$DataItem>>> Save$Item$sAsync(IRepositoryCallContext callContext, PlusObservableCollection<$Product$$Item$DataItem> $item$DataItems)
+public async Task<CallResponse<PlusObservableCollection<$Product$$Item$DataItem>>> Save$Item$sAsync(IRepositoryCallContext callContext, PlusObservableCollection<$Product$$Item$DataItem> $item$DataItems$specialContent4$)
 {
 	try
 	{
@@ -34,7 +34,7 @@ public async Task<CallResponse<PlusObservableCollection<$Product$$Item$DataItem>
 			$item$Dtos.Add(create$Item$);
 		}
 		
-		CallResponse<IList<$Product$$Item$>> response = await _$product$$Item$Service.Save$Item$sAsync(callContext, $item$Dtos$specialContent3$);
+		CallResponse<IList<$Product$$Item$>> response = await _$product$$Item$Service.Save$Item$sAsync(callContext, $item$Dtos$specialContent3$, $item$DataItems.Max(t => t.LupdTimestamp));
 		if (response.IsSuccess)
 		{
 			foreach ($Product$$Item$ dto in response.Result)

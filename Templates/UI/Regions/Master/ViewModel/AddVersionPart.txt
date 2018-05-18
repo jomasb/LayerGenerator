@@ -13,7 +13,7 @@ private bool AddVersionCommandCanExecute()
 
 	if ($item$ == null && _activeItem != null)
 	{
-		$item$ = _activeItem.Parent.Parent as $Product$$Item$DataItem;
+		$item$ = _activeItem.Parent.Parent as $Product$$Parent$DataItem;
 	}
 
 	return !IsBusy && !IsInReadOnlyMode && !IsDirty && $item$ != null;
@@ -34,9 +34,9 @@ private async Task AddVersionCommandExecuted()
 
 	if ($item$ != null)
 	{
-		if (!$item$.Versions.IsLoadingCompleted)
+		if (!$item$.$Parent$Versions.IsLoadingCompleted)
 		{
-			$item$.Versions.Load();
+			$item$.$Parent$Versions.Load();
 		}
 
 		CallResponse<$Product$$Version$DataItem> response = await _$product$$Dialog$Repository.AddNew$Version$Async(CreateNewCallContext(), $item$);
@@ -47,7 +47,7 @@ private async Task AddVersionCommandExecuted()
 			ActiveItem = new$Version$;
 			new$Version$.HasAnyChanges = true;
 			new$Version$.PropertyChanged += New$Version$_PropertyChanged;
-			$item$.Versions.HasAnyChanges = true;
+			$item$.$Parent$Versions.HasAnyChanges = true;
 			RaiseCanExecuteChanged();
 		}
 	}

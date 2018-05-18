@@ -1,9 +1,9 @@
-private bool Add$Item$CommandCanExecute()
+public override bool AddCommandCanExecute()
 {
 	return !IsInReadOnlyMode && !IsBusy && IsInitialLoadingCompleted;
 }
 
-private async Task Add$Item$CommandExecuted()
+private async Task AddCommandExecuted()
 {
 	IsBusy = true;
 	CallResponse<$Product$$Item$DataItem> response = await _$product$$Dialog$Repository.AddNew$Item$Async(CreateNewCallContext(true), $Product$$Item$DataItemsList);

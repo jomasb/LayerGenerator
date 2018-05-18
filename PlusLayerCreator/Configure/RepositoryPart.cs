@@ -110,18 +110,25 @@ namespace PlusLayerCreator.Configure
                                 .DoReplaces(dataItem) + "\r\n\r\n";
                         var content = File.ReadAllText(_configuration.InputPath + @"Repository\SavePart.txt")
                                             .DoReplaces(dataItem) + "\r\n\r\n";
-                        content = content.ReplaceSpecialContent(new[] { identifier, readOnly, GetParentParameter(dataItem, 1)});
+                        content = content.ReplaceSpecialContent(new[] { identifier, readOnly, GetParentParameter(dataItem, 1, true)});
                         repositoryContent += content;
                     }
 
                     if (dataItem.CanEditMultiple)
                     {
+                        string parentParameter = string.Empty;
+                        if (!string.IsNullOrEmpty(dataItem.Parent))
+                        {
+                            parentParameter = ", $Product$$Parent$DataItem $parent$DataItem".DoReplaces(dataItem);
+                        }
+
                         interfaceContent +=
                             File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\SaveMultiPart.txt")
+                                .ReplaceSpecialContent(new []{ parentParameter })
                                 .DoReplaces(dataItem) + "\r\n\r\n";
                         var content = File.ReadAllText(_configuration.InputPath + @"Repository\SaveMultiPart.txt")
-                                            .DoReplaces(dataItem) + "\r\n\r\n";
-                        content = content.ReplaceSpecialContent(new[] { identifier, readOnly, GetParentParameter(dataItem, 1) });
+                                    .ReplaceSpecialContent(new[] { identifier, readOnly, GetParentParameter(dataItem, 1), parentParameter })
+                                    .DoReplaces(dataItem) + "\r\n\r\n";
                         repositoryContent += content;
                     }
                 }
@@ -233,26 +240,28 @@ namespace PlusLayerCreator.Configure
             return retValue;
         }
 
-        private string GetParentParameter(ConfigurationItem item, int startLevel = 0)
+        private string GetParentParameter(ConfigurationItem item, int startLevel = 0, bool startParent = false)
         {
             string retValue = string.Empty;
             int counter = startLevel;
 
-            ConfigurationItem parent = GetParent(item);
+            ConfigurationItem parent = Helpers.GetParent(item);
             ConfigurationItem ii = item;
             while (parent != null)
             {
+                string startP = startParent ? item.Name : item.Parent;
+
                 retValue = ", _" + _configuration.Product.ToLower() + "DtoFactory.Create" + parent.Name +
-                            "FromDataItem(" + GetParentString(ii, counter) + ")" + retValue;
+                            "FromDataItem(" + GetParentString(ii, startP, counter) + ")" + retValue;
                 ii = parent;
-                parent = GetParent(parent);
+                parent = Helpers.GetParent(parent);
                 counter++;
             }
 
             return retValue;
         }
 
-        private string GetParentString(ConfigurationItem item, int level)
+        private string GetParentString(ConfigurationItem item, string originalParent, int level)
         {
             string retValue = string.Empty;
             if (level == 0)
@@ -263,7 +272,7 @@ namespace PlusLayerCreator.Configure
             {
                 StringBuilder builder = new StringBuilder();
                 builder.Append("(").Append(_configuration.Product).Append(item.Parent).Append("DataItem)")
-                    .Append(item.Name.ToPascalCase()).Append("DataItem");
+                    .Append(originalParent.ToPascalCase()).Append("DataItem");
                 for (int i = 0; i < level; i++)
                 {
                     retValue = builder.Append(".Parent.Parent").ToString();
@@ -271,16 +280,6 @@ namespace PlusLayerCreator.Configure
             }
 
             return retValue;
-        }
-
-        private ConfigurationItem GetParent(ConfigurationItem item)
-        {
-            if (string.IsNullOrEmpty(item.Parent))
-            {
-                return null;
-            }
-
-            return _configuration.DataLayout.First(t => t.Name == item.Parent);
         }
 
         private string GetPreFilterInformation(ConfigurationItem item, string information)

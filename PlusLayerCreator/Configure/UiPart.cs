@@ -154,7 +154,7 @@ namespace PlusLayerCreator.Configure
             var filterChildViewModelContent = string.Empty;
 
             //filterMembersContent
-            foreach (var dataItem in _configuration.DataLayout.Where(t => !t.Name.EndsWith("Version")))
+            foreach (var dataItem in _configuration.DataLayout.Where(t => t.Properties.Any(c => c.IsFilterProperty)))
             {
                 var filterMembersContent = string.Empty;
                 var filterPredicatesContent = string.Empty;
@@ -508,7 +508,7 @@ namespace PlusLayerCreator.Configure
                     var master = _configuration.DataLayout.First(t => t.Order == version.Order - 1);
 
                     masterViewCodeBehindContent +=
-                        "viewModel.ColumnProvider = Filtered" + master.Name + "sGridView;\r\n\r\n";
+                        "viewModel.ColumnProvider = Filtered" + master.Name + "rGridView;\r\n\r\n";
 
                     var gridContent = _masterGridVersionTemplate.DoReplaces(master);
                     masterViewContent +=
@@ -531,6 +531,8 @@ namespace PlusLayerCreator.Configure
                         "viewModel.ColumnProvider = Filtered" + dataItem.Name + "GridView;\r\n\r\n";
                     nextDataItem = dataItem.Order + 1;
                 }
+
+                rowNumber++;
 
                 for (var i = nextDataItem; i < _configuration.DataLayout.OrderBy(t => t.Order).Count(); i++)
                 {
@@ -612,7 +614,11 @@ namespace PlusLayerCreator.Configure
                 {
                     lazyLoadingContent += GetLazyLoadingPart(configurationItem);
 
-                    filterParamContent += ", IFilterSourceProvider<" + _configuration.Product + configurationItem.Name + "DataItem>";
+                    if (configurationItem.Properties.Any(t => t.IsFilterProperty))
+                    {
+                        filterParamContent += ", IFilterSourceProvider<" + _configuration.Product + configurationItem.Name + "DataItem>";
+                    }
+
                     navigationContent += _masterViewModelNavigation.DoReplaces(configurationItem);
 
                     membersContent += "private $Product$$Item$DataItem _selected$Item$DataItem;\r\n".DoReplaces(configurationItem);
@@ -643,12 +649,14 @@ namespace PlusLayerCreator.Configure
                         {
                             if (configurationItem.CanEdit)
                             {
+                                initializeContent += "Add$Item$Command = CommandService.GetCommand(CommandNames.Add$Item$Command);\r\n".DoReplaces(configurationItem);
                                 initializeContent += "CommandService.SubscribeAsyncCommand(CommandNames.Add$Item$Command, Add$Item$CommandExecuted, Add$Item$CommandCanExecute);\r\n".DoReplaces(configurationItem);
                                 commandContent += GetAddCommand(configurationItem);
                                 propertiesContent += "public IPlusCommand Add$Item$Command { get; set; }\r\n".DoReplaces(configurationItem);
                             }
                             if (configurationItem.CanDelete)
                             {
+                                initializeContent += "Delete$Item$Command = CommandService.GetCommand(CommandNames.Delete$Item$Command);\r\n".DoReplaces(configurationItem);
                                 initializeContent += "CommandService.SubscribeAsyncCommand(CommandNames.Delete$Item$Command, Delete$Item$CommandExecuted, Delete$Item$CommandCanExecute);\r\n".DoReplaces(configurationItem);
                                 commandContent += GetDeleteCommand(configurationItem);
                                 propertiesContent += "public IPlusCommand Delete$Item$Command { get; set; }\r\n".DoReplaces(configurationItem);
@@ -676,6 +684,8 @@ namespace PlusLayerCreator.Configure
 
                     if (configurationItem.CanSort)
                     {
+                        initializeContent += "Sort$Item$UpCommand = CommandService.GetCommand(CommandNames.Sort$Item$UpCommand);\r\n".DoReplaces(configurationItem);
+                        initializeContent += "Sort$Item$DownCommand = CommandService.GetCommand(CommandNames.Sort$Item$DownCommand);\r\n".DoReplaces(configurationItem);
                         initializeContent += "CommandService.SubscribeAsyncCommand(CommandNames.Sort$Item$UpCommand, Sort$Item$UpCommandExecuted, Sort$Item$UpCommandCanExecute);\r\n".DoReplaces(configurationItem);
                         initializeContent += "CommandService.SubscribeAsyncCommand(CommandNames.Sort$Item$DownCommand, Sort$Item$DownCommandExecuted, Sort$Item$DownCommandCanExecute);\r\n".DoReplaces(configurationItem);
                         propertiesContent += "public IPlusCommand Sort$Item$UpCommand { get; set; }\r\n".DoReplaces(configurationItem);
@@ -785,16 +795,23 @@ namespace PlusLayerCreator.Configure
             foreach (var item in _configuration.DataLayout.Where(t => t.CanEdit && !t.CanEditMultiple).OrderByDescending(t => t.Order))
             {
                 string acceptPoint;
+                string saveChildPart = string.Empty;
+
+                foreach (var childMultiSaveItem in _configuration.DataLayout.Where(t => t.CanEditMultiple && t.Parent == item.Name))
+                {
+                    saveChildPart =
+                        "await _$product$$Dialog$Repository.Save$Item$sAsync(CreateNewCallContext(true), Selected" + item.Name + "DataItem.$Item$s, Selected" + item.Name + "DataItem);".DoReplaces(childMultiSaveItem);
+                }
 
                 if (string.IsNullOrEmpty(item.Parent))
                 {
                     acceptPoint = item.Name + "sList";
-                    commandContent += _masterViewModelSaveCommand.ReplaceSpecialContent(new[] { acceptPoint }).DoReplaces(item);
+                    commandContent += _masterViewModelSaveCommand.ReplaceSpecialContent(new[] { saveChildPart, acceptPoint }).DoReplaces(item);
                 }
                 else if (!item.Name.EndsWith("Version"))
                 {
                     acceptPoint = "Selected" + item.Parent + "DataItem." + item.Name + "s";
-                    commandContent += _masterViewModelSaveCommand.ReplaceSpecialContent(new[] { acceptPoint }).DoReplaces(item);
+                    commandContent += _masterViewModelSaveCommand.ReplaceSpecialContent(new[] { saveChildPart, acceptPoint }).DoReplaces(item);
                     commandContent += " else ";
                 }
                 else
@@ -824,7 +841,7 @@ namespace PlusLayerCreator.Configure
                 content = _masterViewModelAddChild;
             }
 
-            return content.DoReplaces(item);
+            return content.DoReplaces(Helpers.GetParent(item));
         }
 
         private string GetDeleteCommand(ConfigurationItem item)
@@ -906,11 +923,13 @@ namespace PlusLayerCreator.Configure
                 moduleContent += "_container.RegisterType<object, " + dataItem.Name + "DetailView>(ViewNames." +
                                  dataItem.Name + "DetailView);\r\n";
 
-                if (!dataItem.Name.EndsWith("Version"))
+                if (dataItem.Properties.Any(t => t.IsFilterProperty))
+                {
                     moduleContent2 += "_container.RegisterType<IFilterSourceProvider<" + _configuration.Product +
                                       dataItem.Name + "DataItem>, " +
                                       _configuration.DialogName +
                                       "MasterViewModel>(new ContainerControlledLifetimeManager());\r\n";
+                }
 
                 viewNamesContent += "public static readonly string " + dataItem.Name + "DetailView = \"" +
                                     dataItem.Name + "DetailView\";\r\n";

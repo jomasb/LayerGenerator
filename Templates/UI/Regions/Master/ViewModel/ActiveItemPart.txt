@@ -12,10 +12,12 @@ public PlusStateDataItem ActiveItem
 			{
 				if (_activeItem is $Product$$Item$DataItem)
 				{
+					Selected$Item$DataItem = _activeItem as $Product$$Item$DataItem;
 					NavigateTo$Item$Detail(($Product$$Item$DataItem)_activeItem);
 				}
 				if (_activeItem is $Product$$Version$DataItem)
 				{
+					Selected$Item$VersionDataItem = _activeItem as $Product$$Item$VersionDataItem;
 					NavigateTo$Version$Detail(($Product$$Version$DataItem)_activeItem);
 				}
 			}

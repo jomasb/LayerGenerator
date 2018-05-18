@@ -20,7 +20,7 @@
 			x:Name="Filtered$Item$GridView"
 			plus:PlusSpinnerContainer.IsLoading="{Binding Selected$Parent$DataItem.$Item$s.IsLoading}"
 			IsSynchronizedWithCurrentItem="False"
-			ItemsSource="{Binding $Item$FilterCollection}"
+			ItemsSource="{Binding Binding Selected$Parent$DataItem.$Item$s.LoadedItems}"
 			SelectedItem="{Binding Selected$Item$DataItem}">
 
 			<i:Interaction.Behaviors>

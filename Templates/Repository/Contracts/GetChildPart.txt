@@ -3,5 +3,5 @@
 /// </summary>
 /// <param name="callContext">The call context.</param>
 /// <returns></returns>
-Task<CallResponse<IList<$Product$$Item$DataItem>>> Get$Item$sAsync(IRepositoryCallContext callContext$specialContent1$);
+Task<CallResponse<IList<$Product$$Item$DataItem>>> Get$Item$sAsync(IRepositoryCallContext callContext$specialContent1$$specialContent2$);
 

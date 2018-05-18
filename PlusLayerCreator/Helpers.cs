@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using PlusLayerCreator.Items;
@@ -247,6 +248,16 @@ namespace PlusLayerCreator
             return "{localization:Localize Key=" + Configuration.Product + Configuration.DialogName + "_lbl" + input +
                    extension + ", Source=" + Configuration.Product +
                    "Localizer}";
+        }
+
+        public static ConfigurationItem GetParent(ConfigurationItem item)
+        {
+            if (string.IsNullOrEmpty(item.Parent))
+            {
+                return null;
+            }
+
+            return Configuration.DataLayout.First(t => t.Name == item.Parent);
         }
     }
 }

@@ -8,7 +8,7 @@ private async Task<bool> SaveCommandExecuted()
 	IsBusy = true;
 	RaiseCanExecuteChanged();
 
-	var response = await _$product$$Dialog$Repository.Save$Item$Async(CreateNewCallContext(true), Selected$Item$DataItem);
+	var response = await _$product$$Dialog$Repository.Save$Item$Async(CreateNewCallContext(true), Selected$Item$DataItem$specialContent1$);
 	if (response.IsSuccess)
 	{
 		$Item$DataItemsList.Accept();
