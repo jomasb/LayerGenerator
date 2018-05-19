@@ -86,6 +86,8 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 
 		#region Command Handler
 		
+		$specialContent6$
+		
 		/// <summary>
 		/// Refreshes the command executed.
 		/// </summary>
@@ -110,11 +112,15 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 				// Selected$MasterDataItem$DataItem.PropertyChanged -= New$Product$DataItem_PropertyChanged;
 			// }
 		}
+		
+		$specialContent7$
 
 		#endregion Navigation
 		
 		#region FilterSourceProvider Interface
 
+		$specialContent8$
+		
 		#endregion
 	}
 }

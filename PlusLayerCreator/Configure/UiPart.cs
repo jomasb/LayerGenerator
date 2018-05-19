@@ -22,6 +22,7 @@ namespace PlusLayerCreator.Configure
         private readonly string _masterGridVersionTemplate;
 
         private readonly string _masterViewModelNavigation;
+        private readonly string _masterViewModelResetNavigation;
         private readonly string _masterViewModelSort;
         private readonly string _masterViewModelSave;
         private readonly string _masterViewModelSaveCommand;
@@ -35,6 +36,7 @@ namespace PlusLayerCreator.Configure
         private readonly string _masterViewModelDeleteVersion;
         private readonly string _masterViewModelDeleteChild;
         private readonly string _masterViewModelClone;
+        private readonly string _masterViewModelCloneCommand;
         private readonly string _masterViewModelInitializeItemsList;
         private readonly string _masterViewModelItemsList;
         private readonly string _masterViewModelSelectedItem;
@@ -71,6 +73,8 @@ namespace PlusLayerCreator.Configure
 
             _masterViewModelNavigation =
                 File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\NavigationPart.txt");
+            _masterViewModelResetNavigation =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\ResetNavigationPart.txt");
             _masterViewModelSort =
                 File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\SortPart.txt");
             _masterViewModelSave =
@@ -97,6 +101,8 @@ namespace PlusLayerCreator.Configure
                 File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\DeleteChildPart.txt");
             _masterViewModelClone =
                 File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\ClonePart.txt");
+            _masterViewModelCloneCommand =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\CloneCommandPart.txt");
             _masterViewModelSelectedItem =
                 File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\SeletedItemPart.txt");
             _masterViewModelActiveItem =
@@ -601,8 +607,11 @@ namespace PlusLayerCreator.Configure
             string commandContent = string.Empty; //6
             string navigationContent = string.Empty; //7
             string filterSourceProviderContent = string.Empty; //8
+            string resetNavigationContent = string.Empty;
             string lazyLoadingContent = string.Empty;
             string lazyLoadingCollectionContent = string.Empty;
+            string cloneContent = string.Empty;
+            
 
             initializeContent += "CommandService.SubscribeCommand(GlobalCommandNames.OpenSettingsDialogCommand, OpenSettingsDialogCommandExecuted);\r\n";
             initializeContent += "CommandService.SubscribeCommand(GlobalCommandNames.RefreshCommand, RefreshCommandExecuted, RefreshCommandCanExecute);\r\n";
@@ -612,6 +621,8 @@ namespace PlusLayerCreator.Configure
             {
                 if (!configurationItem.IsPreFilterItem)
                 {
+                    resetNavigationContent = GetResetNavigationContent(configurationItem) + resetNavigationContent;
+
                     lazyLoadingContent += GetLazyLoadingPart(configurationItem);
 
                     if (configurationItem.Properties.Any(t => t.IsFilterProperty))
@@ -675,7 +686,7 @@ namespace PlusLayerCreator.Configure
                     {
                         filterSourceProviderContent += _masterViewModelFilterSourceProvider.DoReplaces(configurationItem);
                         string filter = _masterViewModelLazyLoadingFilter.DoReplaces(configurationItem);
-                        lazyLoadingCollectionContent += _masterViewModelLazyLoadingChildCollection.ReplaceSpecialContent(new[] { filter }).DoReplaces(configurationItem);
+
                     }
                     else if(configurationItem.Name != masterItem.Name)
                     {
@@ -723,7 +734,13 @@ namespace PlusLayerCreator.Configure
             if (_configuration.DataLayout.Any(t => t.CanClone))
             {
                 initializeContent += "CommandService.SubscribeAsyncCommand(GlobalCommandNames.CopyCommand, CopyCommandExecuted, CopyCommandCanExecute);\r\n";
-                commandContent += GetCloneCommand(masterItem);
+
+                foreach (var configurationItem in _configuration.DataLayout.Where(t => t.CanClone))
+                {
+                    cloneContent += GetCloneCommand(configurationItem);
+                }
+
+                commandContent += _masterViewModelClone.ReplaceSpecialContent(new[] {cloneContent}).DoReplaces(masterItem);//TODO falsch;
             }
 
             if (masterItem.CanEdit && !masterItem.CanEditMultiple)
@@ -756,125 +773,15 @@ namespace PlusLayerCreator.Configure
 
             Helpers.CreateFileFromPath(masterViewModelTemplate,
                 _configuration.OutputPath + @"UI\Regions\Master\" + _configuration.DialogName + @"MasterViewModel.cs",
-                new[] { membersContent, initializeContent, propertiesContent, methodsContent, filterParamContent, commandContent, navigationContent, filterSourceProviderContent }, masterItem);
+                new[] { membersContent, initializeContent, propertiesContent, methodsContent, filterParamContent, commandContent, navigationContent, filterSourceProviderContent, resetNavigationContent }, masterItem);
 
-        }
-
-        private string GetLazyLoadingPart(ConfigurationItem item)
-        {
-            string content = "if (sender is ILazyLoadingObservableCollection<$Product$$Item$DataItem>)" +
-                             "{" +
-                             "    On$Product$$Item$DataItemListLoaded();" +
-                             "}\r\n";
-
-            return content.DoReplaces(item);
-        }
-
-        private string GetSortCommand(ConfigurationItem item)
-        {
-            string content = _masterViewModelSort;
-            string acceptPoint;
-
-            if (string.IsNullOrEmpty(item.Parent))
-            {
-                acceptPoint = item.Name + "sList";
-            }
-            else
-            {
-                acceptPoint = "Selected" + item.Parent + "DataItem." + item.Name + "s";
-            }
-
-
-            return content.ReplaceSpecialContent(new []{ acceptPoint}).DoReplaces(item);
-        }
-
-        private string GetSaveCommand()
-        {
-            string content = _masterViewModelSave;
-            string commandContent = string.Empty;
-            foreach (var item in _configuration.DataLayout.Where(t => t.CanEdit && !t.CanEditMultiple).OrderByDescending(t => t.Order))
-            {
-                string acceptPoint;
-                string saveChildPart = string.Empty;
-
-                foreach (var childMultiSaveItem in _configuration.DataLayout.Where(t => t.CanEditMultiple && t.Parent == item.Name))
-                {
-                    saveChildPart =
-                        "await _$product$$Dialog$Repository.Save$Item$sAsync(CreateNewCallContext(true), Selected" + item.Name + "DataItem.$Item$s, Selected" + item.Name + "DataItem);".DoReplaces(childMultiSaveItem);
-                }
-
-                if (string.IsNullOrEmpty(item.Parent))
-                {
-                    acceptPoint = item.Name + "sList";
-                    commandContent += _masterViewModelSaveCommand.ReplaceSpecialContent(new[] { saveChildPart, acceptPoint }).DoReplaces(item);
-                }
-                else if (!item.Name.EndsWith("Version"))
-                {
-                    acceptPoint = "Selected" + item.Parent + "DataItem." + item.Name + "s";
-                    commandContent += _masterViewModelSaveCommand.ReplaceSpecialContent(new[] { saveChildPart, acceptPoint }).DoReplaces(item);
-                    commandContent += " else ";
-                }
-                else
-                {
-                    commandContent += _masterViewModelSaveVersionCommand.DoReplaces(item);
-                    break;
-                }
-                
-            }
-
-            return content.DoReplaces().ReplaceSpecialContent(new []{commandContent});
-        }
-
-        private string GetAddCommand(ConfigurationItem item)
-        {
-            string content = string.Empty;
-            if (item.Name == _configuration.GetMasterItem().Name)
-            {
-                content = _masterViewModelAdd;
-            }
-            else if (item.Name.EndsWith("Version"))
-            {
-                content = _masterViewModelAddVersion;
-            }
-            else
-            {
-                content = _masterViewModelAddChild;
-            }
-
-            return content.DoReplaces(Helpers.GetParent(item));
-        }
-
-        private string GetDeleteCommand(ConfigurationItem item)
-        {
-            string content = string.Empty;
-            if (item.Name == _configuration.GetMasterItem().Name)
-            {
-                if (_configuration.DataLayout.Any(t => t.Name.EndsWith("Version")))
-                {
-                    content = _masterViewModelDeleteVersion;
-                }
-                else
-                {
-                    content = _masterViewModelDelete;
-                }
-            }
-            else
-            {
-                content = _masterViewModelDeleteChild;
-            }
-
-            return content.DoReplaces(item);
-        }
-
-        private string GetCloneCommand(ConfigurationItem item)
-        {
-            return _masterViewModelClone.DoReplaces(item);
         }
 
         #endregion Master
 
         #region Helpers
 
+        #region View
         private string GetGridXaml(ConfigurationItem dataItem, bool old = false)
         {
             var columnsContent = string.Empty;
@@ -902,6 +809,138 @@ namespace PlusLayerCreator.Configure
 
             return columnsContent;
         }
+
+        #endregion View
+
+        #region ViewModel
+
+        private string GetResetNavigationContent(ConfigurationItem item)
+        {
+            return _masterViewModelResetNavigation.DoReplaces(item);
+        }
+
+        private string GetLazyLoadingPart(ConfigurationItem item)
+        {
+            string content = "if (sender is ILazyLoadingObservableCollection<$Product$$Item$DataItem>)" +
+                             "{" +
+                             "    On$Product$$Item$DataItemListLoaded();" +
+                             "}\r\n";
+
+            return content.DoReplaces(item);
+        }
+
+        private string GetSortCommand(ConfigurationItem item)
+        {
+            string content = _masterViewModelSort;
+            string acceptPoint;
+
+            if (string.IsNullOrEmpty(item.Parent))
+            {
+                acceptPoint = item.Name + "sList";
+            }
+            else
+            {
+                acceptPoint = "Selected" + item.Parent + "DataItem." + item.Name + "s";
+            }
+
+
+            return content.ReplaceSpecialContent(new[] { acceptPoint }).DoReplaces(item);
+        }
+
+        private string GetSaveCommand()
+        {
+            string content = _masterViewModelSave;
+            string commandContent = string.Empty;
+            foreach (var item in _configuration.DataLayout.Where(t => t.CanEdit && !t.CanEditMultiple).OrderByDescending(t => t.Order))
+            {
+                string acceptPoint;
+                string saveChildPart = string.Empty;
+
+                foreach (var childMultiSaveItem in _configuration.DataLayout.Where(t => t.CanEditMultiple && t.Parent == item.Name))
+                {
+                    saveChildPart =
+                        "await _" + _configuration.Product.ToPascalCase() + _configuration.DialogName + "Repository.Save" + childMultiSaveItem.Name + "sAsync(CreateNewCallContext(true), Selected" + item.Name + "DataItem.Modules, Selected" + item.Name + "DataItem);";
+                }
+
+                if (string.IsNullOrEmpty(item.Parent))
+                {
+                    acceptPoint = item.Name + "sList";
+                    commandContent += _masterViewModelSaveCommand.ReplaceSpecialContent(new[] { saveChildPart, acceptPoint }).DoReplaces(item);
+                }
+                else if (!item.Name.EndsWith("Version"))
+                {
+                    acceptPoint = "Selected" + item.Parent + "DataItem." + item.Name + "s";
+                    commandContent += _masterViewModelSaveCommand.ReplaceSpecialContent(new[] { saveChildPart, acceptPoint }).DoReplaces(item);
+                    commandContent += " else ";
+                }
+                else
+                {
+                    commandContent += _masterViewModelSaveVersionCommand.DoReplaces(item);
+                    break;
+                }
+
+            }
+
+            return content.DoReplaces().ReplaceSpecialContent(new[] { commandContent });
+        }
+
+        private string GetAddCommand(ConfigurationItem item)
+        {
+            string content = string.Empty;
+            if (item.Name == _configuration.GetMasterItem().Name)
+            {
+                content = _masterViewModelAdd.DoReplaces(item);
+            }
+            else if (item.Name.EndsWith("Version"))
+            {
+                content = _masterViewModelAddVersion.DoReplaces(Helpers.GetParent(item));
+            }
+            else
+            {
+                content = _masterViewModelAddChild.DoReplaces(item);
+            }
+
+            return content;
+        }
+
+        private string GetDeleteCommand(ConfigurationItem item)
+        {
+            string content = string.Empty;
+            if (item.Name == _configuration.GetMasterItem().Name)
+            {
+                if (_configuration.DataLayout.Any(t => t.Name.EndsWith("Version")))
+                {
+                    content = _masterViewModelDeleteVersion;
+                }
+                else
+                {
+                    content = _masterViewModelDelete;
+                }
+            }
+            else
+            {
+                content = _masterViewModelDeleteChild;
+            }
+
+            return content.DoReplaces(item);
+        }
+
+        private string GetCloneCommand(ConfigurationItem item)
+        {
+            return _masterViewModelCloneCommand.ReplaceSpecialContent(new []{ GetItemsList(item)}).DoReplaces(item);
+        }
+
+        private string GetItemsList(ConfigurationItem item)
+        {
+            if (string.IsNullOrEmpty(item.Parent))
+            {
+                return _configuration.Product + item.Name + "DataItemsList";
+            }
+
+            return "Selected" + item.Parent + "DataItem." + item.Name + "s";
+        }
+
+        #endregion ViewModel
 
         #endregion
 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using Dcx.Plus.Infrastructure.Contracts.Application;
 using Dcx.Plus.Localization;
+using Dcx.Plus.Repository.FW;
 using Dcx.Plus.Repository.FW.Collections;
 using Dcx.Plus.Repository.FW.Contracts;
 using Dcx.Plus.Repository.FW.DataItems;
@@ -110,6 +111,52 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 			await $Product$$Item$DataItemsList.CurrentLoadingTask;
 		}
 		
+		public bool HasAnyErrors
+	    {
+	        get
+	        {
+	            var activeItem = Selected$Item$DataItem as PlusNotifyDataErrorInfoBase;
+	            return activeItem != null && activeItem.HasErrors || BaseServices.ValidationService.HasAnyErrors;
+	        }
+	    }
+		
+		/// <summary>
+        /// Selectings the active item command execute.
+        /// </summary>
+        /// <param name="args">The arguments.</param>
+        private async void SelectingActiveItemCommandExecuted(CancelableSelectionArgs<object> args)
+	    {
+            // If the user tries to select another item while there are any changes, we either cancel
+            // the selection or allow selection and eigher save or discard the changes
+            if (IsDirty && (($Product$$Item$DataItem)args.Value).State != DataItemState.New)
+            {
+                args.Cancel = true;
+
+                var result = await BaseServices.PopupDialogService.ShowSaveQuestionAsync();
+
+                if (result == NlsMessageResult.YES)
+                    if (HasAnyErrors)
+                    {
+                        await BaseServices.PopupDialogService.ShowCheckYourInputMessageAsync();
+                    }
+                    else
+                    {
+                        var saveResponse = await SaveCommandExecuted();
+                        if (saveResponse)
+                            Selected$Item$DataItem = ($Product$$Item$DataItem)args.Value;
+                    }
+
+                if (result == NlsMessageResult.NO)
+                {
+                    args.Cancel = false;
+                    await CancelCommandExecuted();
+                    Selected$Item$DataItem = ($Product$$Item$DataItem)args.Value;
+                }
+
+                if (result == NlsMessageResult.CANCEL) args.Cancel = true;
+            }
+        }
+		
 		#endregion Command Handler
 		
 		#region Navigation
@@ -119,12 +166,8 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 		/// </summary>
 		private void ResetNavigation()
 		{
-			BaseServices.NavigationService.Unload(RegionNames.DetailRegion);
-			
-			// if (Selected$MasterDataItem$DataItem != null)
-			// {
-				// Selected$MasterDataItem$DataItem.PropertyChanged -= New$Product$DataItem_PropertyChanged;
-			// }
+			$specialContent9$
+			NavigationService.Unload(RegionNames.DetailRegion);
 		}
 
 		$specialContent7$

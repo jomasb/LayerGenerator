@@ -2,7 +2,7 @@
 /// Adds the $item$ version command can execute.
 /// </summary>
 /// <returns></returns>
-private bool AddVersionCommandCanExecute()
+public override bool AddVersionCommandCanExecute()
 {
 	if (_activeItem != null && _activeItem.HasAnyChanges && !IsBusy)
 	{
@@ -13,7 +13,7 @@ private bool AddVersionCommandCanExecute()
 
 	if ($item$ == null && _activeItem != null)
 	{
-		$item$ = _activeItem.Parent.Parent as $Product$$Parent$DataItem;
+		$item$ = _activeItem.Parent.Parent as $Product$$Item$DataItem;
 	}
 
 	return !IsBusy && !IsInReadOnlyMode && !IsDirty && $item$ != null;
@@ -29,25 +29,25 @@ private async Task AddVersionCommandExecuted()
 
 	if ($item$ == null && _activeItem != null)
 	{
-		$item$ = _activeItem.Parent.Parent as $Product$$Parent$DataItem;
+		$item$ = _activeItem.Parent.Parent as $Product$$Item$DataItem;
 	}
 
 	if ($item$ != null)
 	{
-		if (!$item$.$Parent$Versions.IsLoadingCompleted)
+		if (!$item$.$Item$Versions.IsLoadingCompleted)
 		{
-			$item$.$Parent$Versions.Load();
+			$item$.$Item$Versions.Load();
 		}
 
-		CallResponse<$Product$$Version$DataItem> response = await _$product$$Dialog$Repository.AddNew$Version$Async(CreateNewCallContext(), $item$);
+		CallResponse<$Product$$Version$DataItem> response = await _$product$$Dialog$Repository.AddNew$Version$Async(CreateNewCallContext(), $item$.$Item$Versions);
 		if (response.IsSuccess)
 		{
 			$Product$$Version$DataItem new$Version$ = response.Result;
 			$item$.MetaItem.IsExpanded = true;
 			ActiveItem = new$Version$;
 			new$Version$.HasAnyChanges = true;
-			new$Version$.PropertyChanged += New$Version$_PropertyChanged;
-			$item$.$Parent$Versions.HasAnyChanges = true;
+			new$Version$.PropertyChanged += New$Product$$Version$DataItem_PropertyChanged;
+			$item$.$Item$Versions.HasAnyChanges = true;
 			RaiseCanExecuteChanged();
 		}
 	}

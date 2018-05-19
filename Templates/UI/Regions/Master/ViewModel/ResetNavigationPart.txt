@@ -1,0 +1,7 @@
+if (Selected$Item$DataItem != null)
+{
+	//Selected$Item$DataItem.PropertyChanged -= New$Product$DataItem_PropertyChanged;
+	NavigateTo$Item$Detail(Selected$Item$DataItem);
+	return;
+}
+

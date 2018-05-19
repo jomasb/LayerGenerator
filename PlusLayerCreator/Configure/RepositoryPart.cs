@@ -171,175 +171,7 @@ namespace PlusLayerCreator.Configure
                 });
         }
 
-        private string GetInterfaceGetPart(ConfigurationItem item, string template)
-        {
-            return File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\" + template)
-                .ReplaceSpecialContent(new[] { GetPreFilterInformation(item, "parameter"), GetGetItemsInformation(item, 1) })
-                .DoReplaces(item) + "\r\n\r\n";
-
-        }
-
-        private string GetRepositoryGetPart(ConfigurationItem item, string template)
-        {
-            string getChild = string.Empty;
-            if (_configuration.DataLayout.Any(t => t.Parent == item.Name))
-            {
-                var childDataItem = _configuration.DataLayout.FirstOrDefault(t => t.Parent == item.Name).Name;
-                getChild = item.Name.ToPascalCase() + "DataItem." + childDataItem +
-                               "s = new PlusLazyLoadingAsyncObservableCollection<" + _configuration.Product +
-                               childDataItem + "DataItem>(" +
-                               "() => Get" + childDataItem + "sAsync(callContext, " +
-                               item.Name.ToPascalCase() + "DataItem))" +
-                               "{ AutoAcceptAfterSuccessfullyLoading = true, AutoOverwriteParent = true };";
-            }
-
-            return File.ReadAllText(_configuration.InputPath + @"Repository\" + template)
-                    .ReplaceSpecialContent(new[]
-                    {
-                        GetPreFilterInformation(item, "parameter"),
-                        GetGetItemsInformation(item, 1),
-                        GetPreFilterInformation(item, "mainCall"),
-                        GetGetItemsInformation(item, 2),
-                        getChild,
-                        GetPreFilterInformation(item, "listCall"),
-                        GetGetItemsInformation(item, 3)
-                    })
-                    .DoReplaces(item) + "\r\n\r\n";
-        }
-
-        private string GetGetItemsInformation(ConfigurationItem item, int part)
-        {
-            if (string.IsNullOrEmpty(item.Parent))
-            {
-                return string.Empty;
-            }
-
-            string retValue = string.Empty;
-
-            switch (part)
-            {
-                case 1:
-                {
-                    retValue += ", " + _configuration.Product + item.Parent + "DataItem " + item.Parent.ToPascalCase() + "DataItem";
-                    break;
-                }
-                case 2:
-                {
-                    //retValue += ", _" + _configuration.Product.ToLower() + "DtoFactory.Create" + item.Parent +
-                    //                   "FromDataItem(" + item.Parent.ToPascalCase() + "DataItem)";
-                    retValue += GetParentParameter(item);
-                        break;
-                }
-                case 3:
-                {
-                    retValue += ", " + item.Parent.ToPascalCase() + "DataItem";
-                        break;
-                }
-            }
-
-            return retValue;
-        }
-
-        private string GetParentParameter(ConfigurationItem item, int startLevel = 0, bool startParent = false)
-        {
-            string retValue = string.Empty;
-            int counter = startLevel;
-
-            ConfigurationItem parent = Helpers.GetParent(item);
-            ConfigurationItem ii = item;
-            while (parent != null)
-            {
-                string startP = startParent ? item.Name : item.Parent;
-
-                retValue = ", _" + _configuration.Product.ToLower() + "DtoFactory.Create" + parent.Name +
-                            "FromDataItem(" + GetParentString(ii, startP, counter) + ")" + retValue;
-                ii = parent;
-                parent = Helpers.GetParent(parent);
-                counter++;
-            }
-
-            return retValue;
-        }
-
-        private string GetParentString(ConfigurationItem item, string originalParent, int level)
-        {
-            string retValue = string.Empty;
-            if (level == 0)
-            {
-                retValue = item.Parent.ToPascalCase() + "DataItem";
-            }
-            else
-            {
-                StringBuilder builder = new StringBuilder();
-                builder.Append("(").Append(_configuration.Product).Append(item.Parent).Append("DataItem)")
-                    .Append(originalParent.ToPascalCase()).Append("DataItem");
-                for (int i = 0; i < level; i++)
-                {
-                    retValue = builder.Append(".Parent.Parent").ToString();
-                }
-            }
-
-            return retValue;
-        }
-
-        private string GetPreFilterInformation(ConfigurationItem item, string information)
-        {
-            if (item.IsPreFilterItem)
-            {
-                return string.Empty;
-            }
-
-            var filterParameter = string.Empty;
-            foreach (var configurationItem in _configuration.DataLayout.Where(t => t.IsPreFilterItem))
-            {
-                if (information == "parameter")
-                {
-                    filterParameter += ", " + _configuration.Product + configurationItem.Name + "DataItem " +
-                                   configurationItem.Name.ToPascalCase() + "DataItem";
-
-                }
-
-                if (information == "mainCall")
-                {
-                    filterParameter += ", _" + _configuration.Product.ToLower() + "DtoFactory.Create" + configurationItem.Name +
-                                       "FromDataItem(" + configurationItem.Name.ToPascalCase() + "DataItem)";
-                }
-
-                if (information == "listCall")
-                {
-                    filterParameter += ", " + configurationItem.Name.ToPascalCase() + "DataItem";
-                }
-            }
-
-            return filterParameter;
-        }
-
-        private string GetIdentifier(ConfigurationItem dataItem)
-        {
-            var identifier = string.Empty;
-            foreach (var plusDataObject in dataItem.Properties.Where(t => t.IsKey))
-            {
-                if (identifier != string.Empty) identifier = " && " + identifier;
-
-                identifier += "x." + plusDataObject.Name + ".Equals(dto." + plusDataObject.Name + ")";
-            }
-
-            return identifier;
-        }
-
-        private string GetReadOnly(ConfigurationItem dataItem)
-        {
-            var readOnly = string.Empty;
-            foreach (var plusDataObject in dataItem.Properties.Where(t => t.IsKey))
-                if (plusDataObject.IsReadOnly)
-                    readOnly +=
-                        dataItem.Name.ToPascalCase() + "Dto." + plusDataObject.Name + " = " +
-                        dataItem.Name.ToPascalCase() + "." +
-                        plusDataObject.Name + ";\r\n";
-
-            return readOnly;
-        }
-
+        
         public void CreateDataItem()
         {
             foreach (var dataItem in _configuration.DataLayout)
@@ -447,5 +279,177 @@ namespace PlusLayerCreator.Configure
         }
 
         #endregion Repository
+
+        #region Helpers
+
+        private string GetInterfaceGetPart(ConfigurationItem item, string template)
+        {
+            return File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\" + template)
+                .ReplaceSpecialContent(new[] { GetPreFilterInformation(item, "parameter"), GetGetItemsInformation(item, 1) })
+                .DoReplaces(item) + "\r\n\r\n";
+        }
+
+        private string GetRepositoryGetPart(ConfigurationItem item, string template)
+        {
+            string getChild = string.Empty;
+            if (_configuration.DataLayout.Any(t => t.Parent == item.Name))
+            {
+                var childDataItem = _configuration.DataLayout.FirstOrDefault(t => t.Parent == item.Name).Name;
+                getChild = item.Name.ToPascalCase() + "DataItem." + childDataItem +
+                               "s = new PlusLazyLoadingAsyncObservableCollection<" + _configuration.Product +
+                               childDataItem + "DataItem>(" +
+                               "() => Get" + childDataItem + "sAsync(callContext, " +
+                               item.Name.ToPascalCase() + "DataItem))" +
+                               "{ AutoAcceptAfterSuccessfullyLoading = true, AutoOverwriteParent = true };";
+            }
+
+            return File.ReadAllText(_configuration.InputPath + @"Repository\" + template)
+                    .ReplaceSpecialContent(new[]
+                    {
+                        GetPreFilterInformation(item, "parameter"),
+                        GetGetItemsInformation(item, 1),
+                        GetPreFilterInformation(item, "mainCall"),
+                        GetGetItemsInformation(item, 2),
+                        getChild,
+                        GetPreFilterInformation(item, "listCall"),
+                        GetGetItemsInformation(item, 3)
+                    })
+                    .DoReplaces(item) + "\r\n\r\n";
+        }
+
+        private string GetGetItemsInformation(ConfigurationItem item, int part)
+        {
+            if (string.IsNullOrEmpty(item.Parent))
+            {
+                return string.Empty;
+            }
+
+            string retValue = string.Empty;
+
+            switch (part)
+            {
+                case 1:
+                    {
+                        retValue += ", " + _configuration.Product + item.Parent + "DataItem " + item.Parent.ToPascalCase() + "DataItem";
+                        break;
+                    }
+                case 2:
+                    {
+                        //retValue += ", _" + _configuration.Product.ToLower() + "DtoFactory.Create" + item.Parent +
+                        //                   "FromDataItem(" + item.Parent.ToPascalCase() + "DataItem)";
+                        retValue += GetParentParameter(item);
+                        break;
+                    }
+                case 3:
+                    {
+                        retValue += ", " + item.Parent.ToPascalCase() + "DataItem";
+                        break;
+                    }
+            }
+
+            return retValue;
+        }
+
+        private string GetParentParameter(ConfigurationItem item, int startLevel = 0, bool startParent = false)
+        {
+            string retValue = string.Empty;
+            int counter = startLevel;
+
+            ConfigurationItem parent = Helpers.GetParent(item);
+            ConfigurationItem ii = item;
+            while (parent != null)
+            {
+                string startP = startParent ? item.Name : item.Parent;
+
+                retValue = ", _" + _configuration.Product.ToLower() + "DtoFactory.Create" + parent.Name +
+                            "FromDataItem(" + GetParentString(ii, startP, counter) + ")" + retValue;
+                ii = parent;
+                parent = Helpers.GetParent(parent);
+                counter++;
+            }
+
+            return retValue;
+        }
+
+        private string GetParentString(ConfigurationItem item, string originalParent, int level)
+        {
+            string retValue = string.Empty;
+            if (level == 0)
+            {
+                retValue = item.Parent.ToPascalCase() + "DataItem";
+            }
+            else
+            {
+                StringBuilder builder = new StringBuilder();
+                builder.Append("(").Append(_configuration.Product).Append(item.Parent).Append("DataItem)")
+                    .Append(originalParent.ToPascalCase()).Append("DataItem");
+                for (int i = 0; i < level; i++)
+                {
+                    retValue = builder.Append(".Parent.Parent").ToString();
+                }
+            }
+
+            return retValue;
+        }
+
+        private string GetPreFilterInformation(ConfigurationItem item, string information)
+        {
+            if (item.IsPreFilterItem)
+            {
+                return string.Empty;
+            }
+
+            var filterParameter = string.Empty;
+            foreach (var configurationItem in _configuration.DataLayout.Where(t => t.IsPreFilterItem))
+            {
+                if (information == "parameter")
+                {
+                    filterParameter += ", " + _configuration.Product + configurationItem.Name + "DataItem " +
+                                   configurationItem.Name.ToPascalCase() + "DataItem";
+
+                }
+
+                if (information == "mainCall")
+                {
+                    filterParameter += ", _" + _configuration.Product.ToLower() + "DtoFactory.Create" + configurationItem.Name +
+                                       "FromDataItem(" + configurationItem.Name.ToPascalCase() + "DataItem)";
+                }
+
+                if (information == "listCall")
+                {
+                    filterParameter += ", " + configurationItem.Name.ToPascalCase() + "DataItem";
+                }
+            }
+
+            return filterParameter;
+        }
+
+        private string GetIdentifier(ConfigurationItem dataItem)
+        {
+            var identifier = string.Empty;
+            foreach (var plusDataObject in dataItem.Properties.Where(t => t.IsKey))
+            {
+                if (identifier != string.Empty) identifier = " && " + identifier;
+
+                identifier += "x." + plusDataObject.Name + ".Equals(dto." + plusDataObject.Name + ")";
+            }
+
+            return identifier;
+        }
+
+        private string GetReadOnly(ConfigurationItem dataItem)
+        {
+            var readOnly = string.Empty;
+            foreach (var plusDataObject in dataItem.Properties.Where(t => t.IsKey))
+                if (plusDataObject.IsReadOnly)
+                    readOnly +=
+                        dataItem.Name.ToPascalCase() + "Dto." + plusDataObject.Name + " = " +
+                        dataItem.Name.ToPascalCase() + "." +
+                        plusDataObject.Name + ";\r\n";
+
+            return readOnly;
+        }
+
+        #endregion
     }
 }
