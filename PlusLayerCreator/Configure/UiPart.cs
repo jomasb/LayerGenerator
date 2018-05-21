@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using PlusLayerCreator.Items;
 
@@ -49,7 +48,9 @@ namespace PlusLayerCreator.Configure
         private readonly string _masterViewModelLazyLoadingCollectionSelectVersion;
         private readonly string _masterViewModelLazyLoadingChildCollection;
         private readonly string _masterViewModelLazyLoadingFilter;
-        
+
+        private readonly string _yesNoConverterString = ", Converter={StaticResource BoolToLocalizedYesNoConverterConverter}";
+
         private readonly string _readOnlyTemplate = " IsReadOnly=\"True\"";
 
         #endregion Members
@@ -266,8 +267,7 @@ namespace PlusLayerCreator.Configure
                         (File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarAddButtonPart.txt") +
                          "\r\n").DoReplaces(dataItem);
                     
-                }
-                
+                }   
             }
 
             foreach (var dataItem in _configuration.DataLayout.Where(t => t.IsPreFilterItem == false && t.Name.EndsWith("Version")))
@@ -316,41 +316,24 @@ namespace PlusLayerCreator.Configure
             foreach (var dataItem in _configuration.DataLayout)
             {
                 var detailViewContent = string.Empty;
-                var yesNoConverterString = ", Converter={StaticResource BoolToLocalizedYesNoConverterConverter}";
 
                 if (!string.IsNullOrEmpty(dataItem.Parent))
                 {
-                    var parent = _configuration.DataLayout.FirstOrDefault(t => t.Name == dataItem.Parent);
-
-                    // Parent key fields
-                    detailViewContent += "<plus:PlusGroupBox Header=\"" + dataItem.Parent.GetLocalizedString() +
-                                         "\">";
-                    detailViewContent += "    <StackPanel>";
-
-                    foreach (var property in parent.Properties)
+                    int level = 0;
+                    string parentContent = string.Empty;
+                    ConfigurationItem parent = Helpers.GetParent(dataItem);
+                    while (parent != null)
                     {
-                        detailViewContent += "        <plus:PlusFormRow Label=\"" +
-                                             (parent.Name + property.Name).GetLocalizedString() + "\">\r\n";
-                        if (property.Type == "bool")
-                            detailViewContent +=
-                                "            <plus:PlusLabel Content=\"{Binding DataItem.Parent.Parent." +
-                                property.Name +
-                                yesNoConverterString + "}\" />\r\n";
-                        else
-                            detailViewContent +=
-                                "            <plus:PlusLabel Content=\"{Binding DataItem.Parent.Parent." +
-                                property.Name +
-                                "}\" />\r\n";
-                        detailViewContent += "        </plus:PlusFormRow>\r\n";
+                        parentContent = GetParentInformation(parent, level) + parentContent;
+                        parent = Helpers.GetParent(parent);
+                        level++;
                     }
 
-                    detailViewContent += "    </StackPanel>";
-                    detailViewContent += "</plus:PlusGroupBox>";
+                    detailViewContent += parentContent;
                 }
 
-                detailViewContent += "<plus:PlusGroupBox Header=\"" + dataItem.Name.GetLocalizedString(true) +
-                                     "\">";
-                detailViewContent += "    <StackPanel>";
+                detailViewContent += "<plus:PlusGroupBox Header=\"" + dataItem.Name.GetLocalizedString(true) + "\">";
+                detailViewContent += "    <StackPanel>\r\n";
 
                 if (dataItem.Name.EndsWith("Version"))
                     detailViewContent +=
@@ -363,64 +346,22 @@ namespace PlusLayerCreator.Configure
                     detailViewContent += "        <plus:PlusFormRow Label=\"" +
                                          (dataItem.Name + property.Name).GetLocalizedString() + "\">\r\n";
 
-                    if (!dataItem.CanEdit)
-                    {
-                        if (property.Type == "bool")
-                            detailViewContent += "            <plus:PlusLabel Content=\"{Binding DataItem." +
-                                                 property.Name +
-                                                 yesNoConverterString + "}\" />\r\n";
-                        else
-                            detailViewContent += "            <plus:PlusLabel Content=\"{Binding DataItem." +
-                                                 property.Name +
-                                                 "}\" />\r\n";
-                    }
-                    else
-                    {
-                        var addintionalInformation = string.Empty;
-                        if (property.IsKey)
-                            addintionalInformation += _keyReadOnlyTemplate;
-                        else if (property.IsReadOnly) addintionalInformation += _readOnlyTemplate;
-
-                        if (property.Type == "bool")
-                        {
-                            detailViewContent += "            <plus:PlusCheckBox " + addintionalInformation +
-                                                 " IsChecked=\"{Binding DataItem." + property.Name + "}\" />\r\n";
-                        }
-                        else if (property.Type == "DateTime")
-                        {
-                            detailViewContent +=
-                                File.ReadAllText(_configuration.InputPath +
-                                                 @"UI\Regions\Detail\DetailDateTimePickerXaml.txt")
-                                    .DoReplaces2("DataItem." + property.Name);
-                        }
-                        else
-                        {
-                            if (property.Length != string.Empty)
-                                addintionalInformation += " MaxLength =\"" + property.Length + "\"";
-
-                            if (property.Type == "int") addintionalInformation += _isNumericTemplate;
-
-                            detailViewContent += "            <plus:PlusTextBox" + addintionalInformation +
-                                                 " Text=\"{Binding DataItem." +
-                                                 property.Name +
-                                                 ", UpdateSourceTrigger=PropertyChanged}\" />\r\n";
-                        }
-                    }
+                    detailViewContent += GetItemControl(dataItem, property);
 
                     detailViewContent += "        </plus:PlusFormRow>\r\n";
                 }
 
                 detailViewContent +=
                     "				<plus:PlusFormRow Label=\"{localization:Localize Key=Global_lblLupdTimestamp, Source=GlobalLocalizer}\">";
-                detailViewContent += "				    <plus:PlusLabel Content=\"{Binding DataItem.LupdTimestamp}\" />";
-                detailViewContent += "				</plus:PlusFormRow>";
+                detailViewContent += "				    <plus:PlusLabel Content=\"{Binding DataItem.LupdTimestamp}\" />\r\n";
+                detailViewContent += "				</plus:PlusFormRow>\r\n";
                 detailViewContent +=
                     "				<plus:PlusFormRow Label=\"{localization:Localize Key=Global_lblLupdUser, Source=GlobalLocalizer}\">";
-                detailViewContent += "				    <plus:PlusLabel Content=\"{Binding DataItem.LupdUser}\" />";
-                detailViewContent += "				</plus:PlusFormRow>";
+                detailViewContent += "				    <plus:PlusLabel Content=\"{Binding DataItem.LupdUser}\" />\r\n";
+                detailViewContent += "				</plus:PlusFormRow>\r\n";
 
-                detailViewContent += "    </StackPanel>";
-                detailViewContent += "</plus:PlusGroupBox>";
+                detailViewContent += "    </StackPanel>\r\n";
+                detailViewContent += "</plus:PlusGroupBox>\r\n";
 
                 if (dataItem.Name.EndsWith("Version"))
                     Helpers.CreateFileFromPath(Files.VersionDetailViewModelTemplate,
@@ -723,7 +664,8 @@ namespace PlusLayerCreator.Configure
                 commandContent += _masterViewModelCancel.DoReplaces(masterItem);
                 if (masterItem.CanEditMultiple)
                 {
-                    commandContent += _masterViewModelSaveMulti.DoReplaces(masterItem);
+                    string preFilter = string.Empty;
+                    commandContent += _masterViewModelSaveMulti.ReplaceSpecialContent(new []{ preFilter }).DoReplaces(masterItem);
                 }
                 else
                 {
@@ -782,6 +724,96 @@ namespace PlusLayerCreator.Configure
         #region Helpers
 
         #region View
+
+        private string GetItemControl(ConfigurationItem item, ConfigurationProperty property)
+        {
+            string retValue = string.Empty;
+
+            if (!item.CanEdit)
+            {
+                if (property.Type == "bool")
+                    retValue += "            <plus:PlusLabel Content=\"{Binding DataItem." +
+                                         property.Name +
+                                         _yesNoConverterString + "}\" />\r\n";
+                else
+                    retValue += "            <plus:PlusLabel Content=\"{Binding DataItem." +
+                                         property.Name +
+                                         "}\" />\r\n";
+            }
+            else
+            {
+                var addintionalInformation = string.Empty;
+                if (property.IsKey)
+                    addintionalInformation += _keyReadOnlyTemplate;
+                else if (property.IsReadOnly) addintionalInformation += _readOnlyTemplate;
+
+                if (property.Type == "bool")
+                {
+                    retValue += "            <plus:PlusCheckBox " + addintionalInformation +
+                                         " IsChecked=\"{Binding DataItem." + property.Name + "}\" />\r\n";
+                }
+                else if (property.Type == "DateTime")
+                {
+                    retValue +=
+                        File.ReadAllText(_configuration.InputPath +
+                                         @"UI\Regions\Detail\DetailDateTimePickerXaml.txt")
+                            .DoReplaces2("DataItem." + property.Name);
+                }
+                else
+                {
+                    if (property.Length != string.Empty)
+                        addintionalInformation += " MaxLength =\"" + property.Length + "\"";
+
+                    if (property.Type == "int") addintionalInformation += _isNumericTemplate;
+
+                    retValue += "            <plus:PlusTextBox" + addintionalInformation +
+                                         " Text=\"{Binding DataItem." +
+                                         property.Name +
+                                         ", UpdateSourceTrigger=PropertyChanged}\" />\r\n";
+                }
+            }
+
+            return retValue;
+        }
+
+        private string GetParentInformation(ConfigurationItem parent, int level)
+        {
+            string detailViewContent = string.Empty;
+            string parentLevelString = string.Empty;
+
+            for (int i = 0; i <= level; i++)
+            {
+                parentLevelString += "Parent.Parent.";
+            }
+
+            // Parent key fields
+            detailViewContent += "<plus:PlusGroupBox Header=\"" + parent.Name.GetLocalizedString() +
+                                 "\">\r\n";
+            detailViewContent += "    <StackPanel\r\n>";
+
+            foreach (var property in parent.Properties.Where(t => t.IsKey || t.IsRequired))
+            {
+                detailViewContent += "        <plus:PlusFormRow Label=\"" +
+                                     (parent.Name + property.Name).GetLocalizedString() + "\">\r\n";
+                if (property.Type == "bool")
+                    detailViewContent +=
+                        "            <plus:PlusLabel Content=\"{Binding DataItem." + parentLevelString +
+                        property.Name +
+                        _yesNoConverterString + "}\" />\r\n";
+                else
+                    detailViewContent +=
+                        "            <plus:PlusLabel Content=\"{Binding DataItem." + parentLevelString +
+                        property.Name +
+                        "}\" />\r\n";
+                detailViewContent += "        </plus:PlusFormRow>\r\n";
+            }
+
+            detailViewContent += "    </StackPanel>\r\n";
+            detailViewContent += "</plus:PlusGroupBox>\r\n";
+
+            return detailViewContent;
+        }
+
         private string GetGridXaml(ConfigurationItem dataItem, bool old = false)
         {
             var columnsContent = string.Empty;

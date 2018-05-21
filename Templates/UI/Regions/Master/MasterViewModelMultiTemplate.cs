@@ -18,7 +18,6 @@ using Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Infrastructure;
 using Dcx.Plus.Localization.Modules.$Product$;
 using Dcx.Plus.UI.WPF.FW.Shell.Commands;
 using Dcx.Plus.UI.WPF.FW.Shell.Extensions;
-using Dcx.Plus.UI.WPF.FW.Shell.Infrastructure.Selection;
 
 namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 {
@@ -96,6 +95,19 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 			await Refresh();
 		}
 		
+		/// <summary>
+		/// Refreshes this instance.
+		/// </summary>
+		/// <returns></returns>
+		private async Task Refresh()
+		{
+			IsBusy = true;
+			IsInitialLoadingCompleted = false;
+			RaiseCanExecuteChanged();
+			$Product$$Item$DataItemsList.Reload();
+			await $Product$$Item$DataItemsList.CurrentLoadingTask;
+		}
+		
 		#endregion Command Handler
 		
 		#region Navigation
@@ -105,12 +117,8 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 		/// </summary>
 		private void ResetNavigation()
 		{
-			BaseServices.NavigationService.Unload(RegionNames.DetailRegion);
-			
-			// if (Selected$MasterDataItem$DataItem != null)
-			// {
-				// Selected$MasterDataItem$DataItem.PropertyChanged -= New$Product$DataItem_PropertyChanged;
-			// }
+			$specialContent9$
+			NavigationService.Unload(RegionNames.DetailRegion);
 		}
 		
 		$specialContent7$
