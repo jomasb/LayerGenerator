@@ -1,0 +1,15 @@
+/// <summary>
+/// Deletes the $item$s asynchronous.
+/// </summary>
+/// <param name="serviceCallContext">The service call context.</param>
+/// <param name="$item$Dto">The $item$ dto.</param>
+/// <returns></returns>
+public Task<CallResponse<bool>> Delete$Item$Async(IServiceCallContext serviceCallContext, $Product$$Item$ $item$Dto$specialContent1$)
+{
+	return Task.Factory.StartNew(() =>
+	{
+		Thread.Sleep(500);
+
+		return CallResponse.FromSuccessfulResult(true);
+	});
+}

@@ -77,6 +77,7 @@ namespace PlusLayerCreator.Configure
 
                 if (dataItem.CanEdit && !dataItem.CanEditMultiple)
                 { 
+                    //Save
                     interfaceSaveContent +=
                         File.ReadAllText(_configuration.InputPath + @"Service\Contracts\SavePart" +
                                             fileNameExtension + ".txt")
@@ -91,6 +92,24 @@ namespace PlusLayerCreator.Configure
                     if (!withBo)
                         serviceMockSaveContent +=
                             File.ReadAllText(_configuration.InputPath + @"Service\SavePartNoBOMock.txt")
+                                .ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param") })
+                                .DoReplaces(dataItem) + "\r\n\r\n";
+
+                    //Delete
+                    interfaceSaveContent +=
+                        File.ReadAllText(_configuration.InputPath + @"Service\Contracts\DeletePart" +
+                                         fileNameExtension + ".txt")
+                            .ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param") })
+                            .DoReplaces(dataItem) + "\r\n\r\n";
+                    serviceSaveContent +=
+                        File.ReadAllText(
+                                _configuration.InputPath + @"Service\DeletePart" + fileNameExtension + ".txt")
+                            .ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param"), GetParentParameter(dataItem, "call"), GetParentParameter(dataItem, "") })
+                            .DoReplaces(dataItem) + "\r\n\r\n";
+
+                    if (!withBo)
+                        serviceMockSaveContent +=
+                            File.ReadAllText(_configuration.InputPath + @"Service\DeletePartNoBOMock.txt")
                                 .ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param") })
                                 .DoReplaces(dataItem) + "\r\n\r\n";
                 }

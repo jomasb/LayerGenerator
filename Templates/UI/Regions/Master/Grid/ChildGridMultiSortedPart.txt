@@ -19,6 +19,7 @@
 		<plus:PlusDataGrid
 			x:Name="Filtered$Item$GridView"
 			plus:PlusSpinnerContainer.IsLoading="{Binding Selected$Parent$DataItem.$Item$s.IsLoading}"
+			CanUserSortColumns="False"
 			IsSynchronizedWithCurrentItem="False"
 			ItemsSource="{Binding Selected$Parent$DataItem.$Item$s.LoadedItems}"
 			SelectedItem="{Binding Selected$Item$DataItem}">
@@ -37,6 +38,9 @@
 					IsVisibilityConfigurable="False" />
 				$specialContent1$
 			</plus:PlusDataGrid.Columns>
+			<telerik:RadGridView.SortDescriptors>
+				<telerik:SortDescriptor Member="Sequence" SortDirection="Ascending" />
+			</telerik:RadGridView.SortDescriptors>
 		</plus:PlusDataGrid>
 	</plus:PlusSpinnerContainer>
 </plus:PlusExpandableHeader>

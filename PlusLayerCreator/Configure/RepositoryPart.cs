@@ -14,9 +14,8 @@ namespace PlusLayerCreator.Configure
         public RepositoryPart(Configuration configuration)
         {
             _configuration = configuration;
-            _createRepositoryDtoTemplatePart =
-                File.ReadAllText(configuration.InputPath + @"Repository\CreateDataItemPart.txt");
-            _createDataItemTemplatePart = File.ReadAllText(configuration.InputPath + @"Repository\CreateDtoPart.txt");
+            _createRepositoryDtoTemplatePart = File.ReadAllText(configuration.InputPath + @"Repository\CreateDtoPart.txt");
+            _createDataItemTemplatePart = File.ReadAllText(configuration.InputPath + @"Repository\CreateDataItemPart.txt");
         }
 
         #region Repository
@@ -79,9 +78,14 @@ namespace PlusLayerCreator.Configure
                     interfaceContent +=
                         File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\DeletePart.txt")
                             .DoReplaces(dataItem) + "\r\n\r\n";
-                    repositoryContent +=
-                        File.ReadAllText(_configuration.InputPath + @"Repository\DeletePart.txt").DoReplaces(dataItem) +
-                        "\r\n\r\n";
+                    if (dataItem.CanEditMultiple)
+                    {
+                        repositoryContent += File.ReadAllText(_configuration.InputPath + @"Repository\DeletePart.txt").DoReplaces(dataItem) + "\r\n\r\n";
+                    }
+                    else
+                    {
+                        repositoryContent += File.ReadAllText(_configuration.InputPath + @"Repository\DeleteAndSavePart.txt").DoReplaces(dataItem) + "\r\n\r\n";
+                    }
                 }
 
                 if (dataItem.CanSort)
@@ -170,7 +174,6 @@ namespace PlusLayerCreator.Configure
                     repositoryServiceConstructorContent, repositoryContent, dtoLayer
                 });
         }
-
         
         public void CreateDataItem()
         {
@@ -246,7 +249,10 @@ namespace PlusLayerCreator.Configure
             {
                 var itemContent = string.Empty;
                 foreach (var plusDataObject in dataItem.Properties)
+                {
                     itemContent += plusDataObject.Name + " = dataItem." + plusDataObject.Name + ",\r\n";
+                }
+
                 factoryContent += _createRepositoryDtoTemplatePart.DoReplaces(dataItem)
                                       .ReplaceSpecialContent(new[] {itemContent}) + "\r\n";
             }

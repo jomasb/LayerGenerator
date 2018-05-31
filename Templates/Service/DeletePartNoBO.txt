@@ -1,0 +1,32 @@
+/// <summary>
+/// Deletes the $item$s asynchronous.
+/// </summary>
+/// <param name="serviceCallContext">The service call context.</param>
+/// <param name="$item$Dto">The $item$ dto.</param>
+/// <returns></returns>
+public Task<CallResponse<bool>> Delete$Item$Async(IServiceCallContext serviceCallContext, $Product$$Item$ $item$Dto$specialContent1$)
+{
+	ServiceCallContext = serviceCallContext;
+	return GetDataTandemResponseAsync(() => Delete$Item$($item$Dto$specialContent2$), serviceCallContext);
+}
+
+/// <summary>
+/// Deletes the $item$s.
+/// </summary>
+/// <param name="$item$Dto">The $item$ dto.</param>
+/// <returns></returns>
+private CallResponse<bool> Delete$Item$($Product$$Item$ $item$Dto$specialContent1$)
+{
+	using (TraceLog.Log(this, options: TraceLogOptions.All))
+	{
+		IDictionary<string, object> arguments = new Dictionary<string, object>();
+		arguments.Add("$Item$ToDelete", $item$Dto);
+		$specialContent3$
+		if (!DataAdapter.Execute<I$Product$$Item$Service>(this, "Delete$Item$", ref arguments))
+		{
+			return CallResponse.FromFailedResult(false);
+		}
+
+		return CallResponse.FromSuccessfulResult(true);
+	}
+}

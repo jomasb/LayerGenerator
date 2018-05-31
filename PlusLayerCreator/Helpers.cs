@@ -58,7 +58,7 @@ namespace PlusLayerCreator
 
         public static string DoReplaces(this string input, ConfigurationItem item = null)
         {
-            input = input.Replace("$PPRODUCT$", Configuration.Product.ToUpper());
+            input = input.Replace("$PRODUCT$", Configuration.Product.ToUpper());
             input = input.Replace("$Product$", Configuration.Product);
             input = input.Replace("$product$", ToPascalCase(Configuration.Product));
             input = input.Replace("$Item$", item == null ? string.Empty : item.Name);

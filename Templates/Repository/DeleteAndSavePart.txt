@@ -1,0 +1,20 @@
+/// <summary>
+/// Deletes the $Item$ asynchronous.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="$item$">The $Item$.</param>
+/// <param name="$item$DataItems">The $Item$DataItems.</param>
+/// <returns></returns>
+public async Task<CallResponse<bool>> Delete$Item$Async(IRepositoryCallContext callContext, $Product$$Item$DataItem $item$, PlusObservableCollection<$Product$$Item$DataItem> $item$DataItems)
+{
+	$Product$$Item$ $item$Dto = _$product$DtoFactory.Create$Item$FromDataItem($item$);
+	CallResponse<bool> response = await _$product$$Item$Service.Delete$Item$Async(callContext, $item$Dto);
+	if (response.IsSuccess)
+	{
+		$item$DataItems.Remove($item$);
+		$item$DataItems.Accept();	
+		return CallResponse<bool>.Success;		
+	}
+
+	return CallResponse<bool>.Failure;
+}

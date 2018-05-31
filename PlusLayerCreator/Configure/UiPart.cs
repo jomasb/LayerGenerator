@@ -433,12 +433,19 @@ namespace PlusLayerCreator.Configure
                 var dataItem = _configuration.DataLayout.FirstOrDefault();
                 string gridTemplate;
                 if (dataItem.CanEditMultiple)
+                {
                     gridTemplate = _masterGridMultiTemplate;
+                }
                 else if (dataItem.CanEdit)
+                {
                     gridTemplate = _masterGridTemplate;
+                }
                 else
+                {
                     gridTemplate = _masterGridReadonlyTemplate;
-                var gridContent = gridTemplate.DoReplaces();
+                }
+
+                var gridContent = gridTemplate.DoReplaces(dataItem);
                 masterViewContent +=
                     gridContent.ReplaceSpecialContent(new[] {GetGridXaml(dataItem), rowNumber.ToString()});
                 masterViewCodeBehindContent +=
@@ -865,18 +872,20 @@ namespace PlusLayerCreator.Configure
         {
             string content = _masterViewModelSort;
             string acceptPoint;
+            string isNullCheck = string.Empty;
 
             if (string.IsNullOrEmpty(item.Parent))
             {
-                acceptPoint = item.Name + "sList";
+                acceptPoint = item.Name + "sList" + item.Name + "sList";
             }
             else
             {
                 acceptPoint = "Selected" + item.Parent + "DataItem." + item.Name + "s";
+                isNullCheck = " && Selected" + item.Parent + "DataItem != null && Selected" + item.Parent + "DataItem." + item.Name + "s != null";
             }
 
 
-            return content.ReplaceSpecialContent(new[] { acceptPoint }).DoReplaces(item);
+            return content.ReplaceSpecialContent(new[] { acceptPoint, isNullCheck }).DoReplaces(item);
         }
 
         private string GetSaveCommand()
@@ -891,12 +900,12 @@ namespace PlusLayerCreator.Configure
                 foreach (var childMultiSaveItem in _configuration.DataLayout.Where(t => t.CanEditMultiple && t.Parent == item.Name))
                 {
                     saveChildPart =
-                        "await _" + _configuration.Product.ToPascalCase() + _configuration.DialogName + "Repository.Save" + childMultiSaveItem.Name + "sAsync(CreateNewCallContext(true), Selected" + item.Name + "DataItem.Modules, Selected" + item.Name + "DataItem);";
+                        "await _" + _configuration.Product.ToPascalCase() + _configuration.DialogName + "Repository.Save" + childMultiSaveItem.Name + "sAsync(CreateNewCallContext(true), Selected" + item.Name + "DataItem." + childMultiSaveItem.Name + "s, Selected" + item.Name + "DataItem);";
                 }
 
                 if (string.IsNullOrEmpty(item.Parent))
                 {
-                    acceptPoint = item.Name + "sList";
+                    acceptPoint = _configuration.Product + item.Name + "DataItemsList";
                     commandContent += _masterViewModelSaveCommand.ReplaceSpecialContent(new[] { saveChildPart, acceptPoint }).DoReplaces(item);
                 }
                 else if (!item.Name.EndsWith("Version"))
