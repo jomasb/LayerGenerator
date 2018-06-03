@@ -7,17 +7,17 @@
 public async Task<CallResponse<$Product$$Item$DataItem>> Move$Item$OrderUpAsync(IRepositoryCallContext callContext, IList<$Product$$Item$DataItem> $item$DataItems,
 	$Product$$Item$DataItem currentItem)
 {
-	int selectedOrder = currentItem.Id;
-	var previousItem = $item$DataItems.Where(s => s.Id < selectedOrder).OrderByDescending(b => b.Id).FirstOrDefault();
+	int selectedOrder = currentItem.Sequence;
+	var previousItem = $item$DataItems.Where(s => s.Sequence < selectedOrder).OrderByDescending(b => b.Sequence).FirstOrDefault();
 
-	currentItem.Id = selectedOrder - 1;
-	previousItem.Id = selectedOrder;
+	currentItem.Sequence = selectedOrder - 1;
+	previousItem.Sequence = selectedOrder;
 
 	int counter = selectedOrder;
 
-	foreach ($Product$$Item$DataItem $item$DataItem in $item$DataItems.Where(t => t.Id >= selectedOrder - 1 && t.Id <= selectedOrder).OrderBy(s => s.Id))
+	foreach ($Product$$Item$DataItem $item$DataItem in $item$DataItems.Where(t => t.Sequence >= selectedOrder - 1 && t.Sequence <= selectedOrder).OrderBy(s => s.Sequence))
 	{
-		$item$DataItem.Id = counter++;
+		$item$DataItem.Sequence = counter++;
 	}
 
 	return CallResponse.FromSuccessfulResult(currentItem);
@@ -32,17 +32,17 @@ public async Task<CallResponse<$Product$$Item$DataItem>> Move$Item$OrderUpAsync(
 public async Task<CallResponse<$Product$$Item$DataItem>> Move$Item$OrderDownAsync(IRepositoryCallContext callContext, IList<$Product$$Item$DataItem> $item$DataItems,
 	$Product$$Item$DataItem currentItem)
 {
-	int selectedOrder = currentItem.Id;
-	var nextItem = $item$DataItems.Where(s => s.Id > selectedOrder).OrderBy(b => b.Id).FirstOrDefault();
+	int selectedOrder = currentItem.Sequence;
+	var nextItem = $item$DataItems.Where(s => s.Sequence > selectedOrder).OrderBy(b => b.Sequence).FirstOrDefault();
 
-	currentItem.Id = selectedOrder + 1;
-	nextItem.Id = selectedOrder;
+	currentItem.Sequence = selectedOrder + 1;
+	nextItem.Sequence = selectedOrder;
 
 	int counter = selectedOrder;
 
-	foreach ($Product$$Item$DataItem $item$DataItem in $item$DataItems.Where(t => t.Id >= selectedOrder && t.Id <= selectedOrder + 1).OrderBy(s => s.Id))
+	foreach ($Product$$Item$DataItem $item$DataItem in $item$DataItems.Where(t => t.Sequence >= selectedOrder && t.Sequence <= selectedOrder + 1).OrderBy(s => s.Sequence))
 	{
-		$item$DataItem.Id = counter++;
+		$item$DataItem.Sequence = counter++;
 	}
 
 	return CallResponse.FromSuccessfulResult(currentItem);

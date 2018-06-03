@@ -35,6 +35,10 @@ namespace PlusLayerCreator.Configure
                 new DelegateCommand(DeleteItemPropertyCommandExecuted, DeleteItemPropertyCommandCanExecute);
             ImportSettingsCommand = new DelegateCommand(ImportSettingsExecuted);
             ExportSettingsCommand = new DelegateCommand(ExportSettingsExecuted);
+            SortItemUpCommand = new DelegateCommand(SortItemUpCommandExecuted, SortItemUpCommandCanExecute);
+            SortItemDownCommand = new DelegateCommand(SortItemDownCommandExecuted, SortItemDownCommandCanExecute);
+            SortItemPropertyUpCommand = new DelegateCommand(SortItemPropertyUpCommandExecuted, SortItemPropertyUpCommandCanExecute);
+            SortItemPropertyDownCommand = new DelegateCommand(SortItemPropertyDownCommandExecuted, SortItemPropertyDownCommandCanExecute);
         }
 
         #endregion Construction
@@ -101,6 +105,10 @@ namespace PlusLayerCreator.Configure
             DeleteItemCommand.RaiseCanExecuteChanged();
             AddItemPropertyCommand.RaiseCanExecuteChanged();
             DeleteItemPropertyCommand.RaiseCanExecuteChanged();
+            SortItemDownCommand.RaiseCanExecuteChanged();
+            SortItemUpCommand.RaiseCanExecuteChanged();
+            SortItemPropertyDownCommand.RaiseCanExecuteChanged();
+            SortItemPropertyUpCommand.RaiseCanExecuteChanged();
         }
 
         #region Import/Export
@@ -258,6 +266,70 @@ namespace PlusLayerCreator.Configure
             return ActiveConfiguration != null;
         }
 
+        private bool SortItemDownCommandCanExecute()
+        {
+            return SelectedItem != null &&
+                   SelectedItem.Order < DataLayout.Max(t => t.Order);
+        }
+
+        private void SortItemDownCommandExecuted()
+        {
+            int order = SelectedItem.Order;
+            ConfigurationItem item = DataLayout.First(t => t.Order == order + 1);
+            item.Order = order - 1;
+            SelectedItem.Order++;
+            RaiseCanExecuteChanged();
+        }
+
+        private bool SortItemUpCommandCanExecute()
+        {
+            return SelectedItem != null &&
+                   SelectedItem.Order > DataLayout.Min(t => t.Order);
+        }
+
+        private void SortItemUpCommandExecuted()
+        {
+            int order = SelectedItem.Order;
+            ConfigurationItem item = DataLayout.First(t => t.Order == order - 1);
+            item.Order = order + 1;
+            SelectedItem.Order--;
+            RaiseCanExecuteChanged();
+
+        }
+
+        private bool SortItemPropertyDownCommandCanExecute()
+        {
+            return SelectedItem != null && SelectedItem.Properties != null && SelectedItem.Properties.Count > 0 &&
+                   SelectedPropertyItem != null &&
+                   SelectedPropertyItem.Order < SelectedItem.Properties.Max(t => t.Order);
+        }
+
+        private void SortItemPropertyDownCommandExecuted()
+        {
+            int order = SelectedPropertyItem.Order;
+            ConfigurationProperty prop = SelectedItem.Properties.First(t => t.Order == order + 1);
+            prop.Order = order - 1;
+            SelectedPropertyItem.Order++;
+            RaiseCanExecuteChanged();
+        }
+
+        private bool SortItemPropertyUpCommandCanExecute()
+        {
+            return SelectedItem != null && SelectedItem.Properties != null && SelectedItem.Properties.Count > 0 &&
+                   SelectedPropertyItem != null &&
+                   SelectedPropertyItem.Order > SelectedItem.Properties.Min(t => t.Order);
+        }
+
+        private void SortItemPropertyUpCommandExecuted()
+        {
+            int order = SelectedPropertyItem.Order;
+            ConfigurationProperty prop = SelectedItem.Properties.First(t => t.Order == order -1);
+            prop.Order = order + 1;
+            SelectedPropertyItem.Order--;
+            RaiseCanExecuteChanged();
+
+        }
+
         private void DeleteItemPropertyCommandExecuted()
         {
             if (ActiveConfiguration != null && SelectedPropertyItem != null)
@@ -394,11 +466,20 @@ namespace PlusLayerCreator.Configure
 
         public DelegateCommand AddItemCommand { get; set; }
 
+        public DelegateCommand SortItemUpCommand { get; set; }
+
+        public DelegateCommand SortItemDownCommand { get; set; }
+
+
         public DelegateCommand AddVersionCommand { get; set; }
 
         public DelegateCommand DeleteItemCommand { get; set; }
 
         public DelegateCommand AddItemPropertyCommand { get; set; }
+
+        public DelegateCommand SortItemPropertyUpCommand { get; set; }
+
+        public DelegateCommand SortItemPropertyDownCommand { get; set; }
 
         public DelegateCommand DeleteItemPropertyCommand { get; set; }
 
@@ -445,7 +526,7 @@ namespace PlusLayerCreator.Configure
                 {
                     if (_selectedPropertyItem != null)
                     {
-                        SelectedItem = null;
+                        //SelectedItem = null;
                         NavigateToDataItemPropertyDetail();
                     }
 

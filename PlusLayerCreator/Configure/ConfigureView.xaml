@@ -131,6 +131,9 @@
                             <plus:PlusButton Command="{Binding AddItemCommand}" Icon="{StaticResource Icon.New.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
                             <plus:PlusButton Command="{Binding AddVersionCommand}" Icon="{StaticResource Icon.Ok.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
                             <plus:PlusButton Command="{Binding DeleteItemCommand}" Icon="{StaticResource Icon.Delete.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
+                            <plus:PlusButton Command="{Binding SortItemUpCommand}" Icon="{StaticResource Icon.Arrow.Up.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
+                            <plus:PlusButton Command="{Binding SortItemDownCommand}" Icon="{StaticResource Icon.Arrow.Down.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
+
                         </StackPanel>
                     </plus:PlusExpandableHeader.HeaderAdditionalContent>
                     <plus:PlusGridView
@@ -160,14 +163,17 @@
                         <StackPanel Orientation="Horizontal">
                             <plus:PlusButton Command="{Binding AddItemPropertyCommand}" Icon="{StaticResource Icon.New.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
                             <plus:PlusButton Command="{Binding DeleteItemPropertyCommand}" Icon="{StaticResource Icon.Delete.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
+                            <plus:PlusButton Command="{Binding SortItemPropertyUpCommand}" Icon="{StaticResource Icon.Arrow.Up.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
+                            <plus:PlusButton Command="{Binding SortItemPropertyDownCommand}" Icon="{StaticResource Icon.Arrow.Down.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
                         </StackPanel>
                     </plus:PlusExpandableHeader.HeaderAdditionalContent>
                     <plus:PlusGridView
                         AutoGenerateColumns="False"
                         ColumnWidth="*"
-                        ItemsSource="{Binding ActiveConfiguration.Properties, Mode=TwoWay}"
+                        ItemsSource="{Binding SelectedItem.Properties, Mode=TwoWay}"
                         SelectedItem="{Binding SelectedPropertyItem}">
                         <plus:PlusGridView.Columns>
+                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Order}" Header="Order" />
                             <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Name}" Header="Name" />
                             <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Translation}" Header="Translation" />
                             <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Type}" Header="Type" />

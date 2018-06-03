@@ -1,6 +1,6 @@
 private bool Sort$Item$UpCommandCanExecute()
 {
-	return !IsBusy && !IsInReadOnlyMode$specialContent2$ && $specialContent1$.Count > 1 && Selected$Item$DataItem != null && Selected$Item$DataItem.Id > $specialContent1$.Min(x => x.Id);
+	return !IsBusy && !IsInReadOnlyMode$specialContent2$ && $specialContent1$.Count > 1 && Selected$Item$DataItem != null && Selected$Item$DataItem.Sequence > $specialContent1$.Min(x => x.Sequence);
 }
 
 private async Task Sort$Item$UpCommandExecuted()
@@ -12,7 +12,7 @@ private async Task Sort$Item$UpCommandExecuted()
 
 private bool Sort$Item$DownCommandCanExecute()
 {
-	return !IsBusy && !IsInReadOnlyMode && Selected$Item$DataItem != null$specialContent2$ && Selected$Item$DataItem.Id < $specialContent1$.Count;
+	return !IsBusy && !IsInReadOnlyMode && Selected$Item$DataItem != null$specialContent2$ && Selected$Item$DataItem.Sequence < $specialContent1$.Count;
 }
 
 private async Task Sort$Item$DownCommandExecuted()

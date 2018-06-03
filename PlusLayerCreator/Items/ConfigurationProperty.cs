@@ -7,6 +7,8 @@ namespace PlusLayerCreator.Items
     {
         [DataMember] public string Name { get; set; }
 
+        [DataMember] public int Order { get; set; }
+
         [DataMember] public string Translation { get; set; }
 
         [DataMember] public string Type { get; set; }
