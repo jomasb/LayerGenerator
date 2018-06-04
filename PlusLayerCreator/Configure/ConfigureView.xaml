@@ -189,6 +189,7 @@
                             <plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsReadOnly}" Header="ReadOnly" />
                             <plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsRequired}" Header="Required" />
                             <plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsKey}" Header="IsKey" />
+                            <plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsVisibleInGrid}" Header="IsVisibleInGrid" />
                             <plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsFilterProperty}" Header="IsFilterProperty" />
                             <plus:PlusGridViewTextColumn DataMemberBinding="{Binding FilterPropertyType}" Header="FilterPropertyType" />
                         </plus:PlusGridView.Columns>

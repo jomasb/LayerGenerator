@@ -12,6 +12,7 @@ namespace PlusLayerCreator.Items
         private string _filterPropertyType;
         private bool _isFilterProperty;
         private bool _isKey;
+        private bool _isVisibleInGrid;
         private bool _isRequired;
         private bool _isReadOnly;
         private string _length;
@@ -70,6 +71,13 @@ namespace PlusLayerCreator.Items
         {
             get => _isKey;
             set => SetProperty(ref _isKey, value);
+        }
+
+        [DataMember]
+        public bool IsVisibleInGrid
+        {
+            get => _isVisibleInGrid;
+            set => SetProperty(ref _isVisibleInGrid, value);
         }
 
         [DataMember]

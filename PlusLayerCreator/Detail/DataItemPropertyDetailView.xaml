@@ -39,6 +39,9 @@
             <plus:PlusFormRow Label="IsKey">
                 <plus:PlusCheckBox IsChecked="{Binding Property.IsKey}" />
             </plus:PlusFormRow>
+            <plus:PlusFormRow Label="IsVisibleInGrid">
+                <plus:PlusCheckBox IsChecked="{Binding Property.IsVisibleInGrid}" />
+            </plus:PlusFormRow>
             <plus:PlusFormRow Label="IsFilterProperty">
                 <plus:PlusCheckBox IsChecked="{Binding Property.IsFilterProperty}" />
             </plus:PlusFormRow>

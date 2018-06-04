@@ -736,7 +736,7 @@ namespace PlusLayerCreator.Configure
         {
             string retValue = string.Empty;
 
-            if (!item.CanEdit)
+            if (!item.CanEdit || item.Name == "Sequence")
             {
                 if (property.Type == "bool")
                     retValue += "            <plus:PlusLabel Content=\"{Binding DataItem." +
@@ -824,7 +824,7 @@ namespace PlusLayerCreator.Configure
         private string GetGridXaml(ConfigurationItem dataItem, bool old = false)
         {
             var columnsContent = string.Empty;
-            foreach (var plusDataObject in dataItem.Properties)
+            foreach (var plusDataObject in dataItem.Properties.Where(t => t.IsVisibleInGrid))
                 if (plusDataObject.Type == "bool")
                 {
                     columnsContent +=
