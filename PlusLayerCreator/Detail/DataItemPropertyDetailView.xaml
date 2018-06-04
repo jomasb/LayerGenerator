@@ -14,6 +14,9 @@
     mc:Ignorable="d">
     <plus:PlusExpandableHeader Header="Property Details">
         <plus:PlusFormPanel>
+            <plus:PlusFormRow Label="Order">
+                <plus:PlusLabel Content="{Binding Property.Order}" />
+            </plus:PlusFormRow>
             <plus:PlusFormRow Label="Name">
                 <plus:PlusTextBox Text="{Binding Property.Name, UpdateSourceTrigger=PropertyChanged}" />
             </plus:PlusFormRow>

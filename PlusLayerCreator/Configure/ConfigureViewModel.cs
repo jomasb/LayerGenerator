@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Windows;
+using System.Windows.Data;
 using Microsoft.Win32;
 using PlusLayerCreator.Infrastructure;
 using PlusLayerCreator.Items;
@@ -14,7 +16,7 @@ using Prism.Events;
 
 namespace PlusLayerCreator.Configure
 {
-    public class ConfigureViewModel : RegionViewModelBase
+    public class ConfigureViewModel : RegionViewModelBase, INotifyPropertyChanged
     {
         #region Construction
 
@@ -23,7 +25,8 @@ namespace PlusLayerCreator.Configure
         {
             _navigationService = navigationService;
 
-            _dataLayout = new ObservableCollection<ConfigurationItem>();
+            DataLayout = new ObservableCollection<ConfigurationItem>();
+            ItemCollection = (CollectionView)CollectionViewSource.GetDefaultView(DataLayout);
 
             StartCommand = new DelegateCommand(StartExecuted);
             AddItemCommand = new DelegateCommand(AddItemCommandExecuted, AddItemCommandCanExecute);
@@ -40,6 +43,8 @@ namespace PlusLayerCreator.Configure
             SortItemPropertyUpCommand = new DelegateCommand(SortItemPropertyUpCommandExecuted, SortItemPropertyUpCommandCanExecute);
             SortItemPropertyDownCommand = new DelegateCommand(SortItemPropertyDownCommandExecuted, SortItemPropertyDownCommandCanExecute);
         }
+
+        public CollectionView ItemCollection { get; set; }
 
         #endregion Construction
 
@@ -118,6 +123,8 @@ namespace PlusLayerCreator.Configure
             {
                 UseSimpleDictionaryFormat = true
             };
+
+        private CollectionView _propertyCollection;
 
         private void ExportSettingsExecuted()
         {
@@ -209,6 +216,7 @@ namespace PlusLayerCreator.Configure
                 CanClone = true,
                 CanDelete = true,
                 CanEdit = true,
+                Order = DataLayout.Count,
                 Parent = SelectedItem.Name,
                 Properties = new ObservableCollection<ConfigurationProperty>
                 {
@@ -255,15 +263,18 @@ namespace PlusLayerCreator.Configure
 
         private void AddItemPropertyCommandExecuted()
         {
-            var property = new ConfigurationProperty();
-            ActiveConfiguration.Properties.Add(property);
+            var property = new ConfigurationProperty()
+            {
+                Order = SelectedItem.Properties.Count
+            };
+            SelectedItem.Properties.Add(property);
             SelectedPropertyItem = property;
             RaiseCanExecuteChanged();
         }
 
         private bool AddItemPropertyCommandCanExecute()
         {
-            return ActiveConfiguration != null;
+            return SelectedItem != null;
         }
 
         private bool SortItemDownCommandCanExecute()
@@ -276,8 +287,9 @@ namespace PlusLayerCreator.Configure
         {
             int order = SelectedItem.Order;
             ConfigurationItem item = DataLayout.First(t => t.Order == order + 1);
-            item.Order = order - 1;
+            item.Order = order;
             SelectedItem.Order++;
+            ItemCollection.Refresh();
             RaiseCanExecuteChanged();
         }
 
@@ -291,8 +303,9 @@ namespace PlusLayerCreator.Configure
         {
             int order = SelectedItem.Order;
             ConfigurationItem item = DataLayout.First(t => t.Order == order - 1);
-            item.Order = order + 1;
+            item.Order = order;
             SelectedItem.Order--;
+            ItemCollection.Refresh();
             RaiseCanExecuteChanged();
 
         }
@@ -308,8 +321,9 @@ namespace PlusLayerCreator.Configure
         {
             int order = SelectedPropertyItem.Order;
             ConfigurationProperty prop = SelectedItem.Properties.First(t => t.Order == order + 1);
-            prop.Order = order - 1;
+            prop.Order = order;
             SelectedPropertyItem.Order++;
+            PropertyCollection.Refresh();
             RaiseCanExecuteChanged();
         }
 
@@ -324,22 +338,23 @@ namespace PlusLayerCreator.Configure
         {
             int order = SelectedPropertyItem.Order;
             ConfigurationProperty prop = SelectedItem.Properties.First(t => t.Order == order -1);
-            prop.Order = order + 1;
+            prop.Order = order;
             SelectedPropertyItem.Order--;
+            PropertyCollection.Refresh();
             RaiseCanExecuteChanged();
 
         }
 
         private void DeleteItemPropertyCommandExecuted()
         {
-            if (ActiveConfiguration != null && SelectedPropertyItem != null)
-                ActiveConfiguration.Properties.Remove(SelectedPropertyItem);
+            if (SelectedItem != null && SelectedPropertyItem != null)
+                SelectedItem.Properties.Remove(SelectedPropertyItem);
             RaiseCanExecuteChanged();
         }
 
         private bool DeleteItemPropertyCommandCanExecute()
         {
-            return ActiveConfiguration != null && SelectedPropertyItem != null;
+            return SelectedItem != null && SelectedPropertyItem != null;
         }
 
         private void StartExecuted()
@@ -485,15 +500,6 @@ namespace PlusLayerCreator.Configure
 
         #endregion Commands
 
-        public ConfigurationItem ActiveConfiguration
-        {
-            get => _activeConfiguration;
-            set
-            {
-                if (SetProperty(ref _activeConfiguration, value)) RaiseCanExecuteChanged();
-            }
-        }
-
         public ConfigurationItem SelectedItem
         {
             get => _selectedItem;
@@ -503,7 +509,7 @@ namespace PlusLayerCreator.Configure
                 {
                     if (_selectedItem != null)
                     {
-                        ActiveConfiguration = SelectedItem;
+                        PropertyCollection = (CollectionView)CollectionViewSource.GetDefaultView(SelectedItem.Properties);
                         NavigateToDataItemDetail();
                         SelectedPropertyItem = null;
                     }
@@ -515,6 +521,12 @@ namespace PlusLayerCreator.Configure
                     RaiseCanExecuteChanged();
                 }
             }
+        }
+
+        public CollectionView PropertyCollection
+        {
+            get => _propertyCollection;
+            set => SetProperty(ref _propertyCollection, value);
         }
 
         public ConfigurationProperty SelectedPropertyItem
@@ -664,5 +676,7 @@ namespace PlusLayerCreator.Configure
         }
 
         #endregion Properties
+
+
     }
 }

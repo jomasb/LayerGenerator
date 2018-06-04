@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mvvm="http://prismlibrary.com/"
     xmlns:plus="http://schemas.abatplus.de/xaml"
+    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
     d:DataContext="{d:DesignInstance d:Type=configure:ConfigureViewModel}"
     d:DesignWidth="1000"
     mvvm:ViewModelLocator.AutoWireViewModel="True"
@@ -139,7 +140,8 @@
                     <plus:PlusGridView
                         AutoGenerateColumns="False"
                         ColumnWidth="*"
-                        ItemsSource="{Binding DataLayout, Mode=TwoWay}"
+                        CanUserSortColumns="False"
+                        ItemsSource="{Binding ItemCollection}"
                         SelectedItem="{Binding SelectedItem}">
                         <plus:PlusGridView.Columns>
                             <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Order}" Header="Order" />
@@ -153,6 +155,11 @@
                             <plus:PlusGridViewCheckColumn DataMemberBinding="{Binding CanClone}" Header="CanClone" />
                             <plus:PlusGridViewCheckColumn DataMemberBinding="{Binding CanSort}" Header="CanSort" />
                         </plus:PlusGridView.Columns>
+
+                        <telerik:RadGridView.SortDescriptors>
+                            <telerik:SortDescriptor Member="Order" SortDirection="Ascending" />
+                        </telerik:RadGridView.SortDescriptors>
+
                     </plus:PlusGridView>
                 </plus:PlusExpandableHeader>
 
@@ -169,8 +176,9 @@
                     </plus:PlusExpandableHeader.HeaderAdditionalContent>
                     <plus:PlusGridView
                         AutoGenerateColumns="False"
+                        CanUserSortColumns="False"
                         ColumnWidth="*"
-                        ItemsSource="{Binding SelectedItem.Properties, Mode=TwoWay}"
+                        ItemsSource="{Binding PropertyCollection}"
                         SelectedItem="{Binding SelectedPropertyItem}">
                         <plus:PlusGridView.Columns>
                             <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Order}" Header="Order" />
@@ -184,6 +192,10 @@
                             <plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsFilterProperty}" Header="IsFilterProperty" />
                             <plus:PlusGridViewTextColumn DataMemberBinding="{Binding FilterPropertyType}" Header="FilterPropertyType" />
                         </plus:PlusGridView.Columns>
+
+                        <telerik:RadGridView.SortDescriptors>
+                            <telerik:SortDescriptor Member="Order" SortDirection="Ascending" />
+                        </telerik:RadGridView.SortDescriptors>
                     </plus:PlusGridView>
                 </plus:PlusExpandableHeader>
             </Grid>

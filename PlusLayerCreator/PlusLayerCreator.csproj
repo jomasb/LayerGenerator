@@ -191,6 +191,7 @@
     <Compile Include="Items\Configuration.cs" />
     <Compile Include="Items\ConfigurationItem.cs" />
     <Compile Include="Items\ConfigurationProperty.cs" />
+    <Compile Include="Items\ItemBase.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

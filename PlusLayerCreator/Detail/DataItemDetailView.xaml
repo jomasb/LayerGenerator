@@ -13,6 +13,9 @@
     mc:Ignorable="d">
     <plus:PlusExpandableHeader Header="Item Details">
         <plus:PlusFormPanel>
+            <plus:PlusFormRow Label="Order">
+                <plus:PlusLabel Content="{Binding DataItem.Order}" />
+            </plus:PlusFormRow>
             <plus:PlusFormRow Label="Name">
                 <plus:PlusTextBox Text="{Binding DataItem.Name, UpdateSourceTrigger=PropertyChanged}" />
             </plus:PlusFormRow>
