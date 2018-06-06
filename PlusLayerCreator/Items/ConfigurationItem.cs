@@ -112,6 +112,11 @@ namespace PlusLayerCreator.Items
                     CanEditMultiple = true;
 
                 if (Properties != null && Properties.Count(t => t.Name == "Sequence") == 0)
+                {
+                    foreach (ConfigurationProperty property in Properties)
+                    {
+                        property.Order++;
+                    }
                     Properties.Add(new ConfigurationProperty()
                     {
                         Name = "Sequence",
@@ -123,6 +128,7 @@ namespace PlusLayerCreator.Items
                         Translation = "Reihenfolge",
                         Type = "int"
                     });
+                }
             }
         }
 

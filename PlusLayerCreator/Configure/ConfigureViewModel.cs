@@ -253,6 +253,11 @@ namespace PlusLayerCreator.Configure
         private void DeleteItemCommandExecuted()
         {
             DataLayout.Remove(SelectedItem);
+            int count = 0;
+            foreach (ConfigurationItem item in DataLayout)
+            {
+                item.Order = count++;
+            }
             RaiseCanExecuteChanged();
         }
 
@@ -348,7 +353,14 @@ namespace PlusLayerCreator.Configure
         private void DeleteItemPropertyCommandExecuted()
         {
             if (SelectedItem != null && SelectedPropertyItem != null)
+            {
                 SelectedItem.Properties.Remove(SelectedPropertyItem);
+                int count = 0;
+                foreach (ConfigurationProperty property in SelectedItem.Properties)
+                {
+                    property.Order = count++;
+                }
+            }
             RaiseCanExecuteChanged();
         }
 
