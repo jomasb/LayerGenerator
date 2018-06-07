@@ -5,8 +5,8 @@ public override bool CopyCommandCanExecute()
 
 private async Task CopyCommandExecuted()
 {
-	IsBusy = true;
+	IsGlobalBusy = true;
 	$specialContent1$
-	IsBusy = false;
+	IsGlobalBusy = false;
 }
 

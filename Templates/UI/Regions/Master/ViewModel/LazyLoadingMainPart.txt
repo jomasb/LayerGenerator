@@ -6,7 +6,7 @@ public void OnRegisteredLazyCollectionLoaded(object sender)
 {
 	$specialContent1$
 
-	IsBusy = false;
+	IsGlobalBusy = false;
 	RaiseCanExecuteChanged();
 }
 
@@ -17,7 +17,7 @@ public void OnRegisteredLazyCollectionLoaded(object sender)
 /// <param name="exception">The exception.</param>
 public void OnRegisteredLazyCollectionException(object sender, Exception exception)
 {
-	IsBusy = false;
+	IsGlobalBusy = false;
 	IsInitialLoadingCompleted = false;
 	RaiseCanExecuteChanged();
 }

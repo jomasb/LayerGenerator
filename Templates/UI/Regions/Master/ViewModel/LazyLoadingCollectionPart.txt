@@ -11,6 +11,7 @@ private void On$Product$$Item$DataItemListLoaded()
 	});
 
 	ResetNavigation();
+	IsGlobalBusy = true;
 
 	$specialContent1$
 }

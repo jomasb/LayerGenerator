@@ -101,7 +101,7 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Master
 		/// <returns></returns>
 		private async Task Refresh()
 		{
-			IsBusy = true;
+			IsGlobalBusy = true;
 			IsInitialLoadingCompleted = false;
 			RaiseCanExecuteChanged();
 			$Product$$Item$DataItemsList.Reload();

@@ -39,6 +39,7 @@ private async Task AddVersionCommandExecuted()
 			$item$.$Item$Versions.Load();
 		}
 
+		IsGlobalBusy = true;
 		CallResponse<$Product$$Version$DataItem> response = await _$product$$Dialog$Repository.AddNew$Version$Async(CreateNewCallContext(), $item$.$Item$Versions);
 		if (response.IsSuccess)
 		{
@@ -50,6 +51,7 @@ private async Task AddVersionCommandExecuted()
 			$item$.$Item$Versions.HasAnyChanges = true;
 			RaiseCanExecuteChanged();
 		}
+		IsGlobalBusy = false;
 	}
 }
 

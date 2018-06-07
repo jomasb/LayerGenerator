@@ -5,7 +5,7 @@ public override bool AddCommandCanExecute()
 
 private async Task AddCommandExecuted()
 {
-	IsBusy = true;
+	IsGlobalBusy = true;
 	CallResponse<$Product$$Item$DataItem> response = await _$product$$Dialog$Repository.AddNew$Item$Async(CreateNewCallContext(true), $Product$$Item$DataItemsList);
 	if (response.IsSuccess)
 	{
@@ -15,6 +15,6 @@ private async Task AddCommandExecuted()
 		new$Product$$Item$DataItem.PropertyChanged += New$Product$$Item$DataItem_PropertyChanged;
 		RaiseCanExecuteChanged();
 	}
-	IsBusy = false;
+	IsGlobalBusy = false;
 }
 

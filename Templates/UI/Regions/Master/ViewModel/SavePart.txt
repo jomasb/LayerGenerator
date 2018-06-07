@@ -5,13 +5,13 @@ public override bool SaveCommandCanExecute()
 
 private async Task<bool> SaveCommandExecuted()
 {
-	IsBusy = true;
+	IsGlobalBusy = true;
 	RaiseCanExecuteChanged();
 	bool result = false;
 
 	$specialContent1$
 	
-	IsBusy = false;
+	IsGlobalBusy = false;
 	RaiseCanExecuteChanged();
 	
 	return result;
