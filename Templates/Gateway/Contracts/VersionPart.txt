@@ -1,0 +1,17 @@
+/// <summary>
+/// Activates the version.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="siteId">The $parent$.</param>
+/// <param name="versionId">The version.</param>
+/// <returns></returns>
+Task<CallResponse<$Product$$Item$>> ActivateVersion(ICallContext callContext, $Product$$Parent$ parent, $Item$ version);
+
+/// <summary>
+/// Deactivates the version.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="siteId">The $parent$.</param>
+/// <param name="versionId">The version.</param>
+/// <returns></returns>
+Task<CallResponse<$Product$$Item$>> DeactivateVersion(ICallContext callContext, $Product$$Parent$ parent, $Item$ version);

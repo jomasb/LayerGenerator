@@ -2,7 +2,7 @@
 /// Activates the version asynchronous.
 /// </summary>
 /// <param name="serviceCallContext">The service call context.</param>
-/// <param name="siteId">The $parent$.</param>
+/// <param name="parent">The $parent$.</param>
 /// <param name="versionId">The version.</param>
 /// <returns></returns>
 public Task<CallResponse<$Product$$Item$>> ActivateVersionAsync(IServiceCallContext serviceCallContext, $Product$$Parent$ parent, $Product$$Item$ version)
@@ -14,7 +14,7 @@ public Task<CallResponse<$Product$$Item$>> ActivateVersionAsync(IServiceCallCont
 /// Deactivates the version asynchronous.
 /// </summary>
 /// <param name="serviceCallContext">The service call context.</param>
-/// <param name="siteId">The $parent$.</param>
+/// <param name="parent">The $parent$.</param>
 /// <param name="versionId">The version.</param>
 /// <returns></returns>
 public Task<CallResponse<$Product$$Item$>> DeactivateVersionAsync(IServiceCallContext serviceCallContext, $Product$$Parent$ parent, $Product$$Item$ version)

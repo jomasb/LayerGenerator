@@ -16,6 +16,8 @@ namespace PlusLayerCreator.Items
         private bool _isRequired;
         private bool _isReadOnly;
         private string _length;
+        private bool _shouldLazyLoad;
+        private string _messageField;
 
         [DataMember]
         public string Name
@@ -92,6 +94,22 @@ namespace PlusLayerCreator.Items
         {
             get => _filterPropertyType;
             set => SetProperty(ref _filterPropertyType, value);
+        }
+
+        [DataMember]
+        public bool ShouldLazyLoad
+        {
+            get => _shouldLazyLoad;
+            set => SetProperty(ref _shouldLazyLoad, value);
+        }
+
+
+
+        [DataMember]
+        public string MessageField
+        {
+            get => _messageField;
+            set => SetProperty(ref _messageField, value);
         }
     }
 }

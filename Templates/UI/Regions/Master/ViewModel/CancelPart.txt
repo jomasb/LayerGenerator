@@ -1,8 +1,10 @@
 private async Task CancelCommandExecuted()
 {
+	IsGlobalBusy = true;
 	await $Product$$Item$DataItemsList.Rollback();
 	$Product$$Item$DataItemsList.HasAnyChanges = false;
 	RaiseCanExecuteChanged();
 	BaseServices.EventAggregator.Publish(GlobalEventNames.CancelExecuted);
+	IsGlobalBusy = false;
 }
 

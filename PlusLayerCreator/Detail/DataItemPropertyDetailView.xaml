@@ -51,7 +51,12 @@
                     ItemsSource="{Binding FilterTypes}"
                     SelectedItem="{Binding Property.FilterPropertyType}" />
             </plus:PlusFormRow>
-
+            <plus:PlusFormRow Label="ShouldLazyLoad">
+                <plus:PlusCheckBox IsChecked="{Binding Property.ShouldLazyLoad}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="MessagesField">
+                <plus:PlusTextBox Text="{Binding Property.MessageField, UpdateSourceTrigger=PropertyChanged}" />
+            </plus:PlusFormRow>
         </plus:PlusFormPanel>
     </plus:PlusExpandableHeader>
 </UserControl>

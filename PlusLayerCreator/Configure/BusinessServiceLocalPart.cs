@@ -15,162 +15,155 @@ namespace PlusLayerCreator.Configure
 
         public void CreateBusinessService(bool withBo)
         {
-            var fileNameExtension = withBo ? string.Empty : "NoBO";
+            var fileNameExtension = string.Empty;
 
             foreach (var dataItem in _configuration.DataLayout)
             {
                 var interfaceReadContent = string.Empty;
                 var interfaceSaveContent = string.Empty;
 
-                var serviceReadContent = string.Empty;
-                var serviceSaveContent = string.Empty;
+                var gatewayReadContent = string.Empty;
+                var gatewaySaveContent = string.Empty;
 
-                var serviceMockReadContent = string.Empty;
-                var serviceMockSaveContent = string.Empty;
+                var key = string.Empty;
+                var identifier = string.Empty;
+                var readOnlyMappingDto = string.Empty;
+                var readOnlyMappingBo = string.Empty;
 
                 if (string.IsNullOrEmpty(dataItem.Parent))
                 {
                     //Parent
                     interfaceReadContent +=
-                        File.ReadAllText(_configuration.InputPath + @"Service\Contracts\GetPart" +
+                        File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\GetPart" +
                                             fileNameExtension + ".txt").DoReplaces(dataItem).ReplaceSpecialContent(new[] { GetPreFilterInformation(dataItem, "parameter") }) + "\r\n\r\n";
-                    serviceReadContent +=
-                        File.ReadAllText(_configuration.InputPath + @"Service\GetPart" + fileNameExtension + ".txt")
+                    gatewayReadContent +=
+                        File.ReadAllText(_configuration.InputPath + @"Gateway\GetPart" + fileNameExtension + ".txt")
                             .DoReplaces(dataItem).ReplaceSpecialContent(new[] { GetPreFilterInformation(dataItem, "parameter"), GetPreFilterInformation(dataItem, "listCall"), GetPreFilterInformation(dataItem, "arguments") }) + "\r\n\r\n";
-
-                    if (!withBo)
-                    {
-                        var propertyAssignments = Helpers.GetBusinessServiceLocalGetMock(dataItem);
-                        serviceMockReadContent +=
-                            File.ReadAllText(_configuration.InputPath + @"Service\GetPartNoBOMock.txt")
-                                .ReplaceSpecialContent(new[] { propertyAssignments, GetPreFilterInformation(dataItem, "parameter")})
-                                .DoReplaces(dataItem) + "\r\n\r\n";
-                    }
                 }
                 else
                 {
                     //Child
                     var content =
-                        File.ReadAllText(_configuration.InputPath + @"Service\Contracts\GetChildPart" +
+                        File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\GetChildPart" +
                                             fileNameExtension + ".txt").DoReplaces(dataItem) +
                         "\r\n\r\n";
                     content = content.ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param") });
                     interfaceReadContent += content;
 
 
-                    content = File.ReadAllText(_configuration.InputPath + @"Service\GetChildPart" +
+                    content = File.ReadAllText(_configuration.InputPath + @"Gateway\GetChildPart" +
                                                 fileNameExtension + ".txt").DoReplaces(dataItem) +
                                 "\r\n\r\n";
                     content = content.ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param"), GetParentParameter(dataItem, "call"), GetParentParameter(dataItem, "") });
-                    serviceReadContent += content;
-
-                    if (!withBo)
-                    {
-                        var propertyAssignments = Helpers.GetBusinessServiceLocalGetMock(dataItem);
-                        serviceMockReadContent +=
-                            File.ReadAllText(_configuration.InputPath + @"Service\GetChildPartNoBOMock.txt")
-                                .ReplaceSpecialContent(new []{ GetParentParameter(dataItem, "param"), propertyAssignments})
-                                .DoReplaces(dataItem) +
-                            "\r\n\r\n";
-                    }
+                    gatewayReadContent += content;
                 }
 
                 if (dataItem.CanEdit && !dataItem.CanEditMultiple)
-                { 
+                {
                     //Save
                     interfaceSaveContent +=
-                        File.ReadAllText(_configuration.InputPath + @"Service\Contracts\SavePart" +
+                        File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\SavePart" +
                                             fileNameExtension + ".txt")
-                            .ReplaceSpecialContent(new []{ GetParentParameter(dataItem, "param") })
+                            .ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param") })
                             .DoReplaces(dataItem) + "\r\n\r\n";
-                    serviceSaveContent +=
+                    gatewaySaveContent +=
                         File.ReadAllText(
-                                _configuration.InputPath + @"Service\SavePart" + fileNameExtension + ".txt")
+                                _configuration.InputPath + @"Gateway\SavePart" + fileNameExtension + ".txt")
                             .ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param"), GetParentParameter(dataItem, "call"), GetParentParameter(dataItem, "") })
                             .DoReplaces(dataItem) + "\r\n\r\n";
-
-                    if (!withBo)
-                        serviceMockSaveContent +=
-                            File.ReadAllText(_configuration.InputPath + @"Service\SavePartNoBOMock.txt")
-                                .ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param") })
-                                .DoReplaces(dataItem) + "\r\n\r\n";
 
                     //Delete
                     interfaceSaveContent +=
-                        File.ReadAllText(_configuration.InputPath + @"Service\Contracts\DeletePart" +
+                        File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\DeletePart" +
                                          fileNameExtension + ".txt")
                             .ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param") })
                             .DoReplaces(dataItem) + "\r\n\r\n";
-                    serviceSaveContent +=
+                    gatewaySaveContent +=
                         File.ReadAllText(
-                                _configuration.InputPath + @"Service\DeletePart" + fileNameExtension + ".txt")
+                                _configuration.InputPath + @"Gateway\DeletePart" + fileNameExtension + ".txt")
                             .ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param"), GetParentParameter(dataItem, "call"), GetParentParameter(dataItem, "") })
                             .DoReplaces(dataItem) + "\r\n\r\n";
-
-                    if (!withBo)
-                        serviceMockSaveContent +=
-                            File.ReadAllText(_configuration.InputPath + @"Service\DeletePartNoBOMock.txt")
-                                .ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param") })
-                                .DoReplaces(dataItem) + "\r\n\r\n";
                 }
 
                 if (dataItem.CanEdit && dataItem.CanEditMultiple)
                 {
                     interfaceSaveContent +=
-                        File.ReadAllText(_configuration.InputPath + @"Service\Contracts\SaveMultiPart" +
+                        File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\SaveMultiPart" +
                                             fileNameExtension + ".txt")
                             .ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param") })
                             .DoReplaces(dataItem) + "\r\n\r\n";
-                    serviceSaveContent +=
-                        File.ReadAllText(_configuration.InputPath + @"Service\SaveMultiPart" + fileNameExtension +
+                    gatewaySaveContent +=
+                        File.ReadAllText(_configuration.InputPath + @"Gateway\SaveMultiPart" + fileNameExtension +
                                             ".txt")
                             .ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param"), GetParentParameter(dataItem, "call"), GetParentParameter(dataItem, "") })
                             .DoReplaces(dataItem) + "\r\n\r\n";
-
-                    if (!withBo)
-                        serviceMockSaveContent +=
-                            File.ReadAllText(_configuration.InputPath + @"Service\SaveMultiPartNoBOMock.txt")
-                                .ReplaceSpecialContent(new[] { GetParentParameter(dataItem, "param") })
-                                .DoReplaces(dataItem) + "\r\n\r\n";
                 }
 
                 if (dataItem.Name.EndsWith("Version"))
                     if (!string.IsNullOrEmpty(dataItem.Parent))
                     {
                         interfaceSaveContent +=
-                            File.ReadAllText(_configuration.InputPath + @"Service\Contracts\VersionPart" +
+                            File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\VersionPart" +
                                              fileNameExtension + ".txt").DoReplaces(dataItem) + "\r\n\r\n";
-                        serviceSaveContent +=
-                            File.ReadAllText(_configuration.InputPath + @"Service\VersionPart" + fileNameExtension +
+                        gatewaySaveContent +=
+                            File.ReadAllText(_configuration.InputPath + @"Gateway\VersionPart" + fileNameExtension +
                                              ".txt").DoReplaces(dataItem) + "\r\n\r\n";
-
-                        if (!withBo)
-                            serviceMockSaveContent +=
-                                File.ReadAllText(_configuration.InputPath + @"Service\VersionPartNoBOMock.txt")
-                                    .DoReplaces(dataItem) + "\r\n\r\n";
                     }
 
-                var servicePath = withBo
-                    ? _configuration.InputPath + @"Service\Contracts\IServiceTemplate.cs"
-                    : _configuration.InputPath + @"Service\Contracts\IServiceNoBOTemplate.cs";
+                foreach (var plusDataObject in dataItem.Properties.Where(t => t.IsKey))
+                {
+                    key += dataItem.Name.ToPascalCase() + "." + plusDataObject.Name + ", ";
+                    identifier += "x.Key." + plusDataObject.Name + ".Equals(dto." + plusDataObject.Name + ") &&";
+                    //if (plusDataObject.Type == "string")
+                    //{
+                    //	mock += Helpers.ToPascalCase(dataItem.Name) + "." + plusDataObject.Name + " = " + plusDataObject.Name + " + i,\r\n";
+                    //}
+                    //if (plusDataObject.Type == "int")
+                    //{
+                    //	mock += Helpers.ToPascalCase(dataItem.Name) + "." + plusDataObject.Name + " = " +
+                    //			rnd.Next(1, Helpers.GetMaxValue(plusDataObject.Length)) + ",\r\n";
+                    //}
+                    //if (plusDataObject.Type == "bool")
+                    //{
+                    //	mock += Helpers.ToPascalCase(dataItem.Name) + "." + plusDataObject.Name + " = true,\r\n";
+                    //}
+                    //if (plusDataObject.Type == "DateTime")
+                    //{
+                    //	mock += Helpers.ToPascalCase(dataItem.Name) + "." + plusDataObject.Name + " = new DateTime(2016, 12, 25),\r\n";
+                    //}
+                    if (plusDataObject.IsReadOnly)
+                    {
+                        readOnlyMappingDto +=
+                            dataItem.Name.ToPascalCase() + "Dto." + plusDataObject.Name + " = " +
+                            dataItem.Name.ToPascalCase() + "." +
+                            plusDataObject.Name + ";\r\n";
+                        readOnlyMappingBo +=
+                            dataItem.Name.ToPascalCase() + "." + plusDataObject.Name + " = " +
+                            dataItem.Name.ToPascalCase() + "Dto." +
+                            plusDataObject.Name + ";\r\n";
+                    }
+                }
 
-                Helpers.CreateFileFromPath(servicePath,
-                    _configuration.OutputPath + @"Service\Contracts\I" + _configuration.Product + dataItem.Name +
-                    "Service.cs", new[] {interfaceReadContent, interfaceSaveContent}, dataItem);
+                if (key.Length > 0) key = key.Substring(0, key.Length - 2);
+
+                if (identifier.Length > 0) identifier = identifier.Substring(0, identifier.Length - 3);
+
+                //special content in gateway
+                gatewaySaveContent = gatewaySaveContent.ReplaceSpecialContent(new[]
+                    {key, identifier, readOnlyMappingDto, readOnlyMappingBo});
+
+                var gatewayPath = _configuration.InputPath + @"Gateway\Contracts\IGatewayTemplate.cs";
+
+                Helpers.CreateFileFromPath(gatewayPath,
+                    _configuration.OutputPath + @"Gateway\Contracts\I" + _configuration.Product + dataItem.Name +
+                    "Gateway.cs", new[] { interfaceReadContent, interfaceSaveContent }, dataItem);
 
 
-                servicePath = withBo
-                    ? _configuration.InputPath + @"Service\ServiceTemplate.cs"
-                    : _configuration.InputPath + @"Service\ServiceNoBOTemplate.cs";
+                gatewayPath = _configuration.InputPath + @"Gateway\GatewayTemplate.cs";
 
-                Helpers.CreateFileFromPath(servicePath,
-                    _configuration.OutputPath + @"Service\" + _configuration.Product + dataItem.Name + "Service.cs",
-                    new[] {serviceReadContent, serviceSaveContent, string.Empty}, dataItem);
-
-                if (!withBo)
-                    Helpers.CreateFileFromPath(servicePath,
-                        _configuration.OutputPath + @"Service\" + _configuration.Product + dataItem.Name +
-                        "ServiceMock.cs", new[] {serviceMockReadContent, serviceMockSaveContent, "Mock"}, dataItem);
+                Helpers.CreateFileFromPath(gatewayPath,
+                    _configuration.OutputPath + @"Gateway\" + _configuration.Product + dataItem.Name + "Gateway.cs",
+                    new[] { gatewayReadContent, gatewaySaveContent, string.Empty }, dataItem);
             }
         }
 

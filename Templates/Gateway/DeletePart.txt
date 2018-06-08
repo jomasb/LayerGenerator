@@ -1,0 +1,10 @@
+/// <summary>
+/// Deletes the $Item$.
+/// </summary>
+/// <param name="callContext">The service call context.</param>
+/// <param name="$item$Dto">The $Item$ dto.</param>
+/// <returns></returns>
+public Task<CallResponse<bool>> Delete$Item$(ICallContext callContext, $Product$$Item$ $item$Dto$specialContent1$)
+{
+	throw new NotImplementedException();
+}
