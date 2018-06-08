@@ -2,7 +2,7 @@
 
 using Dcx.Plus.Gateway.FW.Contracts;
 using System.Collections.Generic;
-using Dcx.Plus.Gateway.Modules.$Product$.Contracts.DTOs;
+using Dcx.Plus.Gateway.Modules.$Product$.Contracts.Dtos;
 using Dcx.Plus.Infrastructure.Contracts;
 using Dcx.Plus.Infrastructure.Contracts.Application;
 

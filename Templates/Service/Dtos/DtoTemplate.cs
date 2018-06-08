@@ -4,7 +4,7 @@ using Dcx.Plus.Gateway.FW.Contracts;
 
 #endregion Usings
 
-namespace Dcx.Plus.BusinessServiceLocal.Modules.$Product$.Contracts.DTOs
+namespace Dcx.Plus.BusinessServiceLocal.Modules.$Product$.Contracts.Dtos
 {
 	/// <summary>
 	/// The $Product$$Item$ dto.

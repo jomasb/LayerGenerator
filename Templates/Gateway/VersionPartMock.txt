@@ -1,0 +1,33 @@
+/// <summary>
+/// Activates the version.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="parent">The $parent$.</param>
+/// <param name="versionId">The version.</param>
+/// <returns></returns>
+public CallResponse<$Product$$Item$> ActivateVersionAsync(ICallContext callContext, $Product$$Parent$ parent, $Product$$Item$ version)
+{
+	Thread.Sleep(500);
+	version.LupdTimestamp = DateTime.Now;
+	version.LupdUser = "JMAN";
+	version.SaveFlag = SaveFlag.Persistent;
+	version.IsActive = true;
+	return CallResponse.FromSuccessfulResult(version);
+}
+
+/// <summary>
+/// Deactivates the version.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="parent">The $parent$.</param>
+/// <param name="versionId">The version.</param>
+/// <returns></returns>
+public CallResponse<$Product$$Item$> DeactivateVersionAsync(ICallContext callContext, $Product$$Parent$ parent, $Product$$Item$ version)
+{
+	Thread.Sleep(500);
+	version.LupdTimestamp = DateTime.Now;
+	version.LupdUser = "JMAN";
+	version.SaveFlag = SaveFlag.Persistent;
+	version.IsActive = false;
+	return CallResponse.FromSuccessfulResult(version);
+}

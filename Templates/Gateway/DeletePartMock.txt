@@ -1,0 +1,12 @@
+/// <summary>
+/// Deletes the $item$s.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="$item$Dto">The $item$ dto.</param>
+/// <returns></returns>
+public CallResponse<bool> Delete$Item$Async(ICallContext callContext, $Product$$Item$ $item$Dto$specialContent1$)
+{
+	Thread.Sleep(500);
+
+	return CallResponse.FromSuccessfulResult(true);
+}

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dcx.Plus.BusinessServiceLocal.FW.Contracts;
-using Dcx.Plus.BusinessServiceLocal.Modules.$Product$.Contracts.DTOs;
+using Dcx.Plus.BusinessServiceLocal.Modules.$Product$.Contracts.Dtos;
 using Dcx.Plus.Data.Contracts;
 using Dcx.Plus.Infrastructure.Contracts.Application;
 

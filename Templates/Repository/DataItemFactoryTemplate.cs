@@ -1,6 +1,6 @@
 #region Usings
 
-using Dcx.Plus.$specialContent2$.Modules.$Product$.Contracts.DTOs;
+using Dcx.Plus.$specialContent2$.Modules.$Product$.Contracts.Dtos;
 using Dcx.Plus.Repository.FW;
 using Dcx.Plus.Repository.Modules.$Product$.DataItems;
 

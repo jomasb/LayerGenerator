@@ -259,5 +259,60 @@ namespace PlusLayerCreator
 
             return Configuration.DataLayout.First(t => t.Name == item.Parent);
         }
+
+        public static string GetParentParameter(ConfigurationItem item, string type)
+        {
+            string retValue = string.Empty;
+
+            if (!string.IsNullOrEmpty(item.Parent))
+            {
+                if (type == "param")
+                {
+                    retValue = ", " + Configuration.Product + item.Parent + " parent" + item.Parent;
+                }
+                else if (type == "call")
+                {
+                    retValue = ", parent" + item.Parent;
+                }
+                else
+                {
+                    retValue = "arguments.Add(\"" + item.Parent + "\", parent" + item.Parent + ");\r\n";
+                }
+                return GetParentParameter(Configuration.DataLayout.First(t => t.Name == item.Parent), type) + retValue;
+            }
+
+            return retValue;
+        }
+
+        public static string GetPreFilterInformation(ConfigurationItem item, string information)
+        {
+            if (item.IsPreFilterItem)
+            {
+                return string.Empty;
+            }
+
+            var filterParameter = string.Empty;
+            foreach (var configurationItem in Configuration.DataLayout.Where(t => t.IsPreFilterItem))
+            {
+                if (information == "parameter")
+                {
+                    filterParameter += ", " + Configuration.Product + configurationItem.Name + " " +
+                                       configurationItem.Name.ToPascalCase();
+                }
+
+                if (information == "arguments")
+                {
+                    filterParameter += "arguments.Add(\"" + Configuration.Product + configurationItem.Name + "\", " +
+                                       configurationItem.Name.ToPascalCase() + ");";
+                }
+
+                if (information == "listCall")
+                {
+                    filterParameter += ", " + configurationItem.Name.ToPascalCase();
+                }
+            }
+
+            return filterParameter;
+        }
     }
 }

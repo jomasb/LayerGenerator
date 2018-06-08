@@ -8,12 +8,7 @@ private async Task Delete$Item$CommandExecuted()
 	if (ShowDeletingMessage() == NlsMessageResult.YES)
 	{
 		IsGlobalBusy = true;
-		CallResponse<bool> response = await _$product$$Dialog$Repository.Delete$Item$Async(CreateNewCallContext(true), Selected$Item$DataItem, Selected$Parent$DataItem.$Item$s);
-		if (response.IsSuccess)
-		{
-			Selected$Parent$DataItem.$Item$s.Remove(Selected$Item$DataItem);
-			Selected$Parent$DataItem.$Item$s.AcceptDeep();
-		}
+		await _$product$$Dialog$Repository.Delete$Item$Async(CreateNewCallContext(true), Selected$Item$DataItem, Selected$Parent$DataItem.$Item$s);
 
 		RaiseCanExecuteChanged();
 		IsGlobalBusy = false;

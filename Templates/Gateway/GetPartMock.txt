@@ -1,0 +1,22 @@
+/// <summary>
+/// Gets the $item$s.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <returns></returns>
+public CallResponse<IList<$Product$$Item$>> Get$Item$s(ICallContext callContext$specialContent2$)
+{
+	IList<$Product$$Item$> $product$$Item$s = new List<$Product$$Item$>();
+	
+	for (int i = 0; i < 10; i++)
+	{
+		$product$$Item$s.Add(new $Product$$Item$()
+		{
+			$specialContent1$
+			LupdTimestamp = new DateTime(2016, 1, 12),
+			LupdUser = "JMA"
+		});
+	}
+	
+	Thread.Sleep(500);
+	return CallResponse.FromSuccessfulResult($product$$Item$s);
+}

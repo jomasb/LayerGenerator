@@ -10,7 +10,7 @@ using Dcx.Plus.Infrastructure.Contracts;
 using Dcx.Plus.Infrastructure.Contracts.Application;
 using Dcx.Plus.Infrastructure.Logging.Contracts.Trace;
 using Dcx.Plus.Gateway.Modules.$Product$.Contracts;
-using Dcx.Plus.Gateway.Modules.$Product$.Contracts.DTOs;
+using Dcx.Plus.Gateway.Modules.$Product$.Contracts.Dtos;
 
 
 #endregion Usings

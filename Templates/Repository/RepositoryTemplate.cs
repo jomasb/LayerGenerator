@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dcx.Plus.BusinessServiceLocal.Modules.$Product$.Contracts;
 using Dcx.Plus.Gateway.FW.Contracts;
-using Dcx.Plus.$specialContent5$.Modules.$Product$.Contracts.DTOs;
+using Dcx.Plus.$specialContent5$.Modules.$Product$.Contracts.Dtos;
 using Dcx.Plus.Infrastructure.Base;
 using Dcx.Plus.Infrastructure.Contracts.Application;
 using Dcx.Plus.Infrastructure.HierarchicalItem;

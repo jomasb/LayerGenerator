@@ -1,0 +1,31 @@
+/// <summary>
+/// Saves the $item$s.
+/// </summary>
+/// <param name="callContext">The call context.</param>
+/// <param name="$item$Dtos">The $item$ dtos.</param>
+/// <returns></returns>
+public CallResponse<IList<$Product$$Item$>> Save$Item$sAsync(ICallContext callContext, IList<$Product$$Item$> $item$Dtos$specialContent1$)
+{
+	var $item$s = from $item$Dto in $item$Dtos
+		where $item$Dto.SaveFlag.Equals(SaveFlag.New) || $item$Dto.SaveFlag.Equals(SaveFlag.Delete) ||
+			  $item$Dto.SaveFlag.Equals(SaveFlag.Modified)
+		select $item$Dto;
+
+	var $item$sToSave = $item$s as IList<$Product$$Item$> ?? $item$s.ToList();
+
+	foreach (var dto in $item$sToSave.Where(t => t.SaveFlag == SaveFlag.New))
+	{
+		dto.LupdTimestamp = DateTime.Now;
+		dto.LupdUser = "JMAN";
+		dto.SaveFlag = SaveFlag.Persistent;
+	}
+
+	foreach (var dto in $item$sToSave.Where(t => t.SaveFlag == SaveFlag.Modified))
+	{
+		dto.LupdTimestamp = DateTime.Now;
+		dto.LupdUser = "JMAM";
+		dto.SaveFlag = SaveFlag.Persistent;
+	}
+
+	return CallResponse.FromSuccessfulResult($item$sToSave);
+}

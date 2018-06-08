@@ -200,23 +200,20 @@ namespace PlusLayerCreator.Configure
 
                 foreach (var plusDataObject in dataItem.Properties)
                 {
-                    if (plusDataObject.IsRequired || plusDataObject.Length != string.Empty)
+                    if (plusDataObject.IsRequired)
                     {
-                        dataItemContent += "[";
-                        if (plusDataObject.IsRequired) dataItemContent += "Required";
-
-                        if (plusDataObject.IsRequired || plusDataObject.Length != string.Empty) dataItemContent += ", ";
-
-                        if (!string.IsNullOrEmpty(plusDataObject.Length))
+                        dataItemContent += "[Required]\r\n";
+                    }
+                    if (!string.IsNullOrEmpty(plusDataObject.Length))
+                    {
+                        if (plusDataObject.Type == "int")
                         {
-                            if (plusDataObject.Type == "int")
-                                dataItemContent +=
-                                    "NumericRange(0, " + Helpers.GetMaxValue(plusDataObject.Length) + ")";
-                            if (plusDataObject.Type == "string")
-                                dataItemContent += "MaxLength(" + plusDataObject.Length + ")";
+                            dataItemContent +="[NumericRange(0, " + Helpers.GetMaxValue(plusDataObject.Length) + ")]\r\n";
                         }
-
-                        dataItemContent += "]\r\n";
+                        if (plusDataObject.Type == "string")
+                        {
+                            dataItemContent += "[MaxLength(" + plusDataObject.Length + ")]\r\n";
+                        }
                     }
 
                     dataItemContent += "public " + plusDataObject.Type + " " + plusDataObject.Name + "\r\n" +
