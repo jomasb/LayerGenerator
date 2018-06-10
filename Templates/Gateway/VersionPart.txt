@@ -7,7 +7,22 @@
 /// <returns></returns>
 public CallResponse<$Product$$Item$> ActivateVersion(ICallContext callContext, $Product$$Parent$ parent, $Item$ version)
 {
-	throw new NotImplementedException();
+	I$Product$$Item$ $item$ = Get$Item$($item$Id, callContext);
+	I$Product$$Item$Version version = _$item$VersionFactory.Get($item$, versionId, ApplicationProvider.SessionContextGuid, callContext);
+	version.ActivateVersion();
+
+	foreach (var $item$Version in $item$.$Item$Versions)
+	{
+		if ($item$Version.Key.Version != versionId && $item$Version.IsActive)
+		{
+			$item$Version.Data[$Product$$Item$VersionDataFields.IS_ACTIVE] = false;
+			$item$Version.Data[$Product$$Item$VersionDataFields.LUPD_TIMESTAMP] = version.LupdTimestamp;
+			$item$Version.Accept();
+		}
+	}
+	$item$.$Item$Versions.Accept();
+	$item$.Accept();
+	return CallResponse.FromSuccessfulResult($Product$DtoFactory.Create$Item$VersionFromBO(version));
 }
 
 /// <summary>
@@ -19,5 +34,8 @@ public CallResponse<$Product$$Item$> ActivateVersion(ICallContext callContext, $
 /// <returns></returns>
 public CallResponse<$Product$$Item$> DeactivateVersion(ICallContext callContext, $Product$$Parent$ parent, $Item$ version)
 {
-	throw new NotImplementedException();
+	I$Product$$Item$ $item$ = Get$Item$($item$Id, callContext);
+	I$Product$$Item$Version version = _$item$VersionFactory.Get($item$, versionId, ApplicationProvider.SessionContextGuid, callContext);
+	version.DeactivateVersion();
+	return CallResponse.FromSuccessfulResult($Product$DtoFactory.Create$Item$VersionFromBO(version));
 }

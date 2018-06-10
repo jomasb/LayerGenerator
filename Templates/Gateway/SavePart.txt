@@ -32,29 +32,17 @@ public CallResponse<$Product$$Item$> Save$Item$(ICallContext callContext, $Produ
 			}
 			break;
 		}
-		case SaveFlag.Delete:
-		{
-			I$Product$$Item$ $item$ = $item$List.$Item$s.FirstOrDefault(x => $specialContent2$);
-			if ($item$ != null)
-			{
-				$item$List.$Item$s.Remove($item$);
-			}
-			break;
-		}
 	}
 
 	$item$List.SetModified();
 	bool isSuccessfullySaved = $item$List.Save();
 	if (isSuccessfullySaved)
 	{
-		if ($item$Dto.SaveFlag == SaveFlag.New || $item$Dto.SaveFlag == SaveFlag.Modified)
-		{
-			I$Product$$Item$ $item$ = $item$Factory.Get($specialContent1$, callContext);
-			$item$Dto.LupdTimestamp = $item$.LupdTimestamp;
-			$item$Dto.LupdUser = $item$.LupdUser;
-			$specialContent3$
-			$item$Dto.SaveFlag = SaveFlag.Persistent;
-		}
+		I$Product$$Item$ $item$ = $item$Factory.Get($specialContent1$, callContext);
+		$item$Dto.LupdTimestamp = $item$.LupdTimestamp;
+		$item$Dto.LupdUser = $item$.LupdUser;
+		$specialContent3$
+		$item$Dto.SaveFlag = SaveFlag.Persistent;
 		
 		$item$List.$Item$s.Accept();
 		$item$List.Accept();

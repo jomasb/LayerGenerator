@@ -6,5 +6,26 @@
 /// <returns></returns>
 public Task<CallResponse<bool>> Delete$Item$(ICallContext callContext, $Product$$Item$ $item$Dto$specialContent1$)
 {
-	throw new NotImplementedException();
+	I$Product$$Item$ListFactory $item$ListFactory = BOFactoryProvider.Get<I$Product$$Item$ListFactory>();
+	I$Product$$Item$List $item$List = $item$ListFactory.Get(ApplicationProvider.SessionContextGuid, callContext);
+	I$Product$$Item$Factory $item$Factory = BOFactoryProvider.Get<I$Product$$Item$Factory>();
+
+	var dto = $item$Dto;
+	
+	I$Product$$Item$ $item$ = $item$List.$Item$s.FirstOrDefault(x => $specialContent2$);
+	if ($item$ != null)
+	{
+		$item$List.$Item$s.Remove($item$);
+		
+		bool isSuccessfullySaved = $item$.Save();
+		if (isSuccessfullySaved)
+		{
+			$item$List.$Item$s.Remove($item$);
+			$item$List.$Item$s.Accept();
+			$item$List.Accept();
+			return CallResponse.FromSuccessfulResult<$Product$$Item$>(null);
+		}
+	}
+	
+	return CallResponse.FromFailedResult<$Product$$Item$>(null);
 }
