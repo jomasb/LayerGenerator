@@ -108,8 +108,10 @@ namespace PlusLayerCreator.Items
             set
             {
                 SetProperty(ref _canSort, value);
-                if (!CanEditMultiple)
+                if (value && !CanEditMultiple)
+                {
                     CanEditMultiple = true;
+                }
 
                 if (Properties != null && Properties.Count(t => t.Name == "Sequence") == 0)
                 {

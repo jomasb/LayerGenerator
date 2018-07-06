@@ -1,0 +1,6 @@
+public IPlusCommand Open$Item$SettingsDialogCommand
+{
+	get;
+	protected set;
+}
+

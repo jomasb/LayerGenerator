@@ -1,0 +1,2 @@
+_selected$Item$DataItem.$Child$s.RegisterLoadingHandler(this);
+$Child$FilterCollection = (CollectionView) CollectionViewSource.GetDefaultView(Selected$Item$DataChild.$Child$s.LoadedChilds);

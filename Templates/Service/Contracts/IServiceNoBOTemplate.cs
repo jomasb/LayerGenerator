@@ -14,7 +14,7 @@ namespace Dcx.Plus.BusinessServiceLocal.Modules.$Product$.Contracts
 	/// <author></author>
 	/// <company>abat+ GmbH</company>
 	/// <date></date>
-	public interface I$Product$$Item$Service : IDataProvider, ICommunicationProvider
+	public interface I$Product$$Item$NoBOService : IDataProvider, ICommunicationProvider
 	{
 		#region Get
 		

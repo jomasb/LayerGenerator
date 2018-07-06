@@ -35,7 +35,7 @@ private CallResponse<IList<$Product$$Item$>> Save$Item$s(IList<$Product$$Item$> 
 		arguments.Add("$Item$s", $product$$Item$s);
 		arguments.Add("$Item$sToSave", $item$sToSave);
 
-		if (!DataAdapter.Execute<I$Product$$Item$Service>(this, "Save$Item$List", ref arguments))
+		if (!DataAdapter.Execute<I$Product$$Item$NoBOService>(this, "Save$Item$List", ref arguments))
 		{
 			return CallResponse.FromFailedResult($product$$Item$s);
 		}

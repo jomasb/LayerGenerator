@@ -22,7 +22,7 @@ private CallResponse<$Product$$Item$> Save$Item$($Product$$Item$ $item$Dto$speci
 		IDictionary<string, object> arguments = new Dictionary<string, object>();
 		arguments.Add("$Item$ToSave", $item$Dto);
 		$specialContent3$
-		if (!DataAdapter.Execute<I$Product$$Item$Service>(this, "Save$Item$", ref arguments))
+		if (!DataAdapter.Execute<I$Product$$Item$NoBOService>(this, "Save$Item$", ref arguments))
 		{
 			return CallResponse.FromFailedResult($item$Dto);
 		}

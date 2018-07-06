@@ -23,7 +23,7 @@ private CallResponse<IList<$Product$$Item$>> Get$Item$s(IServiceCallContext call
 		IDictionary<string, object> arguments = new Dictionary<string, object>();
 		arguments.Add("$Item$s", $product$$Item$s);
 		$specialContent3$
-		if (!DataAdapter.Execute<I$Product$$Item$Service>(this, "Get$Item$List", ref arguments))
+		if (!DataAdapter.Execute<I$Product$$Item$NoBOService>(this, "Get$Item$List", ref arguments))
 		{
 			return CallResponse.FromFailedResult($product$$Item$s);
 		}

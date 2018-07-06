@@ -1,0 +1,13 @@
+private CollectionView _$item$FilterCollection;
+
+public CollectionView $Item$FilterCollection
+{
+	get
+	{
+		return _$item$FilterCollection;
+	}
+	set
+	{
+		Set(ref _$item$FilterCollection, value);
+	}
+}

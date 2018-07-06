@@ -22,6 +22,7 @@ namespace PlusLayerCreator.Configure
 
         public void CreateRepository()
         {
+            var fileNameExtension = _configuration.IsUseBusinessServiceWithoutBo ? "NoBO" : string.Empty;
             var repositoryServiceMemberContent = string.Empty;
             var repositoryServiceParameterContent = string.Empty;
             var repositoryServiceConstructorContent = string.Empty;
@@ -32,12 +33,12 @@ namespace PlusLayerCreator.Configure
             foreach (var dataItem in _configuration.DataLayout)
             {
                 repositoryServiceMemberContent += "private readonly I" + _configuration.Product + dataItem.Name +
-                                                  "Service _" +
+                                                  fileNameExtension + "Service _" +
                                                   (_configuration.Product + dataItem.Name + "Service;\r\n")
                                                   .ToPascalCase();
                 if (repositoryServiceParameterContent != string.Empty)
                     repositoryServiceParameterContent = repositoryServiceParameterContent + ", ";
-                repositoryServiceParameterContent += "I" + _configuration.Product + dataItem.Name + "Service " +
+                repositoryServiceParameterContent += "I" + _configuration.Product + dataItem.Name + fileNameExtension + "Service " +
                                                      _configuration.Product.ToPascalCase() + dataItem.Name + "Service";
                 repositoryServiceConstructorContent += "_" + _configuration.Product.ToPascalCase() + dataItem.Name +
                                                        "Service = " + _configuration.Product.ToPascalCase() +

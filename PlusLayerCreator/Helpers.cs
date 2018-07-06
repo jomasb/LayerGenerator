@@ -56,7 +56,7 @@ namespace PlusLayerCreator
             return int.Parse(computedString);
         }
 
-        public static string DoReplaces(this string input, ConfigurationItem item = null)
+        public static string DoReplaces(this string input, ConfigurationItem item = null, ConfigurationItem child = null)
         {
             input = input.Replace("$PRODUCT$", Configuration.Product.ToUpper());
             input = input.Replace("$Product$", Configuration.Product);
@@ -67,6 +67,11 @@ namespace PlusLayerCreator
             input = input.Replace("$version$", item == null ? string.Empty : ToPascalCase(item.Name + "Version"));
             input = input.Replace("$Parent$", item == null ? string.Empty : item.Parent);
             input = input.Replace("$parent$", item == null ? string.Empty : ToPascalCase(item.Parent));
+            if (child != null)
+            {
+                input = input.Replace("$Child$", item == null ? string.Empty : child.Name);
+                input = input.Replace("$child$", item == null ? string.Empty : ToPascalCase(child.Name));
+            }
             input = input.Replace("$Dialog$", Configuration.DialogName);
             input = input.Replace("$dialog$", ToPascalCase(Configuration.DialogName));
             input = input.Replace("$Handle$", Configuration.ControllerHandle);

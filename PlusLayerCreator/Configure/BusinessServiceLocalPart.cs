@@ -155,7 +155,7 @@ namespace PlusLayerCreator.Configure
                     : _configuration.InputPath + @"Service\Contracts\IServiceNoBOTemplate.cs";
 
                 Helpers.CreateFileFromPath(servicePath,
-                    _configuration.OutputPath + @"Service\Contracts\I" + _configuration.Product + dataItem.Name +
+                    _configuration.OutputPath + @"Service\Contracts\I" + _configuration.Product + dataItem.Name + fileNameExtension +
                     "Service.cs", new[] { interfaceReadContent, interfaceSaveContent }, dataItem);
 
 
@@ -164,12 +164,12 @@ namespace PlusLayerCreator.Configure
                     : _configuration.InputPath + @"Service\ServiceNoBOTemplate.cs";
 
                 Helpers.CreateFileFromPath(servicePath,
-                    _configuration.OutputPath + @"Service\" + _configuration.Product + dataItem.Name + "Service.cs",
+                    _configuration.OutputPath + @"Service\" + _configuration.Product + dataItem.Name + fileNameExtension + "Service.cs",
                     new[] { serviceReadContent, serviceSaveContent, string.Empty }, dataItem);
 
                 if (!withBo)
                     Helpers.CreateFileFromPath(servicePath,
-                        _configuration.OutputPath + @"Service\" + _configuration.Product + dataItem.Name +
+                        _configuration.OutputPath + @"Service\" + _configuration.Product + dataItem.Name + fileNameExtension +
                         "ServiceMock.cs", new[] { serviceMockReadContent, serviceMockSaveContent, "Mock" }, dataItem);
             }
         }

@@ -1,0 +1,27 @@
+private IPlusColumnProvider _$item$ColumnProvider;
+
+/// <summary>
+/// Gets or sets the $item$ column provider.
+/// </summary>
+/// <value>
+/// The $item$ column provider.
+/// </value>
+public IPlusColumnProvider $Item$ColumnProvider
+{
+	get
+	{
+		return _$item$ColumnProvider;
+	}
+	set
+	{
+		Set(ref _$item$ColumnProvider, value);
+	}
+}
+
+/// <summary>
+/// Opens the settings dialog command execute.
+/// </summary>
+protected virtual void Open$Item$SettingsDialogCommand()
+{
+	BaseServices.PopupDialogService.ShowGridViewOptionsDialog($Item$ColumnProvider, false);
+}

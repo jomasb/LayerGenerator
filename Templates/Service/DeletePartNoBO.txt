@@ -22,7 +22,7 @@ private CallResponse<bool> Delete$Item$($Product$$Item$ $item$Dto$specialContent
 		IDictionary<string, object> arguments = new Dictionary<string, object>();
 		arguments.Add("$Item$ToDelete", $item$Dto);
 		$specialContent3$
-		if (!DataAdapter.Execute<I$Product$$Item$Service>(this, "Delete$Item$", ref arguments))
+		if (!DataAdapter.Execute<I$Product$$Item$NoBOService>(this, "Delete$Item$", ref arguments))
 		{
 			return CallResponse.FromFailedResult(false);
 		}

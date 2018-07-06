@@ -1,0 +1,2 @@
+Open$Item$SettingsDialogCommand = CommandService.GetCommand(CommandNames.Open$Item$SettingsDialogCommand);
+CommandService.SubscribeCommand(CommandNames.Open$Item$SettingsDialogCommand, Open$Item$SettingsDialogCommandExecuted);

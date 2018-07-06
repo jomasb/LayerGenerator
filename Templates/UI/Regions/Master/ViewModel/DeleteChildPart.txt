@@ -10,6 +10,11 @@ private async Task Delete$Item$CommandExecuted()
 		IsGlobalBusy = true;
 		await _$product$$Dialog$Repository.Delete$Item$Async(CreateNewCallContext(true), Selected$Item$DataItem, Selected$Parent$DataItem.$Item$s);
 
+		if ($Item$FilterCollection.Count > 0)
+		{
+			Selected$Item$DataItem = $Item$FilterCollection.GetItemAt(0) as $Product$$Item$DataItem;
+		}
+
 		RaiseCanExecuteChanged();
 		IsGlobalBusy = false;
 	}

@@ -18,6 +18,7 @@ using Dcx.Plus.UI.WPF.FW.Shell.Infrastructure.ViewModels;
 using Dcx.Plus.UI.WPF.FW.Shell.Interfaces;
 using Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Infrastructure;
 using Dcx.Plus.Localization.Modules.$Product$;
+using Dcx.Plus.UI.WPF.FW.Controls.Interfaces;
 using Dcx.Plus.UI.WPF.FW.Shell.Commands;
 using Dcx.Plus.UI.WPF.FW.Shell.Extensions;
 using Dcx.Plus.UI.WPF.FW.Shell.Infrastructure.Selection;

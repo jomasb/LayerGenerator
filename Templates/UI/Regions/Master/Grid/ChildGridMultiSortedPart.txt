@@ -8,10 +8,10 @@
 	<plus:PlusExpandableHeader.HeaderAdditionalContent>
 		<StackPanel Orientation="Horizontal">
 			$specialContent2$
-			<!--<plus:PlusButton
-				Command="{Binding OpenSecondSettingsDialogCommand}"
+			<plus:PlusButton
+				Command="{Binding Open$Item$SettingsDialogCommand}"
 				Icon="{StaticResource Icon.Menu.Settings.White.30}"
-				Style="{StaticResource ExpandableHeader.Small.Button}" />-->
+				Style="{StaticResource ExpandableHeader.Small.Button}" />
 		</StackPanel>
 	</plus:PlusExpandableHeader.HeaderAdditionalContent>
 
@@ -21,7 +21,7 @@
 			plus:PlusSpinnerContainer.IsLoading="{Binding Selected$Parent$DataItem.$Item$s.IsLoading}"
 			CanUserSortColumns="False"
 			IsSynchronizedWithCurrentItem="False"
-			ItemsSource="{Binding Selected$Parent$DataItem.$Item$s.LoadedItems}"
+			ItemsSource="{Binding $Item$FilterCollection}"
 			SelectedItem="{Binding Selected$Item$DataItem}">
 
 			<i:Interaction.Behaviors>
