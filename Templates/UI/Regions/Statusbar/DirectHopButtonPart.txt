@@ -1,0 +1,6 @@
+<plus:PlusStatusBarItem>
+	<plus:PlusButton
+		Command="{Binding Show$specialContent1$DialogCommand, Mode=OneTime}"
+		Content="{localization:Localize Key=$specialContent2$, Source=$specialContent3$}"
+		Visibility="{Binding IsShow$specialContent1$DirectButtonVisible, Converter={StaticResource BoolToVisibilityConverter}}"		/>
+</plus:PlusStatusBarItem>

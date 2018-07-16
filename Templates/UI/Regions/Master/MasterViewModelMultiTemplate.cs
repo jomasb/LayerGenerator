@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using Dcx.Plus.Infrastructure.Contracts.Application;
 using Dcx.Plus.Localization;
+using Dcx.Plus.Repository.FW;
 using Dcx.Plus.Repository.FW.Collections;
 using Dcx.Plus.Repository.FW.Contracts;
 using Dcx.Plus.Repository.FW.DataItems;

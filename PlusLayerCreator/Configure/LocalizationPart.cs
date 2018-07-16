@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using PlusLayerCreator.Items;
 
@@ -60,7 +61,7 @@ namespace PlusLayerCreator.Configure
                 lblDeOut += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name + "s=@@" +
                             dataItem.Translation + dataItem.Translation.GetLocaliatzionExtension() + "\r\n";
 
-                if ((dataItem.CanEdit || dataItem.CanEditMultiple) && string.IsNullOrEmpty(dataItem.Parent))
+                if ((dataItem.CanEdit || dataItem.CanEditMultiple) && (string.IsNullOrEmpty(dataItem.Parent) || _configuration.DataLayout.Any(x => x.Name == dataItem.Parent && x.IsPreFilterItem)))
                 {
                     btnEn += _configuration.Product + _configuration.DialogName + "_btnAdd" + dataItem.Name + "=New " +
                              dataItem.Name + "\r\n";
@@ -106,37 +107,37 @@ namespace PlusLayerCreator.Configure
                 {
                     lblEn += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name +
                              plusDataObject.Name +
-                             "=" + plusDataObject.Name + "\r\n";
+                             "=" + plusDataObject.TranslationEn + "\r\n";
                     lblEnOut += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name +
-                                plusDataObject.Name + "=@@" + plusDataObject.Name + "\r\n";
+                                plusDataObject.Name + "=@@" + plusDataObject.TranslationEn + "\r\n";
                     lblDe += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name +
                              plusDataObject.Name +
-                             "=" + plusDataObject.Translation + "\r\n";
+                             "=" + plusDataObject.TranslationDe + "\r\n";
                     lblDeOut += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name +
-                                plusDataObject.Name + "=@@" + plusDataObject.Translation + "\r\n";
+                                plusDataObject.Name + "=@@" + plusDataObject.TranslationDe + "\r\n";
 
                     if (plusDataObject.Type == "DateTime")
                     {
                         lblEn += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name +
                                  plusDataObject.Name +
-                                 "From=" + plusDataObject.Name + " from\r\n";
+                                 "From=" + plusDataObject.TranslationEn + " from\r\n";
                         lblEnOut += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name +
-                                    plusDataObject.Name + "From=@@" + plusDataObject.Name + " from\r\n";
+                                    plusDataObject.Name + "From=@@" + plusDataObject.TranslationEn + " from\r\n";
                         lblDe += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name +
                                  plusDataObject.Name +
-                                 "From=" + plusDataObject.Translation + " von\r\n";
+                                 "From=" + plusDataObject.TranslationDe + " von\r\n";
                         lblDeOut += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name +
-                                    plusDataObject.Name + "From=@@" + plusDataObject.Translation + " von\r\n";
+                                    plusDataObject.Name + "From=@@" + plusDataObject.TranslationDe + " von\r\n";
                         lblEn += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name +
                                  plusDataObject.Name +
-                                 "To=" + plusDataObject.Name + " to\r\n";
+                                 "To=" + plusDataObject.TranslationEn + " to\r\n";
                         lblEnOut += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name +
-                                    plusDataObject.Name + "To=@@" + plusDataObject.Name + " to\r\n";
+                                    plusDataObject.Name + "To=@@" + plusDataObject.TranslationEn + " to\r\n";
                         lblDe += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name +
                                  plusDataObject.Name +
-                                 "To=" + plusDataObject.Translation + " bis\r\n";
+                                 "To=" + plusDataObject.TranslationDe + " bis\r\n";
                         lblDeOut += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name +
-                                    plusDataObject.Name + "To=@@" + plusDataObject.Translation + " bis\r\n";
+                                    plusDataObject.Name + "To=@@" + plusDataObject.TranslationDe + " bis\r\n";
                     }
                 }
             }

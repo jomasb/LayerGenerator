@@ -1,0 +1,24 @@
+/// <summary>
+/// Gets a value indicating whether the direct button to open the $specialContent1$ dialog is visible.
+/// </summary>
+/// <value>
+/// <c>true</c> if direct button to open the $specialContent1$ dialog is visible, otherwise, <c>false</c>.
+/// </value>
+public bool IsShow$specialContent1$DirectButtonVisible
+{
+	get;
+	private set;
+}
+
+/// <summary>
+/// Gets the show $specialContent1$ dialog command.
+/// </summary>
+/// <value>
+/// The show $specialContent1$ dialog command.
+/// </value>
+public DelegateCommand Show$specialContent1$DialogCommand
+{
+	get;
+	private set;
+}
+

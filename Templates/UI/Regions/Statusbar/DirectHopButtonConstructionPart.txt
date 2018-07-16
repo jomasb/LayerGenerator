@@ -1,0 +1,3 @@
+Show$specialContent1$DialogCommand = new DelegateCommand(OnShow$specialContent1$DialogCommandExecute);
+IsShow$specialContent1$DirectButtonVisible =
+PlusMainDialogProvider.MainDialogController != null && PlusMainDialogProvider.PermissionManager.IsDialogControllerHandlePermitted(PlusDialogControllerHandle.$specialContent2$);

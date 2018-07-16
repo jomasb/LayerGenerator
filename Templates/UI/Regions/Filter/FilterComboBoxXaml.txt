@@ -1,6 +1,5 @@
 <plus:PlusFormRow Label="{localization:Localize Key=$Product$$Dialog$_lbl$Item$$Name$, Source=$Product$Localizer}">
 	<plus:PlusMultiComboBox
-		IsSynchronizedWithCurrentItem="True"
 		ItemsSource="{Binding $Name$MultiSelector.Values, Mode=OneWay}"
 		SelectedIndex="0"
 		SelectedItemsSource="{Binding $Name$MultiSelector.SelectedValues}" />

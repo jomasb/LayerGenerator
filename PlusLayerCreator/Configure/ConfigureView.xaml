@@ -39,6 +39,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="3*" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
@@ -139,8 +140,8 @@
                     </plus:PlusExpandableHeader.HeaderAdditionalContent>
                     <plus:PlusGridView
                         AutoGenerateColumns="False"
-                        ColumnWidth="*"
                         CanUserSortColumns="False"
+                        ColumnWidth="*"
                         ItemsSource="{Binding ItemCollection}"
                         SelectedItem="{Binding SelectedItem}">
                         <plus:PlusGridView.Columns>
@@ -183,7 +184,8 @@
                         <plus:PlusGridView.Columns>
                             <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Order}" Header="Order" />
                             <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Name}" Header="Name" />
-                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Translation}" Header="Translation" />
+                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding TranslationEn}" Header="Translation EN" />
+                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding TranslationDe}" Header="Translation DE" />
                             <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Type}" Header="Type" />
                             <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Length}" Header="Length" />
                             <plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsReadOnly}" Header="ReadOnly" />
@@ -197,6 +199,38 @@
                         <telerik:RadGridView.SortDescriptors>
                             <telerik:SortDescriptor Member="Order" SortDirection="Ascending" />
                         </telerik:RadGridView.SortDescriptors>
+                    </plus:PlusGridView>
+                </plus:PlusExpandableHeader>
+            </Grid>
+            <Grid Grid.Row="3">
+                <plus:PlusExpandableHeader Header="Direct Hops">
+                    <plus:PlusExpandableHeader.HeaderAdditionalContent>
+                        <StackPanel Orientation="Horizontal">
+                            <plus:PlusButton Command="{Binding AddDirectHopCommand}" Icon="{StaticResource Icon.New.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
+                            <plus:PlusButton Command="{Binding DeleteDirectHopCommand}" Icon="{StaticResource Icon.Delete.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
+                            <!--<plus:PlusButton Command="{Binding SortItemUpCommand}" Icon="{StaticResource Icon.Arrow.Up.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
+                            <plus:PlusButton Command="{Binding SortItemDownCommand}" Icon="{StaticResource Icon.Arrow.Down.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />-->
+
+                        </StackPanel>
+                    </plus:PlusExpandableHeader.HeaderAdditionalContent>
+                    <plus:PlusGridView
+                        AutoGenerateColumns="False"
+                        CanUserSortColumns="False"
+                        ColumnWidth="*"
+                        ItemsSource="{Binding DirectHopCollection}"
+                        SelectedItem="{Binding SelectedDirectHop}">
+                        <plus:PlusGridView.Columns>
+                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Order}" Header="Order" />
+                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Product}" Header="Product" />
+                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding ControllerHandle}" Header="ControllerHandle" />
+                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding DialogName}" Header="DialogName" />
+                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding LocalizationKey}" Header="LocalizationKey" />
+                        </plus:PlusGridView.Columns>
+
+                        <telerik:RadGridView.SortDescriptors>
+                            <telerik:SortDescriptor Member="Order" SortDirection="Ascending" />
+                        </telerik:RadGridView.SortDescriptors>
+
                     </plus:PlusGridView>
                 </plus:PlusExpandableHeader>
             </Grid>

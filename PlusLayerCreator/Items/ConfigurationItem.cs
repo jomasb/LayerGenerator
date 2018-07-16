@@ -59,7 +59,18 @@ namespace PlusLayerCreator.Items
         public bool IsPreFilterItem
         {
             get => _isPreFilterItem;
-            set => SetProperty(ref _isPreFilterItem, value);
+            set
+            {
+                SetProperty(ref _isPreFilterItem, value);
+                if (value)
+                {
+                    CanEdit = false;
+                    CanEditMultiple = false;
+                    CanClone = false;
+                    CanDelete = false;
+                    CanSort = false;
+                }
+            }
         }
 
         [DataMember]
@@ -82,7 +93,7 @@ namespace PlusLayerCreator.Items
             set
             {
                 SetProperty(ref _canEditMultiple, value);
-                if (!CanEdit)
+                if (value && !CanEdit)
                     CanEdit = true;
             }
         }
@@ -127,7 +138,7 @@ namespace PlusLayerCreator.Items
                         IsKey = false,
                         IsReadOnly = false,
                         IsRequired = true,
-                        Translation = "Reihenfolge",
+                        TranslationDe = "Reihenfolge",
                         Type = "int"
                     });
                 }

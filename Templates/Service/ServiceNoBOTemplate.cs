@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Dcx.Plus.BusinessServiceLocal.FW;
 using Dcx.Plus.BusinessServiceLocal.FW.Contracts;
 using Dcx.Plus.BusinessServiceLocal.Modules.$Product$.Contracts;
-using Dcx.Plus.BusinessServiceLocal.Modules.$Product$.Contracts.DTOs;
+using Dcx.Plus.BusinessServiceLocal.Modules.$Product$.Contracts.Dtos;
 using Dcx.Plus.Infrastructure.Base;
 using Dcx.Plus.Infrastructure.Contracts.Application;
 using Dcx.Plus.Infrastructure.Logging.Contracts.Trace;

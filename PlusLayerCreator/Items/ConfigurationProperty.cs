@@ -7,7 +7,8 @@ namespace PlusLayerCreator.Items
     {
         private int _order;
         private string _name;
-        private string _translation;
+        private string _translationDe;
+        private string _translationEn;
         private string _type;
         private string _filterPropertyType;
         private bool _isFilterProperty;
@@ -34,10 +35,17 @@ namespace PlusLayerCreator.Items
         }
 
         [DataMember]
-        public string Translation
+        public string TranslationDe
         {
-            get => _translation;
-            set => SetProperty(ref _translation, value);
+            get => _translationDe;
+            set => SetProperty(ref _translationDe, value);
+        }
+
+        [DataMember]
+        public string TranslationEn
+        {
+            get => _translationEn;
+            set => SetProperty(ref _translationEn, value);
         }
 
         [DataMember]

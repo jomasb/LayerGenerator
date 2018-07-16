@@ -1,5 +1,7 @@
+using Dcx.Plus.UI.FAT;
 using Dcx.Plus.UI.WPF.FW.Shell.Infrastructure.ViewModels;
 using Dcx.Plus.UI.WPF.FW.Shell.Interfaces;
+using Prism.Commands;
 
 namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Statusbar
 {
@@ -20,6 +22,19 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Statusbar
 		public StatusbarViewModel(IViewModelBaseServices baseServices, IMessageListener messageListener)
 			: base(baseServices, messageListener)
 		{
+			$specialContent1$
 		}
+		
+		#region Properties
+		
+		$specialContent2$
+		
+		#endregion Properties
+		
+		#region Command Handlers
+		
+		$specialContent3$
+		
+		#endregion Command Handlers
 	}
 }

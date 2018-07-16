@@ -26,10 +26,12 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</plus:PlusStatusBar.Resources>
-
+	
 	<i:Interaction.Triggers>
 		<selection:RoutedEventTrigger RoutedEvent="plus:PlusStatusBar.MessageButtonClick">
 			<mvvm:InvokeCommandAction Command="{Binding ShowMessageOverviewCommand}" />
 		</selection:RoutedEventTrigger>
 	</i:Interaction.Triggers>
+	
+	$specialContent1$
 </plus:PlusStatusBar>

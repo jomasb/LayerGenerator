@@ -4,6 +4,7 @@ namespace PlusLayerCreator.Infrastructure
     {
         public static readonly string EmptyView = "EmptyView";
         public static readonly string DataItemDetailView = "DataItemDetailView";
+        public static readonly string DirectHopDetailView = "DirectHopDetailView";
         public static readonly string DataItemPropertyDetailView = "DataItemPropertyDetailView";
     }
 }

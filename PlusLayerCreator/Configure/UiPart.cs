@@ -53,6 +53,10 @@ namespace PlusLayerCreator.Configure
         private readonly string _masterViewModelChildItemSettingsCommand;
         private readonly string _masterViewModelOpenChildItemSettingsDialogCommand;
         private readonly string _masterViewModelItemFilterCollection;
+        private readonly string _statusBarViewDirectHopButton;
+        private readonly string _statusBarViewDirectHopButtonConstruction;
+        private readonly string _statusBarViewDirectHopButtonProperties;
+        private readonly string _statusBarViewDirectHopButtonCommand;
 
         private readonly string _yesNoConverterString = ", Converter={StaticResource BoolToLocalizedYesNoConverterConverter}";
 
@@ -143,6 +147,14 @@ namespace PlusLayerCreator.Configure
                 File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\OpenChildItemSettingsDialogCommandPart.txt");
             _masterViewModelItemFilterCollection =
                 File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\ItemFilterCollectionPart.txt");
+            _statusBarViewDirectHopButton =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Statusbar\DirectHopButtonPart.txt");
+            _statusBarViewDirectHopButtonConstruction =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Statusbar\DirectHopButtonConstructionPart.txt");
+            _statusBarViewDirectHopButtonProperties =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Statusbar\DirectHopButtonPropertiesPart.txt");
+            _statusBarViewDirectHopButtonCommand =
+                File.ReadAllText(_configuration.InputPath + @"UI\Regions\Statusbar\DirectHopButtonCommandPart.txt");
 
         }
 
@@ -257,10 +269,29 @@ namespace PlusLayerCreator.Configure
 
         public void CreateUiStatusbar()
         {
+            string directHopButtonsConstructionContent = string.Empty;
+            string directHopButtonsPropertiesContent = string.Empty;
+            string directHopButtonsCommandContent = string.Empty;
+            foreach (var directHop in _configuration.DirectHops)
+            {
+                directHopButtonsConstructionContent += _statusBarViewDirectHopButtonConstruction.ReplaceSpecialContent(new[] { directHop.DialogName, directHop.ControllerHandle });
+                directHopButtonsPropertiesContent += _statusBarViewDirectHopButtonProperties.ReplaceSpecialContent(new[] { directHop.DialogName });
+                directHopButtonsCommandContent += _statusBarViewDirectHopButtonCommand.ReplaceSpecialContent(new[] { directHop.DialogName, directHop.ControllerHandle });
+            }
+
+
             Helpers.CreateFileFromPath(Files.StatusbarViewModelTemplate,
-                _configuration.OutputPath + @"UI\Regions\Statusbar\StatusbarViewModel.cs");
+                _configuration.OutputPath + @"UI\Regions\Statusbar\StatusbarViewModel.cs", new []{ directHopButtonsConstructionContent, directHopButtonsPropertiesContent, directHopButtonsCommandContent });
+
+
+            string directHopButtonsContent = string.Empty;
+            foreach (var directHop in _configuration.DirectHops)
+            {
+                directHopButtonsContent += _statusBarViewDirectHopButton.ReplaceSpecialContent(new []{ directHop.DialogName, directHop.LocalizationKey, directHop.Product });
+            }
+
             Helpers.CreateFileFromPath(Files.StatusbarViewTemplate,
-                _configuration.OutputPath + @"UI\Regions\Statusbar\StatusbarView.xaml");
+                _configuration.OutputPath + @"UI\Regions\Statusbar\StatusbarView.xaml", new []{ directHopButtonsContent });
             Helpers.CreateFileFromPath(Files.StatusbarViewCodeBehindTemplate,
                 _configuration.OutputPath + @"UI\Regions\Statusbar\StatusbarView.xaml.cs");
         }
@@ -592,7 +623,7 @@ namespace PlusLayerCreator.Configure
                     membersContent += "private $Product$$Item$DataItem _selected$Item$DataItem;\r\n".DoReplaces(configurationItem);
 
                     string childListContent = string.Empty;
-                    foreach (var child in _configuration.DataLayout.Where(t => t.Name == configurationItem.Name))
+                    foreach (var child in _configuration.DataLayout.Where(t => t.Parent == configurationItem.Name))
                     {
                         childListContent += _masterViewModelSelectedItemChildList.DoReplaces(configurationItem, child);
                     }
@@ -612,7 +643,7 @@ namespace PlusLayerCreator.Configure
                                 : _masterViewModelLazyLoadingCollectionSelect.DoReplaces(configurationItem);
 
                             lazyLoadingCollectionContent += _masterViewModelLazyLoadingCollection.ReplaceSpecialContent(new []{selectPart}).DoReplaces(configurationItem);
-                            propertiesContent += _masterViewModelItemColumnProvider.DoReplaces(configurationItem);
+                            
                             
                             if (configurationItem.CanEdit)
                             {
@@ -631,6 +662,7 @@ namespace PlusLayerCreator.Configure
                             propertiesContent +=
                                 _masterViewModelOpenChildItemSettingsDialogCommand.DoReplaces(configurationItem);
                             propertiesContent += _masterViewModelItemFilterCollection.DoReplaces(configurationItem);
+                            propertiesContent += _masterViewModelItemColumnProvider.DoReplaces(configurationItem);
 
                             if (configurationItem.CanEdit)
                             {

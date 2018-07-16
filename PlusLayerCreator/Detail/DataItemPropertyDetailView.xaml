@@ -20,15 +20,17 @@
             <plus:PlusFormRow Label="Name">
                 <plus:PlusTextBox Text="{Binding Property.Name, UpdateSourceTrigger=PropertyChanged}" />
             </plus:PlusFormRow>
-            <plus:PlusFormRow Label="Translation">
-                <plus:PlusTextBox Text="{Binding Property.Translation, UpdateSourceTrigger=PropertyChanged}" />
+            <plus:PlusFormRow Label="Translation EN">
+                <plus:PlusTextBox Text="{Binding Property.TranslationEn, UpdateSourceTrigger=PropertyChanged}" />
+            </plus:PlusFormRow>
+            <plus:PlusFormRow Label="Translation DE">
+                <plus:PlusTextBox Text="{Binding Property.TranslationDe, UpdateSourceTrigger=PropertyChanged}" />
             </plus:PlusFormRow>
             <plus:PlusFormRow Label="Type">
                 <plus:PlusComboBox ItemsSource="{Binding Types}" SelectedItem="{Binding Property.Type}" />
             </plus:PlusFormRow>
             <plus:PlusFormRow Label="Length">
-                <plus:PlusTextBox IsNumeric="True"
-                                  Text="{Binding Property.Length, UpdateSourceTrigger=PropertyChanged}" />
+                <plus:PlusTextBox IsNumeric="True" Text="{Binding Property.Length, UpdateSourceTrigger=PropertyChanged}" />
             </plus:PlusFormRow>
             <plus:PlusFormRow Label="IsReadOnly">
                 <plus:PlusCheckBox IsChecked="{Binding Property.IsReadOnly}" />
@@ -46,10 +48,7 @@
                 <plus:PlusCheckBox IsChecked="{Binding Property.IsFilterProperty}" />
             </plus:PlusFormRow>
             <plus:PlusFormRow Label="FilterPropertyType">
-                <plus:PlusComboBox
-                    IsEnabled="{Binding Property.IsFilterProperty}"
-                    ItemsSource="{Binding FilterTypes}"
-                    SelectedItem="{Binding Property.FilterPropertyType}" />
+                <plus:PlusComboBox IsEnabled="{Binding Property.IsFilterProperty}" ItemsSource="{Binding FilterTypes}" SelectedItem="{Binding Property.FilterPropertyType}" />
             </plus:PlusFormRow>
             <plus:PlusFormRow Label="ShouldLazyLoad">
                 <plus:PlusCheckBox IsChecked="{Binding Property.ShouldLazyLoad}" />

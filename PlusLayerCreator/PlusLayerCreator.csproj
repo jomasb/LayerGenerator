@@ -138,6 +138,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Detail\DirectHopDetailView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Detail\DataItemPropertyDetailView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -158,6 +162,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Detail\DirectHopDetailView.xaml.cs">
+      <DependentUpon>DirectHopDetailView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Detail\DirectHopDetailViewModel.cs" />
     <Compile Include="Files.cs" />
     <Compile Include="Configure\BusinessServiceLocalPart.cs" />
     <Compile Include="Configure\ConfigureView.xaml.cs">
@@ -189,6 +197,7 @@
     <Compile Include="Infrastructure\RegionViewModelBase.cs" />
     <Compile Include="Infrastructure\ViewNames.cs" />
     <Compile Include="Items\Configuration.cs" />
+    <Compile Include="Items\DirectHopItem.cs" />
     <Compile Include="Items\ConfigurationItem.cs" />
     <Compile Include="Items\ConfigurationProperty.cs" />
     <Compile Include="Items\ItemBase.cs" />

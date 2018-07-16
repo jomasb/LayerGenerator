@@ -26,12 +26,16 @@ namespace PlusLayerCreator.Configure
             _navigationService = navigationService;
 
             DataLayout = new ObservableCollection<ConfigurationItem>();
+            DirectHops = new ObservableCollection<DirectHopItem>();
             ItemCollection = (CollectionView)CollectionViewSource.GetDefaultView(DataLayout);
+            DirectHopCollection = (CollectionView)CollectionViewSource.GetDefaultView(DirectHops);
 
             StartCommand = new DelegateCommand(StartExecuted);
             AddItemCommand = new DelegateCommand(AddItemCommandExecuted, AddItemCommandCanExecute);
+            AddDirectHopCommand = new DelegateCommand(AddDirectHopCommandExecuted, AddDirectHopCommandCanExecute);
             AddVersionCommand = new DelegateCommand(AddVersionCommandExecuted, AddVersionCommandCanExecute);
             DeleteItemCommand = new DelegateCommand(DeleteItemCommandExecuted, DeleteItemCommandCanExecute);
+            DeleteDirectHopCommand = new DelegateCommand(DeleteDirectHopCommandExecuted, DeleteDirectHopCommandCanExecute);
             AddItemPropertyCommand =
                 new DelegateCommand(AddItemPropertyCommandExecuted, AddItemPropertyCommandCanExecute);
             DeleteItemPropertyCommand =
@@ -45,6 +49,7 @@ namespace PlusLayerCreator.Configure
         }
 
         public CollectionView ItemCollection { get; set; }
+        public CollectionView DirectHopCollection { get; set; }
 
         #endregion Construction
 
@@ -59,6 +64,12 @@ namespace PlusLayerCreator.Configure
                 ParameterNames.SelectedItem, SelectedItem);
         }
 
+        public void NavigateToDirectHopDetail()
+        {
+            _navigationService.Navigate(RegionNames.DetailRegion, ViewNames.DirectHopDetailView,
+                ParameterNames.SelectedItem, SelectedDirectHop);
+        }
+
         public void NavigateToDataItemPropertyDetail()
         {
             _navigationService.Navigate(RegionNames.DetailRegion, ViewNames.DataItemPropertyDetailView,
@@ -71,8 +82,10 @@ namespace PlusLayerCreator.Configure
 
         private ConfigurationItem _activeConfiguration;
         private ConfigurationItem _selectedItem;
+        private DirectHopItem _selectedDirectHop;
         private ConfigurationProperty _selectedPropertyItem;
         private ObservableCollection<ConfigurationItem> _dataLayout;
+        private ObservableCollection<DirectHopItem> _directHops;
 
         #region Settings
 
@@ -170,6 +183,15 @@ namespace PlusLayerCreator.Configure
                             foreach (var plusDataItem in dataItems)
                                 DataLayout.Add(plusDataItem);
                     }
+                    else if (property.PropertyType == typeof(IList<DirectHopItem>))
+                    {
+                        var directHops =
+                            property.GetValue(configuration) as IList<DirectHopItem>;
+                        DirectHops.Clear();
+                        if (directHops != null)
+                            foreach (var directHopItem in directHops)
+                                DirectHops.Add(directHopItem);
+                    }
                     else
                     {
                         var propertyInfo = GetType().GetProperty(property.Name);
@@ -201,6 +223,22 @@ namespace PlusLayerCreator.Configure
             RaiseCanExecuteChanged();
         }
 
+        private bool AddDirectHopCommandCanExecute()
+        {
+            return true; //DataLayout.Count < 2;
+        }
+
+        private void AddDirectHopCommandExecuted()
+        {
+            var item = new DirectHopItem
+            {
+                Order = DirectHops.Count
+            };
+            DirectHops.Add(item);
+            SelectedDirectHop = item;
+            RaiseCanExecuteChanged();
+        }
+
         private bool AddVersionCommandCanExecute()
         {
             return SelectedItem != null && DataLayout.Count < 2 &&
@@ -222,25 +260,31 @@ namespace PlusLayerCreator.Configure
                 {
                     new ConfigurationProperty
                     {
+                        Order = 0,
                         IsKey = true,
                         IsRequired = true,
                         Type = "int",
                         Name = "Version",
-                        Translation = "Version",
+                        TranslationDe = "Version",
+                        TranslationEn = "Version",
                         Length = "2"
                     },
                     new ConfigurationProperty
                     {
+                        Order = 1,
                         Type = "bool",
                         Name = "IsActive",
-                        Translation = "Aktiv",
+                        TranslationDe = "Aktiv",
+                        TranslationEn = "Active",
                         Length = "2"
                     },
                     new ConfigurationProperty
                     {
+                        Order = 2,
                         Type = "string",
                         Name = "Description",
-                        Translation = "Beschreibung",
+                        TranslationDe = "Beschreibung",
+                        TranslationEn = "Description",
                         Length = "60"
                     }
                 }
@@ -264,6 +308,22 @@ namespace PlusLayerCreator.Configure
         private bool DeleteItemCommandCanExecute()
         {
             return SelectedItem != null;
+        }
+
+        private void DeleteDirectHopCommandExecuted()
+        {
+            DirectHops.Remove(SelectedDirectHop);
+            int count = 0;
+            foreach (DirectHopItem item in DirectHops)
+            {
+                item.Order = count++;
+            }
+            RaiseCanExecuteChanged();
+        }
+
+        private bool DeleteDirectHopCommandCanExecute()
+        {
+            return SelectedDirectHop != null;
         }
 
         private void AddItemPropertyCommandExecuted()
@@ -457,7 +517,8 @@ namespace PlusLayerCreator.Configure
                 DialogTranslationGerman = _dialogTranslationGerman,
                 DialogTranslationEnglish = _dialogTranslationEnglish,
                 ControllerHandle = _controllerHandle,
-                DataLayout = _dataLayout.ToList()
+                DataLayout = _dataLayout.ToList(),
+                DirectHops = _directHops.ToList()
             };
         }
 
@@ -492,6 +553,7 @@ namespace PlusLayerCreator.Configure
         public DelegateCommand ExportSettingsCommand { get; set; }
 
         public DelegateCommand AddItemCommand { get; set; }
+public DelegateCommand AddDirectHopCommand { get; set; }
 
         public DelegateCommand SortItemUpCommand { get; set; }
 
@@ -501,6 +563,7 @@ namespace PlusLayerCreator.Configure
         public DelegateCommand AddVersionCommand { get; set; }
 
         public DelegateCommand DeleteItemCommand { get; set; }
+public DelegateCommand DeleteDirectHopCommand { get; set; }
 
         public DelegateCommand AddItemPropertyCommand { get; set; }
 
@@ -528,6 +591,23 @@ namespace PlusLayerCreator.Configure
                     else if (_selectedPropertyItem == null)
                     {
                         UnloadDetailRegion();
+                    }
+
+                    RaiseCanExecuteChanged();
+                }
+            }
+        }
+
+        public DirectHopItem SelectedDirectHop
+        {
+            get => _selectedDirectHop;
+            set
+            {
+                if (SetProperty(ref _selectedDirectHop, value))
+                {
+                    if (_selectedDirectHop != null)
+                    {
+                        NavigateToDirectHopDetail();
                     }
 
                     RaiseCanExecuteChanged();
@@ -643,6 +723,11 @@ namespace PlusLayerCreator.Configure
         {
             get => _dataLayout;
             set => SetProperty(ref _dataLayout, value);
+        }
+        public ObservableCollection<DirectHopItem> DirectHops
+        {
+            get => _directHops;
+            set => SetProperty(ref _directHops, value);
         }
 
         public string Product

@@ -180,7 +180,7 @@ namespace PlusLayerCreator
                 filterPredicateResetContent = plusDataObject.Name + " = null;";
                 filterPredicatesContent =
                     ".IsEqual(x => x." + plusDataObject.Name + ", x => x." + plusDataObject.Name + ")";
-                filterXamlContent = DoReplaces(FilterCheckBoxXamlTemplate);
+                filterXamlContent = DoReplaces(FilterCheckBoxXamlTemplate, plusDataItem);
             }
 
             if (plusDataObject.Type == "DateTime")

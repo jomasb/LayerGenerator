@@ -10,6 +10,7 @@ namespace PlusLayerCreator.Items
     public class Configuration : ItemBase
     {
         private IList<ConfigurationItem> _dataLayout;
+        private IList<DirectHopItem> _directHops;
         private string _controllerHandle;
         private string _dialogTranslationEnglish;
         private string _dialogTranslationGerman;
@@ -162,9 +163,16 @@ namespace PlusLayerCreator.Items
             set => SetProperty(ref _dataLayout, value);
         }
 
+        [DataMember]
+        public IList<DirectHopItem> DirectHops
+        {
+            get => _directHops;
+            set => SetProperty(ref _directHops, value);
+        }
+
         public ConfigurationItem GetMasterItem()
         {
-            return DataLayout.FirstOrDefault(t => string.IsNullOrEmpty(t.Parent) && !t.IsPreFilterItem);
+            return DataLayout.OrderBy(x => x.Order).FirstOrDefault(t => !t.IsPreFilterItem);
         }
     }
 }

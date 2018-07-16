@@ -28,6 +28,7 @@ namespace PlusLayerCreator.Infrastructure
 
             _container.RegisterType<object, EmptyView>(ViewNames.EmptyView);
             _container.RegisterType<object, DataItemDetailView>(ViewNames.DataItemDetailView);
+            _container.RegisterType<object, DirectHopDetailView>(ViewNames.DirectHopDetailView);
             _container.RegisterType<object, DataItemPropertyDetailView>(ViewNames.DataItemPropertyDetailView);
         }
     }

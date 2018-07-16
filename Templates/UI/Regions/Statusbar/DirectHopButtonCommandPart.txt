@@ -1,0 +1,7 @@
+/// <summary>
+/// Called when [show $specialContent1$ dialog command execute].
+/// </summary>
+private void OnShow$specialContent1$DialogCommandExecute()
+{
+	PopupDialogService.Show(PlusDialogControllerHandle.$specialContent2$, PlusModalModeType.PlusModeless);
+}
