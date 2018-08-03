@@ -150,7 +150,7 @@ namespace PlusLayerCreator
                     filterMembersContent = "private string _" + ToPascalCase(plusDataObject.Name) + ";";
                     filterPropertiesContent = FilterPropertyTemplate;
                     filterPredicateResetContent = plusDataObject.Name + " = string.Empty;";
-                    filterPredicatesContent = ".StartsWith(x => x." + plusDataObject.Name + filterSuffix + ", x => x." +
+                    filterPredicatesContent = ".Match(x => x." + plusDataObject.Name + filterSuffix + ", x => x." +
                                               plusDataObject.Name + ")";
                     filterXamlContent = DoReplaces(FilterTextBoxXamlTemplate, plusDataItem);
                 }
@@ -167,7 +167,7 @@ namespace PlusLayerCreator
                         plusDataObject.Name +
                         "MultiSelector = new MultiValueSelector<string>(SourceCollection.Select(x => x." +
                         plusDataObject.Name + ".ToString()).Distinct(), RefreshCollectionView, AllValue);";
-                    filterXamlContent = DoReplaces(FilterComboBoxXamlTemplate);
+                    filterXamlContent = DoReplaces(FilterComboBoxXamlTemplate, plusDataItem);
                 }
             }
 

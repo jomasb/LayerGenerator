@@ -101,11 +101,17 @@ namespace PlusLayerCreator.Configure
 
                 if (dataItem.CanEdit)
                 {
-                    interfaceContent +=
+	                string getChild = string.Empty;
+					foreach (var child in _configuration.DataLayout.Where(t => t.Parent == dataItem.Name))
+	                {
+						getChild += GetChildList(dataItem, child.Name);
+					}
+					
+					interfaceContent +=
                         File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\AddPart.txt")
                             .DoReplaces(dataItem) + "\r\n\r\n";
                     repositoryContent +=
-                        File.ReadAllText(_configuration.InputPath + @"Repository\AddPart.txt").DoReplaces(dataItem) +
+                        File.ReadAllText(_configuration.InputPath + @"Repository\AddPart.txt").DoReplaces(dataItem).ReplaceSpecialContent(new []{getChild}) +
                         "\r\n\r\n";
 
                     if (!dataItem.CanEditMultiple)
@@ -293,21 +299,25 @@ namespace PlusLayerCreator.Configure
                 .DoReplaces(item) + "\r\n\r\n";
         }
 
+	    private string GetChildList(ConfigurationItem item, string childDataItem)
+	    {
+			return item.Name.ToPascalCase() + "DataItem." + childDataItem +
+			           "s = new PlusLazyLoadingAsyncObservableCollection<" + _configuration.Product +
+			           childDataItem + "DataItem>(" +
+			           "() => Get" + childDataItem + "sAsync(callContext, " +
+			           item.Name.ToPascalCase() + "DataItem))" +
+			           "{ AutoAcceptAfterSuccessfullyLoading = true, AutoOverwriteParent = true };";
+		}
+
         private string GetRepositoryGetPart(ConfigurationItem item, string template)
         {
             string getChild = string.Empty;
-            if (_configuration.DataLayout.Any(t => t.Parent == item.Name))
-            {
-                var childDataItem = _configuration.DataLayout.FirstOrDefault(t => t.Parent == item.Name).Name;
-                getChild = item.Name.ToPascalCase() + "DataItem." + childDataItem +
-                               "s = new PlusLazyLoadingAsyncObservableCollection<" + _configuration.Product +
-                               childDataItem + "DataItem>(" +
-                               "() => Get" + childDataItem + "sAsync(callContext, " +
-                               item.Name.ToPascalCase() + "DataItem))" +
-                               "{ AutoAcceptAfterSuccessfullyLoading = true, AutoOverwriteParent = true };";
-            }
+			foreach (var child in _configuration.DataLayout.Where(t => t.Parent == item.Name))
+			{
+				getChild += GetChildList(item, child.Name);
+			}
 
-            return File.ReadAllText(_configuration.InputPath + @"Repository\" + template)
+			return File.ReadAllText(_configuration.InputPath + @"Repository\" + template)
                     .ReplaceSpecialContent(new[]
                     {
                         GetPreFilterInformation(item, "parameter"),
