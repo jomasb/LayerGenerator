@@ -10,6 +10,7 @@ namespace PlusLayerCreator.Items
         private string _translationDe;
         private string _translationEn;
         private string _type;
+        private string _comboBoxItem;
         private string _filterPropertyType;
         private bool _isFilterProperty;
         private bool _isKey;
@@ -52,7 +53,29 @@ namespace PlusLayerCreator.Items
         public string Type
         {
             get => _type;
-            set => SetProperty(ref _type, value);
+			set
+			{
+				if (SetProperty(ref _type, value))
+				{
+					if (_type == "DataItem")
+					{
+						Length = string.Empty;
+						IsReadOnly = false;
+						IsRequired = false;
+						IsKey = false;
+						IsFilterProperty = false;
+						ShouldLazyLoad = false;
+						MessageField = string.Empty;
+					}
+				}
+			}
+		}
+
+        [DataMember]
+        public string ComboBoxItem
+		{
+            get => _comboBoxItem;
+            set => SetProperty(ref _comboBoxItem, value);
         }
 
         [DataMember]

@@ -17,6 +17,7 @@ namespace PlusLayerCreator.Items
         private string _translation;
         private string _parent;
         private bool _isPreFilterItem;
+        private bool _isDetailComboBoxItem;
         private bool _canDelete;
         private bool _canClone;
         private ObservableCollection<ConfigurationProperty> _properties;
@@ -64,12 +65,88 @@ namespace PlusLayerCreator.Items
                 SetProperty(ref _isPreFilterItem, value);
                 if (value)
                 {
-                    CanEdit = false;
-                    CanEditMultiple = false;
+	                IsDetailComboBoxItem = false;
+	                CanEditMultiple = false;
+	                CanEdit = false;
                     CanClone = false;
                     CanDelete = false;
                     CanSort = false;
-                }
+
+	                if (Properties != null && !Properties.Any())
+	                {
+		                Properties.Add(new ConfigurationProperty()
+		                {
+							Order = 0,
+			                Name = "Id",
+			                FilterPropertyType = null,
+			                IsFilterProperty = false,
+			                IsKey = true,
+			                IsReadOnly = false,
+			                IsRequired = true,
+			                TranslationDe = "Id",
+			                Type = "string"
+		                });
+		                Properties.Add(new ConfigurationProperty()
+		                {
+							Order = 1,
+			                Name = "Description",
+			                FilterPropertyType = null,
+			                IsFilterProperty = false,
+			                IsKey = false,
+			                IsReadOnly = false,
+			                IsRequired = false,
+			                TranslationDe = "Beschreibung",
+			                Type = "string"
+		                });
+	                }
+				}
+            }
+        }
+
+        [DataMember]
+        public bool IsDetailComboBoxItem
+		{
+            get => _isDetailComboBoxItem;
+            set
+            {
+                SetProperty(ref _isDetailComboBoxItem, value);
+                if (value)
+                {
+	                IsPreFilterItem = false;
+	                CanEditMultiple = false;
+					CanEdit = false;
+                    CanClone = false;
+                    CanDelete = false;
+                    CanSort = false;
+
+	                if (Properties != null && !Properties.Any())
+	                {
+		                Properties.Add(new ConfigurationProperty()
+		                {
+			                Order = 0,
+			                Name = "Id",
+			                FilterPropertyType = null,
+			                IsFilterProperty = false,
+			                IsKey = true,
+			                IsReadOnly = false,
+			                IsRequired = true,
+			                TranslationDe = "Id",
+			                Type = "string"
+		                });
+		                Properties.Add(new ConfigurationProperty()
+		                {
+			                Order = 1,
+			                Name = "Description",
+			                FilterPropertyType = null,
+			                IsFilterProperty = false,
+			                IsKey = false,
+			                IsReadOnly = false,
+			                IsRequired = false,
+			                TranslationDe = "Beschreibung",
+			                Type = "string"
+		                });
+	                }
+				}
             }
         }
 

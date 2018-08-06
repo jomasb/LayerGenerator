@@ -1,239 +1,272 @@
-﻿<UserControl
-    x:Class="PlusLayerCreator.Configure.ConfigureView"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:configure="clr-namespace:PlusLayerCreator.Configure"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:mvvm="http://prismlibrary.com/"
-    xmlns:plus="http://schemas.abatplus.de/xaml"
-    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
-    d:DataContext="{d:DesignInstance d:Type=configure:ConfigureViewModel}"
-    d:DesignWidth="1000"
-    mvvm:ViewModelLocator.AutoWireViewModel="True"
-    mc:Ignorable="d">
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <Style BasedOn="{StaticResource GroupBox.Standard}" TargetType="{x:Type plus:PlusGroupBox}">
-                <Style.Setters>
-                    <Setter Property="Padding" Value="0,5" />
-                </Style.Setters>
-            </Style>
-        </ResourceDictionary>
-    </UserControl.Resources>
+﻿<UserControl x:Class="PlusLayerCreator.Configure.ConfigureView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:configure="clr-namespace:PlusLayerCreator.Configure"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:plus="http://schemas.abatplus.de/xaml"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             d:DataContext="{d:DesignInstance d:Type=configure:ConfigureViewModel}"
+             d:DesignWidth="1000"
+             mvvm:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<Style BasedOn="{StaticResource GroupBox.Standard}" TargetType="{x:Type plus:PlusGroupBox}">
+				<Style.Setters>
+					<Setter Property="Padding" Value="0 5" />
+				</Style.Setters>
+			</Style>
+		</ResourceDictionary>
+	</UserControl.Resources>
 
-    <plus:PlusExpandableHeader Header="Configuration">
-        <plus:PlusExpandableHeader.HeaderAdditionalContent>
-            <UniformGrid Width="400" Rows="1">
-                <plus:PlusButton Command="{Binding StartCommand}" Content="Start" Style="{StaticResource Button.Primary}" />
-                <plus:PlusButton
-                    Margin="5,0"
-                    Command="{Binding ImportSettingsCommand}"
-                    Content="Import"
-                    Style="{StaticResource Button.Primary}" />
-                <plus:PlusButton Command="{Binding ExportSettingsCommand}" Content="Export" Style="{StaticResource Button.Primary}" />
-            </UniformGrid>
-        </plus:PlusExpandableHeader.HeaderAdditionalContent>
+	<plus:PlusExpandableHeader Header="Configuration">
+		<plus:PlusExpandableHeader.HeaderAdditionalContent>
+			<UniformGrid Width="400" Rows="1">
+				<plus:PlusButton Command="{Binding StartCommand}"
+				                 Content="Start"
+				                 Style="{StaticResource Button.Primary}" />
+				<plus:PlusButton Margin="5 0"
+				                 Command="{Binding ImportSettingsCommand}"
+				                 Content="Import"
+				                 Style="{StaticResource Button.Primary}" />
+				<plus:PlusButton Command="{Binding ExportSettingsCommand}"
+				                 Content="Export"
+				                 Style="{StaticResource Button.Primary}" />
+			</UniformGrid>
+		</plus:PlusExpandableHeader.HeaderAdditionalContent>
 
-        <Grid Margin="5">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="3*" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="10" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <plus:PlusGroupBox Header="Paths">
-                    <StackPanel>
-                        <plus:PlusFormRow HorizontalLabelAlignment="Left" Label="InputPath">
-                            <plus:PlusTextBox Text="{Binding InputPath}" />
-                        </plus:PlusFormRow>
-                        <plus:PlusFormRow HorizontalLabelAlignment="Left" Label="OutputPath">
-                            <plus:PlusTextBox Text="{Binding OutputPath}" />
-                        </plus:PlusFormRow>
-                        <plus:PlusFormRow HorizontalLabelAlignment="Left" Label="DialogControllerHandle">
-                            <plus:PlusTextBox MaxLength="5" Text="{Binding ControllerHandle}" />
-                        </plus:PlusFormRow>
-                    </StackPanel>
-                </plus:PlusGroupBox>
-                <plus:PlusGroupBox Grid.Column="2" Header="General Settings">
-                    <StackPanel>
-                        <plus:PlusFormRow HorizontalLabelAlignment="Left" Label="Product/Dialog">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="3*" />
-                                </Grid.ColumnDefinitions>
-                                <plus:PlusTextBox Margin="0,0,2,0" Text="{Binding Product}" />
-                                <plus:PlusTextBox Grid.Column="1" Margin="3,0,0,0" Text="{Binding DialogName}" />
-                            </Grid>
-                        </plus:PlusFormRow>
-                        <plus:PlusFormRow HorizontalLabelAlignment="Left" Label="Translation EN">
-                            <plus:PlusTextBox Text="{Binding DialogTranslationEnglish}" />
-                        </plus:PlusFormRow>
-                        <plus:PlusFormRow HorizontalLabelAlignment="Left" Label="Translation DE">
-                            <plus:PlusTextBox Text="{Binding DialogTranslationGerman}" />
-                        </plus:PlusFormRow>
-                    </StackPanel>
-                </plus:PlusGroupBox>
-            </Grid>
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="10" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <plus:PlusGroupBox Header="Gateway" IsEnabled="{Binding ElementName=CheckBoxWithoutBO, Path=IsChecked, Converter={StaticResource InvertBoolConverter}}">
-                    <StackPanel>
-                        <plus:PlusCheckBox Content="Create DTO" IsChecked="{Binding IsCreateDto, Mode=TwoWay}" />
-                        <plus:PlusCheckBox Content="Create DTO Factory" IsChecked="{Binding IsCreateDtoFactory, Mode=TwoWay}" />
-                        <plus:PlusCheckBox Content="Create Gateway and Interface" IsChecked="{Binding IsCreateGateway, Mode=TwoWay}" />
-                    </StackPanel>
-                </plus:PlusGroupBox>
-                <plus:PlusGroupBox Grid.Row="0" Grid.Column="2" Header="Repository">
-                    <StackPanel>
-                        <plus:PlusCheckBox Content="Create DataItem" IsChecked="{Binding IsCreateDataItem, Mode=TwoWay}" />
-                        <plus:PlusCheckBox Content="Create DataItem Factory" IsChecked="{Binding IsCreateDataItemFactory, Mode=TwoWay}" />
-                        <plus:PlusCheckBox Content="Create DTO Factory" IsChecked="{Binding IsCreateRepositoryDtoFactory, Mode=TwoWay}" />
-                        <plus:PlusCheckBox Content="Create Repository and Interface" IsChecked="{Binding IsCreateRepository, Mode=TwoWay}" />
-                    </StackPanel>
-                </plus:PlusGroupBox>
-                <plus:PlusGroupBox Grid.Row="1" Grid.Column="0" Header="Business Service Local">
-                    <StackPanel>
-                        <plus:PlusCheckBox Content="Create Business Service Local and Interface" IsChecked="{Binding IsCreateBusinessService, Mode=TwoWay}" />
-                        <plus:PlusCheckBox x:Name="CheckBoxWithoutBO" Content="Use Business Service without BOs" IsChecked="{Binding IsUseBusinessServiceWithoutBo, Mode=TwoWay}" />
-                    </StackPanel>
-                </plus:PlusGroupBox>
-                <plus:PlusGroupBox Grid.Row="1" Grid.Column="2" Header="UI">
-                    <StackPanel>
-                        <plus:PlusCheckBox Content="Create Master/Detail Views" IsChecked="{Binding IsCreateUi, Mode=TwoWay}" />
-                        <plus:PlusCheckBox Content="Create Filter" IsChecked="{Binding IsCreateUiFilter, Mode=TwoWay}" />
-                    </StackPanel>
-                </plus:PlusGroupBox>
-            </Grid>
-            <Grid Grid.Row="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
+		<Grid Margin="5">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="3*" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<Grid Grid.Row="0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="10" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<plus:PlusGroupBox Header="Paths">
+					<StackPanel>
+						<plus:PlusFormRow HorizontalLabelAlignment="Left" Label="InputPath">
+							<plus:PlusTextBox Text="{Binding InputPath}" />
+						</plus:PlusFormRow>
+						<plus:PlusFormRow HorizontalLabelAlignment="Left" Label="OutputPath">
+							<plus:PlusTextBox Text="{Binding OutputPath}" />
+						</plus:PlusFormRow>
+						<plus:PlusFormRow HorizontalLabelAlignment="Left" Label="DialogControllerHandle">
+							<plus:PlusTextBox MaxLength="5" Text="{Binding ControllerHandle}" />
+						</plus:PlusFormRow>
+					</StackPanel>
+				</plus:PlusGroupBox>
+				<plus:PlusGroupBox Grid.Column="2" Header="General Settings">
+					<StackPanel>
+						<plus:PlusFormRow HorizontalLabelAlignment="Left" Label="Product/Dialog">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="*" />
+									<ColumnDefinition Width="3*" />
+								</Grid.ColumnDefinitions>
+								<plus:PlusTextBox Margin="0 0 2 0" Text="{Binding Product}" />
+								<plus:PlusTextBox Grid.Column="1"
+								                  Margin="3 0 0 0"
+								                  Text="{Binding DialogName}" />
+							</Grid>
+						</plus:PlusFormRow>
+						<plus:PlusFormRow HorizontalLabelAlignment="Left" Label="Translation EN">
+							<plus:PlusTextBox Text="{Binding DialogTranslationEnglish}" />
+						</plus:PlusFormRow>
+						<plus:PlusFormRow HorizontalLabelAlignment="Left" Label="Translation DE">
+							<plus:PlusTextBox Text="{Binding DialogTranslationGerman}" />
+						</plus:PlusFormRow>
+					</StackPanel>
+				</plus:PlusGroupBox>
+			</Grid>
+			<Grid Grid.Row="1">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="10" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+				<plus:PlusGroupBox Header="Gateway" IsEnabled="{Binding ElementName=CheckBoxWithoutBO, Path=IsChecked, Converter={StaticResource InvertBoolConverter}}">
+					<StackPanel>
+						<plus:PlusCheckBox Content="Create DTO" IsChecked="{Binding IsCreateDto, Mode=TwoWay}" />
+						<plus:PlusCheckBox Content="Create DTO Factory" IsChecked="{Binding IsCreateDtoFactory, Mode=TwoWay}" />
+						<plus:PlusCheckBox Content="Create Gateway and Interface" IsChecked="{Binding IsCreateGateway, Mode=TwoWay}" />
+					</StackPanel>
+				</plus:PlusGroupBox>
+				<plus:PlusGroupBox Grid.Row="0"
+				                   Grid.Column="2"
+				                   Header="Repository">
+					<StackPanel>
+						<plus:PlusCheckBox Content="Create DataItem" IsChecked="{Binding IsCreateDataItem, Mode=TwoWay}" />
+						<plus:PlusCheckBox Content="Create DataItem Factory" IsChecked="{Binding IsCreateDataItemFactory, Mode=TwoWay}" />
+						<plus:PlusCheckBox Content="Create DTO Factory" IsChecked="{Binding IsCreateRepositoryDtoFactory, Mode=TwoWay}" />
+						<plus:PlusCheckBox Content="Create Repository and Interface" IsChecked="{Binding IsCreateRepository, Mode=TwoWay}" />
+					</StackPanel>
+				</plus:PlusGroupBox>
+				<plus:PlusGroupBox Grid.Row="1"
+				                   Grid.Column="0"
+				                   Header="Business Service Local">
+					<StackPanel>
+						<plus:PlusCheckBox Content="Create Business Service Local and Interface" IsChecked="{Binding IsCreateBusinessService, Mode=TwoWay}" />
+						<plus:PlusCheckBox x:Name="CheckBoxWithoutBO"
+						                   Content="Use Business Service without BOs"
+						                   IsChecked="{Binding IsUseBusinessServiceWithoutBo, Mode=TwoWay}" />
+					</StackPanel>
+				</plus:PlusGroupBox>
+				<plus:PlusGroupBox Grid.Row="1"
+				                   Grid.Column="2"
+				                   Header="UI">
+					<StackPanel>
+						<plus:PlusCheckBox Content="Create Master/Detail Views" IsChecked="{Binding IsCreateUi, Mode=TwoWay}" />
+						<plus:PlusCheckBox Content="Create Filter" IsChecked="{Binding IsCreateUiFilter, Mode=TwoWay}" />
+					</StackPanel>
+				</plus:PlusGroupBox>
+			</Grid>
+			<Grid Grid.Row="2">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
 
-                <plus:PlusExpandableHeader Header="Items">
-                    <plus:PlusExpandableHeader.HeaderAdditionalContent>
-                        <StackPanel Orientation="Horizontal">
-                            <plus:PlusButton Command="{Binding AddItemCommand}" Icon="{StaticResource Icon.New.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
-                            <plus:PlusButton Command="{Binding AddVersionCommand}" Icon="{StaticResource Icon.Ok.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
-                            <plus:PlusButton Command="{Binding DeleteItemCommand}" Icon="{StaticResource Icon.Delete.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
-                            <plus:PlusButton Command="{Binding SortItemUpCommand}" Icon="{StaticResource Icon.Arrow.Up.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
-                            <plus:PlusButton Command="{Binding SortItemDownCommand}" Icon="{StaticResource Icon.Arrow.Down.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
+				<plus:PlusExpandableHeader Header="Items">
+					<plus:PlusExpandableHeader.HeaderAdditionalContent>
+						<StackPanel Orientation="Horizontal">
+							<plus:PlusButton Command="{Binding AddItemCommand}"
+							                 Icon="{StaticResource Icon.New.White.16}"
+							                 Style="{StaticResource ExpandableHeader.Small.Button}" />
+							<plus:PlusButton Command="{Binding AddVersionCommand}"
+							                 Icon="{StaticResource Icon.Ok.White.16}"
+							                 Style="{StaticResource ExpandableHeader.Small.Button}" />
+							<plus:PlusButton Command="{Binding DeleteItemCommand}"
+							                 Icon="{StaticResource Icon.Delete.White.16}"
+							                 Style="{StaticResource ExpandableHeader.Small.Button}" />
+							<plus:PlusButton Command="{Binding SortItemUpCommand}"
+							                 Icon="{StaticResource Icon.Arrow.Up.White.16}"
+							                 Style="{StaticResource ExpandableHeader.Small.Button}" />
+							<plus:PlusButton Command="{Binding SortItemDownCommand}"
+							                 Icon="{StaticResource Icon.Arrow.Down.White.16}"
+							                 Style="{StaticResource ExpandableHeader.Small.Button}" />
 
-                        </StackPanel>
-                    </plus:PlusExpandableHeader.HeaderAdditionalContent>
-                    <plus:PlusGridView
-                        AutoGenerateColumns="False"
-                        CanUserSortColumns="False"
-                        ColumnWidth="*"
-                        ItemsSource="{Binding ItemCollection}"
-                        SelectedItem="{Binding SelectedItem}">
-                        <plus:PlusGridView.Columns>
-                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Order}" Header="Order" />
-                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Name}" Header="Name" />
-                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Translation}" Header="Translation" />
-                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Parent}" Header="Parent" />
-                            <plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsPreFilterItem}" Header="IsPreFilterItem" />
-                            <plus:PlusGridViewCheckColumn DataMemberBinding="{Binding CanEdit}" Header="CanEdit" />
-                            <plus:PlusGridViewCheckColumn DataMemberBinding="{Binding CanEditMultiple}" Header="CanEditMultiple" />
-                            <plus:PlusGridViewCheckColumn DataMemberBinding="{Binding CanDelete}" Header="CanDelete" />
-                            <plus:PlusGridViewCheckColumn DataMemberBinding="{Binding CanClone}" Header="CanClone" />
-                            <plus:PlusGridViewCheckColumn DataMemberBinding="{Binding CanSort}" Header="CanSort" />
-                        </plus:PlusGridView.Columns>
+						</StackPanel>
+					</plus:PlusExpandableHeader.HeaderAdditionalContent>
+					<plus:PlusGridView AutoGenerateColumns="False"
+					                   CanUserSortColumns="False"
+					                   ColumnWidth="*"
+					                   ItemsSource="{Binding ItemCollection}"
+					                   SelectedItem="{Binding SelectedItem}">
+						<plus:PlusGridView.Columns>
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Order}" Header="Order" />
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Name}" Header="Name" />
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Translation}" Header="Translation" />
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Parent}" Header="Parent" />
+							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsPreFilterItem}" Header="IsPreFilterItem" />
+							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding CanEdit}" Header="CanEdit" />
+							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding CanEditMultiple}" Header="CanEditMultiple" />
+							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding CanDelete}" Header="CanDelete" />
+							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding CanClone}" Header="CanClone" />
+							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding CanSort}" Header="CanSort" />
+						</plus:PlusGridView.Columns>
 
-                        <telerik:RadGridView.SortDescriptors>
-                            <telerik:SortDescriptor Member="Order" SortDirection="Ascending" />
-                        </telerik:RadGridView.SortDescriptors>
+						<telerik:RadGridView.SortDescriptors>
+							<telerik:SortDescriptor Member="Order" SortDirection="Ascending" />
+						</telerik:RadGridView.SortDescriptors>
 
-                    </plus:PlusGridView>
-                </plus:PlusExpandableHeader>
+					</plus:PlusGridView>
+				</plus:PlusExpandableHeader>
 
-                <GridSplitter Grid.Row="1" />
+				<GridSplitter Grid.Row="1" />
 
-                <plus:PlusExpandableHeader Grid.Row="2" Header="Properties" Style="{StaticResource ExpandableHeader.Detail}">
-                    <plus:PlusExpandableHeader.HeaderAdditionalContent>
-                        <StackPanel Orientation="Horizontal">
-                            <plus:PlusButton Command="{Binding AddItemPropertyCommand}" Icon="{StaticResource Icon.New.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
-                            <plus:PlusButton Command="{Binding DeleteItemPropertyCommand}" Icon="{StaticResource Icon.Delete.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
-                            <plus:PlusButton Command="{Binding SortItemPropertyUpCommand}" Icon="{StaticResource Icon.Arrow.Up.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
-                            <plus:PlusButton Command="{Binding SortItemPropertyDownCommand}" Icon="{StaticResource Icon.Arrow.Down.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
-                        </StackPanel>
-                    </plus:PlusExpandableHeader.HeaderAdditionalContent>
-                    <plus:PlusGridView
-                        AutoGenerateColumns="False"
-                        CanUserSortColumns="False"
-                        ColumnWidth="*"
-                        ItemsSource="{Binding PropertyCollection}"
-                        SelectedItem="{Binding SelectedPropertyItem}">
-                        <plus:PlusGridView.Columns>
-                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Order}" Header="Order" />
-                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Name}" Header="Name" />
-                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding TranslationEn}" Header="Translation EN" />
-                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding TranslationDe}" Header="Translation DE" />
-                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Type}" Header="Type" />
-                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Length}" Header="Length" />
-                            <plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsReadOnly}" Header="ReadOnly" />
-                            <plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsRequired}" Header="Required" />
-                            <plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsKey}" Header="IsKey" />
-                            <plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsVisibleInGrid}" Header="IsVisibleInGrid" />
-                            <plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsFilterProperty}" Header="IsFilterProperty" />
-                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding FilterPropertyType}" Header="FilterPropertyType" />
-                        </plus:PlusGridView.Columns>
+				<plus:PlusExpandableHeader Grid.Row="2"
+				                           Header="Properties"
+				                           Style="{StaticResource ExpandableHeader.Detail}">
+					<plus:PlusExpandableHeader.HeaderAdditionalContent>
+						<StackPanel Orientation="Horizontal">
+							<plus:PlusButton Command="{Binding AddItemPropertyCommand}"
+							                 Icon="{StaticResource Icon.New.White.16}"
+							                 Style="{StaticResource ExpandableHeader.Small.Button}" />
+							<plus:PlusButton Command="{Binding DeleteItemPropertyCommand}"
+							                 Icon="{StaticResource Icon.Delete.White.16}"
+							                 Style="{StaticResource ExpandableHeader.Small.Button}" />
+							<plus:PlusButton Command="{Binding SortItemPropertyUpCommand}"
+							                 Icon="{StaticResource Icon.Arrow.Up.White.16}"
+							                 Style="{StaticResource ExpandableHeader.Small.Button}" />
+							<plus:PlusButton Command="{Binding SortItemPropertyDownCommand}"
+							                 Icon="{StaticResource Icon.Arrow.Down.White.16}"
+							                 Style="{StaticResource ExpandableHeader.Small.Button}" />
+						</StackPanel>
+					</plus:PlusExpandableHeader.HeaderAdditionalContent>
+					<plus:PlusGridView AutoGenerateColumns="False"
+					                   CanUserSortColumns="False"
+					                   ColumnWidth="*"
+					                   ItemsSource="{Binding PropertyCollection}"
+					                   SelectedItem="{Binding SelectedPropertyItem}">
+						<plus:PlusGridView.Columns>
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Order}" Header="Order" />
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Name}" Header="Name" />
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding TranslationEn}" Header="Translation EN" />
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding TranslationDe}" Header="Translation DE" />
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Type}" Header="Type" />
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Length}" Header="Length" />
+							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsReadOnly}" Header="ReadOnly" />
+							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsRequired}" Header="Required" />
+							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsKey}" Header="IsKey" />
+							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsVisibleInGrid}" Header="IsVisibleInGrid" />
+							<plus:PlusGridViewCheckColumn DataMemberBinding="{Binding IsFilterProperty}" Header="IsFilterProperty" />
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding FilterPropertyType}" Header="FilterPropertyType" />
+						</plus:PlusGridView.Columns>
 
-                        <telerik:RadGridView.SortDescriptors>
-                            <telerik:SortDescriptor Member="Order" SortDirection="Ascending" />
-                        </telerik:RadGridView.SortDescriptors>
-                    </plus:PlusGridView>
-                </plus:PlusExpandableHeader>
-            </Grid>
-            <Grid Grid.Row="3">
-                <plus:PlusExpandableHeader Header="Direct Hops">
-                    <plus:PlusExpandableHeader.HeaderAdditionalContent>
-                        <StackPanel Orientation="Horizontal">
-                            <plus:PlusButton Command="{Binding AddDirectHopCommand}" Icon="{StaticResource Icon.New.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
-                            <plus:PlusButton Command="{Binding DeleteDirectHopCommand}" Icon="{StaticResource Icon.Delete.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
-                            <!--<plus:PlusButton Command="{Binding SortItemUpCommand}" Icon="{StaticResource Icon.Arrow.Up.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
+						<telerik:RadGridView.SortDescriptors>
+							<telerik:SortDescriptor Member="Order" SortDirection="Ascending" />
+						</telerik:RadGridView.SortDescriptors>
+					</plus:PlusGridView>
+				</plus:PlusExpandableHeader>
+			</Grid>
+			<Grid Grid.Row="3">
+				<plus:PlusExpandableHeader Header="Direct Hops">
+					<plus:PlusExpandableHeader.HeaderAdditionalContent>
+						<StackPanel Orientation="Horizontal">
+							<plus:PlusButton Command="{Binding AddDirectHopCommand}"
+							                 Icon="{StaticResource Icon.New.White.16}"
+							                 Style="{StaticResource ExpandableHeader.Small.Button}" />
+							<plus:PlusButton Command="{Binding DeleteDirectHopCommand}"
+							                 Icon="{StaticResource Icon.Delete.White.16}"
+							                 Style="{StaticResource ExpandableHeader.Small.Button}" />
+							<!--<plus:PlusButton Command="{Binding SortItemUpCommand}" Icon="{StaticResource Icon.Arrow.Up.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />
                             <plus:PlusButton Command="{Binding SortItemDownCommand}" Icon="{StaticResource Icon.Arrow.Down.White.16}" Style="{StaticResource ExpandableHeader.Small.Button}" />-->
 
-                        </StackPanel>
-                    </plus:PlusExpandableHeader.HeaderAdditionalContent>
-                    <plus:PlusGridView
-                        AutoGenerateColumns="False"
-                        CanUserSortColumns="False"
-                        ColumnWidth="*"
-                        ItemsSource="{Binding DirectHopCollection}"
-                        SelectedItem="{Binding SelectedDirectHop}">
-                        <plus:PlusGridView.Columns>
-                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Order}" Header="Order" />
-                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding Product}" Header="Product" />
-                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding ControllerHandle}" Header="ControllerHandle" />
-                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding DialogName}" Header="DialogName" />
-                            <plus:PlusGridViewTextColumn DataMemberBinding="{Binding LocalizationKey}" Header="LocalizationKey" />
-                        </plus:PlusGridView.Columns>
+						</StackPanel>
+					</plus:PlusExpandableHeader.HeaderAdditionalContent>
+					<plus:PlusGridView AutoGenerateColumns="False"
+					                   CanUserSortColumns="False"
+					                   ColumnWidth="*"
+					                   ItemsSource="{Binding DirectHopCollection}"
+					                   SelectedItem="{Binding SelectedDirectHop}">
+						<plus:PlusGridView.Columns>
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Order}" Header="Order" />
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding Product}" Header="Product" />
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding ControllerHandle}" Header="ControllerHandle" />
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding DialogName}" Header="DialogName" />
+							<plus:PlusGridViewTextColumn DataMemberBinding="{Binding LocalizationKey}" Header="LocalizationKey" />
+						</plus:PlusGridView.Columns>
 
-                        <telerik:RadGridView.SortDescriptors>
-                            <telerik:SortDescriptor Member="Order" SortDirection="Ascending" />
-                        </telerik:RadGridView.SortDescriptors>
+						<telerik:RadGridView.SortDescriptors>
+							<telerik:SortDescriptor Member="Order" SortDirection="Ascending" />
+						</telerik:RadGridView.SortDescriptors>
 
-                    </plus:PlusGridView>
-                </plus:PlusExpandableHeader>
-            </Grid>
-        </Grid>
-    </plus:PlusExpandableHeader>
+					</plus:PlusGridView>
+				</plus:PlusExpandableHeader>
+			</Grid>
+		</Grid>
+	</plus:PlusExpandableHeader>
 </UserControl>

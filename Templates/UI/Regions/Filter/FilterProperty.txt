@@ -1,4 +1,4 @@
-public $Type$ $Name$
+public $Type$ $Property$
 {
 	get { return _$name$; }
 	set

@@ -240,6 +240,13 @@ namespace PlusLayerCreator.Configure
                                 .DoReplaces(childDataItem) + "\r\n";
                 }
 
+	            if (dataItem.IsPreFilterItem || dataItem.IsDetailComboBoxItem)
+	            {
+					dataItemContent +=
+						File.ReadAllText(_configuration.InputPath +
+										 @"Repository\DataItems\DataItemComposedIdAndDescriptionPart.txt") + "\r\n";
+				}
+
                 Helpers.CreateFileFromPath(_configuration.InputPath + @"Repository\DataItems\DataItemTemplate.cs",
                     _configuration.OutputPath + @"Repository\DataItems\" + _configuration.Product + dataItem.Name +
                     "DataItem.cs", new[] {dataItemContent}, dataItem);
@@ -408,7 +415,7 @@ namespace PlusLayerCreator.Configure
 
         private string GetPreFilterInformation(ConfigurationItem item, string information)
         {
-            if (item.IsPreFilterItem)
+            if (item.IsPreFilterItem || item.IsDetailComboBoxItem)
             {
                 return string.Empty;
             }

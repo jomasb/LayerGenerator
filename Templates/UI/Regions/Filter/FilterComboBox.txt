@@ -1,4 +1,4 @@
-public MultiValueSelector<string> $Name$MultiSelector
+public MultiValueSelector<string> $Property$MultiSelector
 {
 	get { return _$name$MultiSelector; }
 	set

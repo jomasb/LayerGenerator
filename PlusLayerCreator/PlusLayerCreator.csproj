@@ -196,6 +196,7 @@
     <Compile Include="Infrastructure\RegionNames.cs" />
     <Compile Include="Infrastructure\RegionViewModelBase.cs" />
     <Compile Include="Infrastructure\ViewNames.cs" />
+    <Compile Include="InvertedMultiBoolConverter.cs" />
     <Compile Include="Items\Configuration.cs" />
     <Compile Include="Items\DirectHopItem.cs" />
     <Compile Include="Items\ConfigurationItem.cs" />

@@ -1,0 +1,7 @@
+if (DataItem != null)
+{
+	if (Delta$Item$DataItemsList != null && Delta$Item$DataItemsList.IsLoadingCompleted)
+	{
+		Selected$Item$DataItem = Delta$Item$DataItemsList.FirstOrDefault(t => t.$Item$Ident == DataItem.$Item$.$Key$);
+	}
+}

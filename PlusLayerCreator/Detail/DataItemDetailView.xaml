@@ -1,66 +1,101 @@
-﻿<UserControl
-    x:Class="PlusLayerCreator.Detail.DataItemDetailView"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:detail="clr-namespace:PlusLayerCreator.Detail"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:mvvm="http://prismlibrary.com/"
-    xmlns:plus="http://schemas.abatplus.de/xaml"
-    d:DataContext="{d:DesignInstance d:Type=detail:DataItemDetailViewModel}"
-    d:DesignWidth="1000"
-    mvvm:ViewModelLocator.AutoWireViewModel="True"
-    mc:Ignorable="d">
-    <plus:PlusExpandableHeader Header="Item Details">
-        <plus:PlusFormPanel>
-            <plus:PlusFormRow Label="Order">
-                <plus:PlusLabel Content="{Binding DataItem.Order}" />
-            </plus:PlusFormRow>
-            <plus:PlusFormRow Label="Name">
-                <plus:PlusTextBox Text="{Binding DataItem.Name, UpdateSourceTrigger=PropertyChanged}" />
-            </plus:PlusFormRow>
-            <plus:PlusFormRow Label="Translation">
-                <plus:PlusTextBox Text="{Binding DataItem.Translation, UpdateSourceTrigger=PropertyChanged}" />
-            </plus:PlusFormRow>
-            <plus:PlusFormRow Label="Parent">
-                <plus:PlusTextBox Text="{Binding DataItem.Parent, UpdateSourceTrigger=PropertyChanged}" />
-            </plus:PlusFormRow>
-            <plus:PlusFormRow Label="IsPreFilterItem">
-                <plus:PlusCheckBox x:Name="IsPreFilterItemCheckBox" IsChecked="{Binding DataItem.IsPreFilterItem}" />
-            </plus:PlusFormRow>
-            <plus:PlusFormRow Label="CanEdit">
-                <plus:PlusCheckBox x:Name="CanEditCheckBox" IsChecked="{Binding DataItem.CanEdit}" IsEnabled="{Binding ElementName=IsPreFilterItemCheckBox, Path=IsChecked, Converter={StaticResource InvertBoolConverter}}" />
-            </plus:PlusFormRow>
-            <plus:PlusFormRow Label="CanEditMultiple">
-                <plus:PlusCheckBox x:Name="CanEditMultipleCheckBox" IsChecked="{Binding DataItem.CanEditMultiple}" IsEnabled="{Binding ElementName=CanEditCheckBox, Path=IsChecked}" />
-            </plus:PlusFormRow>
-            <plus:PlusFormRow Label="CanDelete">
-                <plus:PlusCheckBox IsChecked="{Binding DataItem.CanDelete}" IsEnabled="{Binding ElementName=IsPreFilterItemCheckBox, Path=IsChecked, Converter={StaticResource InvertBoolConverter}}" />
-            </plus:PlusFormRow>
-            <plus:PlusFormRow Label="CanClone">
-                <plus:PlusCheckBox IsChecked="{Binding DataItem.CanClone}" IsEnabled="{Binding ElementName=IsPreFilterItemCheckBox, Path=IsChecked, Converter={StaticResource InvertBoolConverter}}" />
-            </plus:PlusFormRow>
-            <plus:PlusFormRow Label="CanSort">
-                <plus:PlusCheckBox IsChecked="{Binding DataItem.CanSort}" IsEnabled="{Binding ElementName=CanEditMultipleCheckBox, Path=IsChecked}" />
-            </plus:PlusFormRow>
-            <plus:PlusFormRow Label="Server">
-                <plus:PlusTextBox Text="{Binding DataItem.Server, UpdateSourceTrigger=PropertyChanged}" />
-            </plus:PlusFormRow>
-            <plus:PlusFormRow Label="RepRplRead">
-                <plus:PlusTextBox Text="{Binding DataItem.RepRplRead, UpdateSourceTrigger=PropertyChanged}" />
-            </plus:PlusFormRow>
-            <plus:PlusFormRow Label="RepRplWrite">
-                <plus:PlusTextBox IsEnabled="{Binding ElementName=IsPreFilterItemCheckBox, Path=IsChecked, Converter={StaticResource InvertBoolConverter}}" Text="{Binding DataItem.RepRplWrite, UpdateSourceTrigger=PropertyChanged}" />
-            </plus:PlusFormRow>
-            <plus:PlusFormRow Label="TransactionCodeRead">
-                <plus:PlusTextBox Text="{Binding DataItem.TransactionCodeRead, UpdateSourceTrigger=PropertyChanged}" />
-            </plus:PlusFormRow>
-            <plus:PlusFormRow Label="TransactionCodeWrite">
-                <plus:PlusTextBox IsEnabled="{Binding ElementName=IsPreFilterItemCheckBox, Path=IsChecked, Converter={StaticResource InvertBoolConverter}}" Text="{Binding DataItem.TransactionCodeWrite, UpdateSourceTrigger=PropertyChanged}" />
-            </plus:PlusFormRow>
-            <plus:PlusFormRow Label="TableCountProperty">
-                <plus:PlusTextBox Text="{Binding DataItem.TableCountProperty, UpdateSourceTrigger=PropertyChanged}" />
-            </plus:PlusFormRow>
-        </plus:PlusFormPanel>
-    </plus:PlusExpandableHeader>
+﻿<UserControl x:Class="PlusLayerCreator.Detail.DataItemDetailView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:detail="clr-namespace:PlusLayerCreator.Detail"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mvvm="http://prismlibrary.com/"
+             xmlns:plus="http://schemas.abatplus.de/xaml"
+             xmlns:plusLayerCreator="clr-namespace:PlusLayerCreator"
+             d:DataContext="{d:DesignInstance d:Type=detail:DataItemDetailViewModel}"
+             d:DesignWidth="1000"
+             mvvm:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d">
+	<UserControl.Resources>
+		<plusLayerCreator:InvertedMultiBoolConverter ConcatenationOperator="OR" x:Key="InvertedMultiBoolOrConverter" />
+	</UserControl.Resources>
+
+	<plus:PlusExpandableHeader Header="Item Details">
+		<plus:PlusFormPanel>
+			<plus:PlusFormRow Label="Order">
+				<plus:PlusLabel Content="{Binding DataItem.Order}" />
+			</plus:PlusFormRow>
+			<plus:PlusFormRow Label="Name">
+				<plus:PlusTextBox Text="{Binding DataItem.Name, UpdateSourceTrigger=PropertyChanged}" />
+			</plus:PlusFormRow>
+			<plus:PlusFormRow Label="Translation">
+				<plus:PlusTextBox Text="{Binding DataItem.Translation, UpdateSourceTrigger=PropertyChanged}" />
+			</plus:PlusFormRow>
+			<plus:PlusFormRow Label="Parent">
+				<plus:PlusTextBox Text="{Binding DataItem.Parent, UpdateSourceTrigger=PropertyChanged}" />
+			</plus:PlusFormRow>
+			<plus:PlusFormRow Label="IsPreFilterItem">
+				<plus:PlusCheckBox IsChecked="{Binding DataItem.IsPreFilterItem}" />
+			</plus:PlusFormRow>
+			<plus:PlusFormRow Label="IsDetailComboBoxItem">
+				<plus:PlusCheckBox IsChecked="{Binding DataItem.IsDetailComboBoxItem}" />
+			</plus:PlusFormRow>
+			<plus:PlusFormRow Label="CanEdit">
+				<plus:PlusCheckBox IsChecked="{Binding DataItem.CanEdit}">
+					<plus:PlusCheckBox.IsEnabled>
+						<MultiBinding Converter="{StaticResource InvertedMultiBoolOrConverter}">
+							<Binding Path="DataItem.IsPreFilterItem" />
+							<Binding Path="DataItem.IsDetailComboBoxItem" />
+						</MultiBinding>
+					</plus:PlusCheckBox.IsEnabled>
+				</plus:PlusCheckBox>
+			</plus:PlusFormRow>
+			<plus:PlusFormRow Label="CanEditMultiple">
+				<plus:PlusCheckBox IsChecked="{Binding DataItem.CanEditMultiple}" IsEnabled="{Binding DataItem.CanEdit}" />
+			</plus:PlusFormRow>
+			<plus:PlusFormRow Label="CanDelete">
+				<plus:PlusCheckBox IsChecked="{Binding DataItem.CanDelete}">
+					<plus:PlusCheckBox.IsEnabled>
+						<MultiBinding Converter="{StaticResource InvertedMultiBoolOrConverter}">
+							<Binding Path="DataItem.IsPreFilterItem" />
+							<Binding Path="DataItem.IsDetailComboBoxItem" />
+						</MultiBinding>
+					</plus:PlusCheckBox.IsEnabled>
+				</plus:PlusCheckBox>
+			</plus:PlusFormRow>
+			<plus:PlusFormRow Label="CanClone">
+				<plus:PlusCheckBox IsChecked="{Binding DataItem.CanClone}">
+					<plus:PlusCheckBox.IsEnabled>
+						<MultiBinding Converter="{StaticResource InvertedMultiBoolOrConverter}">
+							<Binding Path="DataItem.IsPreFilterItem" />
+							<Binding Path="DataItem.IsDetailComboBoxItem" />
+						</MultiBinding>
+					</plus:PlusCheckBox.IsEnabled>
+				</plus:PlusCheckBox>
+			</plus:PlusFormRow>
+			<plus:PlusFormRow Label="CanSort">
+				<plus:PlusCheckBox IsChecked="{Binding DataItem.CanSort}">
+					<plus:PlusCheckBox.IsEnabled>
+						<MultiBinding Converter="{StaticResource InvertedMultiBoolOrConverter}">
+							<Binding Path="DataItem.IsPreFilterItem" />
+							<Binding Path="DataItem.IsDetailComboBoxItem" />
+						</MultiBinding>
+					</plus:PlusCheckBox.IsEnabled>
+				</plus:PlusCheckBox>
+			</plus:PlusFormRow>
+			<plus:PlusFormRow Label="Server">
+				<plus:PlusTextBox Text="{Binding DataItem.Server, UpdateSourceTrigger=PropertyChanged}" />
+			</plus:PlusFormRow>
+			<plus:PlusFormRow Label="RepRplRead">
+				<plus:PlusTextBox Text="{Binding DataItem.RepRplRead, UpdateSourceTrigger=PropertyChanged}" />
+			</plus:PlusFormRow>
+			<plus:PlusFormRow Label="RepRplWrite">
+				<plus:PlusTextBox IsEnabled="{Binding DataItem.IsPreFilterItem, Converter={StaticResource InvertBoolConverter}}" Text="{Binding DataItem.RepRplWrite, UpdateSourceTrigger=PropertyChanged}" />
+			</plus:PlusFormRow>
+			<plus:PlusFormRow Label="TransactionCodeRead">
+				<plus:PlusTextBox Text="{Binding DataItem.TransactionCodeRead, UpdateSourceTrigger=PropertyChanged}" />
+			</plus:PlusFormRow>
+			<plus:PlusFormRow Label="TransactionCodeWrite">
+				<plus:PlusTextBox IsEnabled="{Binding DataItem.IsPreFilterItem, Converter={StaticResource InvertBoolConverter}}" Text="{Binding DataItem.TransactionCodeWrite, UpdateSourceTrigger=PropertyChanged}" />
+			</plus:PlusFormRow>
+			<plus:PlusFormRow Label="TableCountProperty">
+				<plus:PlusTextBox Text="{Binding DataItem.TableCountProperty, UpdateSourceTrigger=PropertyChanged}" />
+			</plus:PlusFormRow>
+		</plus:PlusFormPanel>
+	</plus:PlusExpandableHeader>
 </UserControl>

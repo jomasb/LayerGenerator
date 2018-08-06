@@ -1,0 +1,3 @@
+Delta$Item$DataItemsList = repository.Get$Item$s(CreateNewCallContext());
+Delta$Item$DataItemsList.RegisterLoadingHandler(this);
+Delta$Item$DataItemsList.Load();

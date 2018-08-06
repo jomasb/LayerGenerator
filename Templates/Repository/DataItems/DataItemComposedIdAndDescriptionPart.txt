@@ -1,0 +1,4 @@
+public string ComposedIdAndDescription
+{
+	get { return Id + " - " + ShortDescription; }
+}

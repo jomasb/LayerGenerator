@@ -56,7 +56,7 @@ namespace PlusLayerCreator
             return int.Parse(computedString);
         }
 
-        public static string DoReplaces(this string input, ConfigurationItem item = null, ConfigurationItem child = null)
+        public static string DoReplaces(this string input, ConfigurationItem item = null, ConfigurationItem child = null, string property = "", string type = "")
         {
             input = input.Replace("$PRODUCT$", Configuration.Product.ToUpper());
             input = input.Replace("$Product$", Configuration.Product);
@@ -75,25 +75,12 @@ namespace PlusLayerCreator
             input = input.Replace("$Dialog$", Configuration.DialogName);
             input = input.Replace("$dialog$", ToPascalCase(Configuration.DialogName));
             input = input.Replace("$Handle$", Configuration.ControllerHandle);
+	        input = input.Replace("$Property$", property);
+	        input = input.Replace("$property$", ToPascalCase(property));
+	        input = input.Replace("$Type$", type);
+	        input = input.Replace("$type$", ToPascalCase(type));
 
-            return input;
-        }
-
-        public static string DoReplaces2(this string input, string name = "", ConfigurationItem item = null,
-            string type = "")
-        {
-            input = input.Replace("$Product$", Configuration.Product);
-            input = input.Replace("$product$", ToPascalCase(Configuration.Product));
-            input = input.Replace("$Item$", item == null ? string.Empty : item.Name);
-            input = input.Replace("$item$", item == null ? string.Empty : ToPascalCase(item.Name));
-            input = input.Replace("$Dialog$", Configuration.DialogName);
-            input = input.Replace("$dialog$", ToPascalCase(Configuration.DialogName));
-            input = input.Replace("$Name$", name);
-            input = input.Replace("$name$", ToPascalCase(name));
-            input = input.Replace("$Type$", type);
-            input = input.Replace("$type$", ToPascalCase(type));
-
-            return input;
+			return input;
         }
 
         public static string ReplaceSpecialContent(this string fileContent, string[] contents = null)
@@ -198,8 +185,8 @@ namespace PlusLayerCreator
                 filterPredicatesContent = ".IsInRange(x => x." + plusDataObject.Name + ", x => x." +
                                           plusDataObject.Name + "From, x => x." + plusDataObject.Name + "To)";
                 filterXamlContent =
-                    DoReplaces2(FilterDateTimePickerXamlTemplate + "\r\n", plusDataObject.Name + "From");
-                filterXamlContent += DoReplaces2(FilterDateTimePickerXamlTemplate, plusDataObject.Name + "To");
+                    DoReplaces(FilterDateTimePickerXamlTemplate + "\r\n", null, null, plusDataObject.Name + "From");
+                filterXamlContent += DoReplaces(FilterDateTimePickerXamlTemplate, null, null, plusDataObject.Name + "To");
             }
 
             filterMembersContent = filterMembersContent.Replace("$Name$", plusDataObject.Name)

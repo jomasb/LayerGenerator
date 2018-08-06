@@ -13,6 +13,7 @@ using PlusLayerCreator.Infrastructure;
 using PlusLayerCreator.Items;
 using Prism.Commands;
 using Prism.Events;
+using Prism.Regions;
 
 namespace PlusLayerCreator.Configure
 {
@@ -72,8 +73,12 @@ namespace PlusLayerCreator.Configure
 
         public void NavigateToDataItemPropertyDetail()
         {
-            _navigationService.Navigate(RegionNames.DetailRegion, ViewNames.DataItemPropertyDetailView,
-                ParameterNames.SelectedItem, SelectedPropertyItem);
+	        var nParams = new NavigationParameters();
+	        nParams.Add(ParameterNames.SelectedItem, SelectedPropertyItem);
+	        nParams.Add(ParameterNames.DataLayout, DataLayout.Where(s => s.IsDetailComboBoxItem).Select(t => t.Name).ToList());
+
+			_navigationService.Navigate(RegionNames.DetailRegion, ViewNames.DataItemPropertyDetailView,
+				nParams);
         }
 
         #region Members

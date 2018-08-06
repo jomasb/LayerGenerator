@@ -16,12 +16,13 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Detail
 	/// Definition of the view model for the version detail view.
 	/// </summary>
 	/// <seealso cref="Dcx.Plus.UI.WPF.FW.Shell.Infrastructure.RegionViewModel{$Product$$Item$DataItem}" />
-    public class $Item$DetailViewModel : RegionViewModel<$Product$$Item$DataItem> 
+    public class $Item$DetailViewModel : RegionViewModel<$Product$$Item$DataItem>, ILazyLoadingHandler
     {
 		#region Members
 
 	    private readonly I$Product$$Dialog$Repository _repository;
 		private bool _isInReadOnlyMode = false;
+		$specialContent1$
 
 		#endregion Members
 		
@@ -31,17 +32,21 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Detail
 		/// Initializes a new instance of the <see cref="$Item$DetailViewModel"/> class.
 		/// </summary>
 		/// <param name="baseServices">The base services.</param>
-	    public $Item$DetailViewModel(IViewModelBaseServices baseServices): base(baseServices)
+	    public $Item$DetailViewModel(IViewModelBaseServices baseServices, I$Product$$Dialog$Repository repository): base(baseServices)
         {
+			_repository = repository;
             DisplayName = GlobalLocalizer.Singleton.Global_strDetails.Translation;
 	        ActivateVersionCommand = PlusCommand.FromAsyncHandler(ActivateVersionCommandExecute, ActivateVersionCommandCanExecute);
 	        ActivateVersionCommand.CanExecuteWhileActive = false;
 	        BaseServices.EventAggregator.Subscribe<bool>(GlobalEventNames.BusyStateChanged, isbusy => IsBusy = isbusy);
+			$specialContent2$
         }
 		
 		#endregion Construction
 
 	    #region Properties
+		
+		$specialContent3$
 
 		/// <summary>
 	    /// Gets the activate version command.
@@ -138,6 +143,8 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Detail
         {
             DataItem = dataItem;
 			IsReadOnly = _isInReadOnlyMode;
+			
+			$specialContent4$
 
 			OnPropertyChanged(() => IsNewItem);
 	        OnPropertyChanged(() => ActivateVersionCommandDisplayName);
@@ -146,5 +153,15 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Detail
 		}
 
 		#endregion Navigation
+		
+		public void OnRegisteredLazyCollectionLoaded(object sender)
+		{
+			$specialContent5$
+		}
+
+		public void OnRegisteredLazyCollectionException(object sender, Exception exception)
+		{
+			
+		}
     }
 }

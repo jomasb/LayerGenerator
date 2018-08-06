@@ -1,0 +1,2 @@
+private Delta$Item$DataItem _selected$Item$DataItem;
+private PlusLazyLoadingAsyncObservableCollection<Delta$Item$DataItem> _delta$Item$DataItemsList;

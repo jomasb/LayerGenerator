@@ -58,7 +58,14 @@ namespace PlusLayerCreator.Configure
         private readonly string _statusBarViewDirectHopButtonProperties;
         private readonly string _statusBarViewDirectHopButtonCommand;
 
-        private readonly string _yesNoConverterString = ", Converter={StaticResource BoolToLocalizedYesNoConverterConverter}";
+	    private readonly string _detailViewModelComboBoxConstructorListLoad;
+	    private readonly string _detailViewModelComboBoxMember;
+	    private readonly string _detailViewModelComboBoxOnNavigatedTo;
+	    private readonly string _detailViewModelComboBoxOnRegisteredLazyCollectionLoaded;
+	    private readonly string _detailViewModelComboBoxProperties;
+	    private readonly string _detailViewModelComboBoxXaml;
+
+		private readonly string _yesNoConverterString = ", Converter={StaticResource BoolToLocalizedYesNoConverterConverter}";
 
         private readonly string _readOnlyTemplate = " IsReadOnly=\"True\"";
 
@@ -156,7 +163,19 @@ namespace PlusLayerCreator.Configure
             _statusBarViewDirectHopButtonCommand =
                 File.ReadAllText(_configuration.InputPath + @"UI\Regions\Statusbar\DirectHopButtonCommandPart.txt");
 
-        }
+	        _detailViewModelComboBoxConstructorListLoad =
+		        File.ReadAllText(_configuration.InputPath + @"UI\Regions\Statusbar\DetailComboBoxConstructorListLoad.txt");
+	        _detailViewModelComboBoxMember =
+		        File.ReadAllText(_configuration.InputPath + @"UI\Regions\Statusbar\DetailComboBoxMember.txt");
+	        _detailViewModelComboBoxOnNavigatedTo =
+		        File.ReadAllText(_configuration.InputPath + @"UI\Regions\Statusbar\DetailComboBoxOnNavigatedTo.txt");
+	        _detailViewModelComboBoxOnRegisteredLazyCollectionLoaded =
+		        File.ReadAllText(_configuration.InputPath + @"UI\Regions\Statusbar\DetailComboBoxOnRegisteredLazyCollectionLoaded.txt");
+	        _detailViewModelComboBoxProperties =
+		        File.ReadAllText(_configuration.InputPath + @"UI\Regions\Statusbar\DetailComboBoxProperties.txt");
+	        _detailViewModelComboBoxXaml =
+		        File.ReadAllText(_configuration.InputPath + @"UI\Regions\Statusbar\DetailComboBoxXaml.txt");
+		}
 
         /// <summary>
         ///     Creates the UI.
@@ -210,21 +229,21 @@ namespace PlusLayerCreator.Configure
                             out var propertyFilterMultiSelectorsInitializeContent);
 
                         filterMembersContent +=
-                            propertyFilterMembersContent.DoReplaces2(plusDataObject.Name, dataItem,
+                            propertyFilterMembersContent.DoReplaces(dataItem, null, plusDataObject.Name, 
                                 plusDataObject.Type);
                         filterPredicatesContent +=
-                            propertyFilterPredicatesContent.DoReplaces2(plusDataObject.Name, dataItem,
+                            propertyFilterPredicatesContent.DoReplaces(dataItem, null, plusDataObject.Name, 
                                 plusDataObject.Type);
                         filterPredicateResetContent +=
-                            propertyFilterPredicateResetContent.DoReplaces2(plusDataObject.Name, dataItem,
+                            propertyFilterPredicateResetContent.DoReplaces(dataItem, null, plusDataObject.Name, 
                                 plusDataObject.Type);
                         filterMultiSelectorsInitializeContent +=
-                            propertyFilterMultiSelectorsInitializeContent.DoReplaces2(plusDataObject.Name, dataItem,
+                            propertyFilterMultiSelectorsInitializeContent.DoReplaces(dataItem, null, plusDataObject.Name, 
                                 plusDataObject.Type);
                         filterPropertiesContent +=
-                            propertyFilterPropertiesContent.DoReplaces2(plusDataObject.Name, dataItem);
+                            propertyFilterPropertiesContent.DoReplaces(dataItem, null, plusDataObject.Name);
                         filterViewContent +=
-                            propertyFilterXamlContent.DoReplaces2(plusDataObject.Name, dataItem, plusDataObject.Type);
+                            propertyFilterXamlContent.DoReplaces(dataItem, null, plusDataObject.Name,  plusDataObject.Type);
                     }
 
                 filterViewContent += "</StackPanel>\r\n";
@@ -359,11 +378,16 @@ namespace PlusLayerCreator.Configure
 
         private void CreateUiDetail()
         {
-            foreach (var dataItem in _configuration.DataLayout)
+			foreach (var dataItem in _configuration.DataLayout.Where(t => !t.IsPreFilterItem && !t.IsDetailComboBoxItem))
             {
                 var detailViewContent = string.Empty;
+	            string memberContent = string.Empty;
+	            string constructorListContent = string.Empty;
+	            string propetiesContent = string.Empty;
+	            string onNavigatedToContent = string.Empty;
+	            string lazyLoadingContent = string.Empty;
 
-                if (!string.IsNullOrEmpty(dataItem.Parent))
+				if (!string.IsNullOrEmpty(dataItem.Parent))
                 {
                     int level = 0;
                     string parentContent = string.Empty;
@@ -387,17 +411,34 @@ namespace PlusLayerCreator.Configure
 
                 foreach (var property in dataItem.Properties)
                 {
-                    if (dataItem.Name.EndsWith("Version") && property.Name == "IsActive") continue;
+	                if (dataItem.Name.EndsWith("Version") && property.Name == "IsActive")
+		                continue;
 
-                    detailViewContent += "        <plus:PlusFormRow Label=\"" +
-                                         (dataItem.Name + property.Name).GetLocalizedString() + "\">\r\n";
+	                detailViewContent += "        <plus:PlusFormRow Label=\"" +
+	                                     (dataItem.Name + property.Name).GetLocalizedString() + "\">\r\n";
 
-                    detailViewContent += GetItemControl(dataItem, property);
+					if (property.Type == "DataItem")
+					{
 
-                    detailViewContent += "        </plus:PlusFormRow>\r\n";
-                }
+						ConfigurationItem propertyItem = _configuration.DataLayout.First(t => t.Name == property.Name);
+						memberContent += _detailViewModelComboBoxMember.DoReplaces(propertyItem);
+						constructorListContent += _detailViewModelComboBoxConstructorListLoad.DoReplaces(propertyItem);
+						propetiesContent += _detailViewModelComboBoxProperties.DoReplaces(propertyItem);
+						onNavigatedToContent += _detailViewModelComboBoxOnNavigatedTo.DoReplaces(propertyItem);
+						lazyLoadingContent += _detailViewModelComboBoxOnRegisteredLazyCollectionLoaded.DoReplaces(propertyItem);
 
-                detailViewContent +=
+						detailViewContent += _detailViewModelComboBoxXaml.DoReplaces(propertyItem, null, property.Name);
+					}
+	                else
+	                {
+		                detailViewContent += GetItemControl(dataItem, property);
+	                }
+
+	                detailViewContent += "        </plus:PlusFormRow>\r\n";
+
+				}
+
+				detailViewContent +=
                     "				<plus:PlusFormRow Label=\"{localization:Localize Key=Global_lblLupdTimestamp, Source=GlobalLocalizer}\">";
                 detailViewContent += "				    <plus:PlusLabel Content=\"{Binding DataItem.LupdTimestamp}\" />\r\n";
                 detailViewContent += "				</plus:PlusFormRow>\r\n";
@@ -409,15 +450,20 @@ namespace PlusLayerCreator.Configure
                 detailViewContent += "    </StackPanel>\r\n";
                 detailViewContent += "</plus:PlusGroupBox>\r\n";
 
-                if (dataItem.Name.EndsWith("Version"))
-                    Helpers.CreateFileFromPath(Files.VersionDetailViewModelTemplate,
-                        _configuration.OutputPath + @"UI\Regions\Detail\" + dataItem.Name + "DetailViewModel.cs", null,
-                        dataItem);
-                else
-                    Helpers.CreateFileFromPath(Files.DetailViewModelTemplate,
-                        _configuration.OutputPath + @"UI\Regions\Detail\" + dataItem.Name + "DetailViewModel.cs", null,
-                        dataItem);
-                Helpers.CreateFileFromPath(Files.DetailViewTemplate,
+	            if (dataItem.Name.EndsWith("Version"))
+	            {
+		            Helpers.CreateFileFromPath(Files.VersionDetailViewModelTemplate,
+			            _configuration.OutputPath + @"UI\Regions\Detail\" + dataItem.Name + "DetailViewModel.cs", new []{ memberContent, constructorListContent, propetiesContent, onNavigatedToContent, lazyLoadingContent},
+			            dataItem);
+	            }
+	            else
+	            {
+		            Helpers.CreateFileFromPath(Files.DetailViewModelTemplate,
+						_configuration.OutputPath + @"UI\Regions\Detail\" + dataItem.Name + "DetailViewModel.cs", new[] { memberContent, constructorListContent, propetiesContent, onNavigatedToContent, lazyLoadingContent },
+						dataItem);
+	            }
+
+	            Helpers.CreateFileFromPath(Files.DetailViewTemplate,
                     _configuration.OutputPath + @"UI\Regions\Detail\" + dataItem.Name + "DetailView.xaml",
                     new[] {detailViewContent}, dataItem);
                 Helpers.CreateFileFromPath(Files.DetailViewCodeBehindTemplate,
@@ -822,7 +868,14 @@ namespace PlusLayerCreator.Configure
                     retValue +=
                         File.ReadAllText(_configuration.InputPath +
                                          @"UI\Regions\Detail\DetailDateTimePickerXaml.txt")
-                            .DoReplaces2("DataItem." + property.Name);
+                            .DoReplaces(null, null, "DataItem." + property.Name);
+                }
+                else if (property.Type == "DataItem")
+                {
+                    retValue +=
+                        File.ReadAllText(_configuration.InputPath +
+										 @"UI\Regions\Detail\DetailComboBoxXaml.txt")
+                            .DoReplaces(null, null, "DataItem." + property.Name);
                 }
                 else
                 {
@@ -882,29 +935,38 @@ namespace PlusLayerCreator.Configure
         private string GetGridXaml(ConfigurationItem dataItem, bool old = false)
         {
             var columnsContent = string.Empty;
-            foreach (var plusDataObject in dataItem.Properties.Where(t => t.IsVisibleInGrid))
-                if (plusDataObject.Type == "bool")
-                {
-                    columnsContent +=
-                        "                <plus:PlusGridViewCheckColumn Width=\"*\" DataMemberBinding=\"{Binding " +
-                        plusDataObject.Name + "}\" Header=\"" +
-                        (dataItem.Name + plusDataObject.Name).GetLocalizedString() + "\"/>\r\n";
-                }
-                else
-                {
-                    if (old)
-                        columnsContent +=
-                            "                <plus:PlusGridViewTextColumn Width=\"*\" DataMemberBinding=\"{Binding " +
-                            plusDataObject.Name + "}\" Header=\"" +
-                            (dataItem.Name + plusDataObject.Name).GetLocalizedString() + "\"/>\r\n";
-                    else
-                        columnsContent +=
-                            "                <plus:PlusGridViewTextColumnMinimal Width=\"*\" DataMemberBinding=\"{Binding " +
-                            plusDataObject.Name + "}\" Header=\"" +
-                            (dataItem.Name + plusDataObject.Name).GetLocalizedString() + "\"/>\r\n";
-                }
+	        foreach (var plusDataObject in dataItem.Properties.Where(t => t.IsVisibleInGrid))
+	        {
+		        if (plusDataObject.Type == "bool")
+		        {
+			        columnsContent +=
+				        "                <plus:PlusGridViewCheckColumn Width=\"*\" DataMemberBinding=\"{Binding " +
+				        plusDataObject.Name + "}\" Header=\"" +
+				        (dataItem.Name + plusDataObject.Name).GetLocalizedString() + "\"/>\r\n";
+		        }
+		        else if (plusDataObject.Type == "DataItem")
+		        {
+			        columnsContent +=
+						"                <plus:PlusGridViewTextColumnMinimal Width=\"*\" DataMemberBinding=\"{Binding " +
+				        plusDataObject.Name + "}\".ComposedIdAndDescription Header=\"" +
+				        (dataItem.Name + plusDataObject.Name).GetLocalizedString() + "\"/>\r\n";
+		        }
+		        else
+		        {
+			        if (old)
+				        columnsContent +=
+					        "                <plus:PlusGridViewTextColumn Width=\"*\" DataMemberBinding=\"{Binding " +
+					        plusDataObject.Name + "}\" Header=\"" +
+					        (dataItem.Name + plusDataObject.Name).GetLocalizedString() + "\"/>\r\n";
+			        else
+				        columnsContent +=
+					        "                <plus:PlusGridViewTextColumnMinimal Width=\"*\" DataMemberBinding=\"{Binding " +
+					        plusDataObject.Name + "}\" Header=\"" +
+					        (dataItem.Name + plusDataObject.Name).GetLocalizedString() + "\"/>\r\n";
+		        }
+	        }
 
-            return columnsContent;
+	        return columnsContent;
         }
 
         #endregion View
