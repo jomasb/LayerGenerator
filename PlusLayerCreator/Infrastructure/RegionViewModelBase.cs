@@ -6,7 +6,7 @@ using Prism.Regions;
 
 namespace PlusLayerCreator.Infrastructure
 {
-    public abstract class RegionViewModelBase : BindableBase, INavigationAware, IActiveAware, IConfirmNavigationRequest
+    public abstract class RegionViewModelBase : BindableBase, IActiveAware, IConfirmNavigationRequest
     {
         private string _displayName;
         private bool _isActive;

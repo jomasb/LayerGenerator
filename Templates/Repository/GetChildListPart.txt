@@ -1,0 +1,1 @@
+$item$DataItem.$Child$s = new PlusLazyLoadingAsyncObservableCollection<$Product$$Child$DataItem>(() => Get$Child$sAsync(callContext, $item$DataItem)) { AutoAcceptAfterSuccessfullyLoading = true, AutoOverwriteParent = true };

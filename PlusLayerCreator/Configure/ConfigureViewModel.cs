@@ -47,9 +47,11 @@ namespace PlusLayerCreator.Configure
             SortItemDownCommand = new DelegateCommand(SortItemDownCommandExecuted, SortItemDownCommandCanExecute);
             SortItemPropertyUpCommand = new DelegateCommand(SortItemPropertyUpCommandExecuted, SortItemPropertyUpCommandCanExecute);
             SortItemPropertyDownCommand = new DelegateCommand(SortItemPropertyDownCommandExecuted, SortItemPropertyDownCommandCanExecute);
+	        SortDirectHopUpCommand = new DelegateCommand(SortDirectHopUpCommandExecuted, SortDirectHopUpCommandCanExecute);
+	        SortDirectHopDownCommand = new DelegateCommand(SortDirectHopDownCommandExecuted, SortDirectHopDownCommandCanExecute);
         }
 
-        public CollectionView ItemCollection { get; set; }
+		public CollectionView ItemCollection { get; set; }
         public CollectionView DirectHopCollection { get; set; }
 
         #endregion Construction
@@ -85,7 +87,6 @@ namespace PlusLayerCreator.Configure
 
         private readonly INavigationService _navigationService;
 
-        private ConfigurationItem _activeConfiguration;
         private ConfigurationItem _selectedItem;
         private DirectHopItem _selectedDirectHop;
         private ConfigurationProperty _selectedPropertyItem;
@@ -123,20 +124,29 @@ namespace PlusLayerCreator.Configure
 
         private void RaiseCanExecuteChanged()
         {
-            AddItemCommand.RaiseCanExecuteChanged();
-            AddVersionCommand.RaiseCanExecuteChanged();
-            DeleteItemCommand.RaiseCanExecuteChanged();
-            AddItemPropertyCommand.RaiseCanExecuteChanged();
-            DeleteItemPropertyCommand.RaiseCanExecuteChanged();
-            SortItemDownCommand.RaiseCanExecuteChanged();
-            SortItemUpCommand.RaiseCanExecuteChanged();
-            SortItemPropertyDownCommand.RaiseCanExecuteChanged();
-            SortItemPropertyUpCommand.RaiseCanExecuteChanged();
-        }
+			//Item
+	        AddItemCommand.RaiseCanExecuteChanged();
+	        AddVersionCommand.RaiseCanExecuteChanged();
+	        DeleteItemCommand.RaiseCanExecuteChanged();
+	        SortItemDownCommand.RaiseCanExecuteChanged();
+	        SortItemUpCommand.RaiseCanExecuteChanged();
 
-        #region Import/Export
+			//Property
+	        AddItemPropertyCommand.RaiseCanExecuteChanged();
+	        DeleteItemPropertyCommand.RaiseCanExecuteChanged();
+	        SortItemPropertyDownCommand.RaiseCanExecuteChanged();
+	        SortItemPropertyUpCommand.RaiseCanExecuteChanged();
 
-        public readonly DataContractJsonSerializerSettings Settings =
+			//DirectHop
+	        AddDirectHopCommand.RaiseCanExecuteChanged();
+	        DeleteDirectHopCommand.RaiseCanExecuteChanged();
+	        SortDirectHopDownCommand.RaiseCanExecuteChanged();
+	        SortDirectHopUpCommand.RaiseCanExecuteChanged();
+		}
+
+		#region Import/Export
+
+		public readonly DataContractJsonSerializerSettings Settings =
             new DataContractJsonSerializerSettings
             {
                 UseSimpleDictionaryFormat = true
@@ -377,7 +387,37 @@ namespace PlusLayerCreator.Configure
             SelectedItem.Order--;
             ItemCollection.Refresh();
             RaiseCanExecuteChanged();
+        }
+        private bool SortDirectHopDownCommandCanExecute()
+        {
+            return SelectedDirectHop != null &&
+                   SelectedDirectHop.Order < DirectHops.Max(t => t.Order);
+        }
 
+        private void SortDirectHopDownCommandExecuted()
+        {
+            int order = SelectedDirectHop.Order;
+            DirectHopItem directHop = DirectHops.First(t => t.Order == order + 1);
+            directHop.Order = order;
+            SelectedDirectHop.Order++;
+            DirectHopCollection.Refresh();
+            RaiseCanExecuteChanged();
+        }
+
+        private bool SortDirectHopUpCommandCanExecute()
+        {
+            return SelectedDirectHop != null &&
+                   SelectedDirectHop.Order > DirectHops.Min(t => t.Order);
+        }
+
+        private void SortDirectHopUpCommandExecuted()
+        {
+            int order = SelectedDirectHop.Order;
+	        DirectHopItem directHop = DirectHops.First(t => t.Order == order - 1);
+            directHop.Order = order;
+            SelectedDirectHop.Order--;
+            DirectHopCollection.Refresh();
+            RaiseCanExecuteChanged();
         }
 
         private bool SortItemPropertyDownCommandCanExecute()
@@ -577,6 +617,11 @@ public DelegateCommand DeleteDirectHopCommand { get; set; }
         public DelegateCommand SortItemPropertyDownCommand { get; set; }
 
         public DelegateCommand DeleteItemPropertyCommand { get; set; }
+
+        public DelegateCommand SortDirectHopUpCommand { get; set; }
+
+        public DelegateCommand SortDirectHopDownCommand
+        { get; set; }
 
         #endregion Commands
 

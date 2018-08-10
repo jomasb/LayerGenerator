@@ -1,0 +1,4 @@
+if (sender is ILazyLoadingObservableCollection<$Product$$Item$DataItem>)
+{
+    On$Product$$Item$DataItemListLoaded();
+}

@@ -980,12 +980,7 @@ namespace PlusLayerCreator.Configure
 
         private string GetLazyLoadingPart(ConfigurationItem item)
         {
-            string content = "if (sender is ILazyLoadingObservableCollection<$Product$$Item$DataItem>)" +
-                             "{" +
-                             "    On$Product$$Item$DataItemListLoaded();" +
-                             "}\r\n";
-
-            return content.DoReplaces(item);
+			return File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\GetLazyLoadingPart.txt").DoReplaces(item);
         }
 
         private string GetSortCommand(ConfigurationItem item)

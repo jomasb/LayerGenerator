@@ -104,7 +104,7 @@ namespace PlusLayerCreator.Configure
 	                string getChild = string.Empty;
 					foreach (var child in _configuration.DataLayout.Where(t => t.Parent == dataItem.Name))
 	                {
-						getChild += GetChildList(dataItem, child.Name);
+						getChild += GetChildList(dataItem, child);
 					}
 					
 					interfaceContent +=
@@ -160,11 +160,6 @@ namespace PlusLayerCreator.Configure
 
                 interfaceContent += "#endregion " + dataItem.Name + "\r\n\r\n";
                 repositoryContent += "#endregion " + dataItem.Name + "\r\n\r\n";
-
-
-
-
-
             }
 
             var dtoLayer = _configuration.IsUseBusinessServiceWithoutBo ? "BusinessServiceLocal" : "Gateway";
@@ -188,24 +183,19 @@ namespace PlusLayerCreator.Configure
             {
                 var dataItemContent = string.Empty;
 
-                if (string.IsNullOrEmpty(dataItem.Parent))
-                    foreach (var preFilterDataItem in _configuration.DataLayout.Where(t =>
-                        t.IsPreFilterItem && t.Properties.Any(z => z.Name == "Id")))
-                    {
-                        var pp = preFilterDataItem.Properties.FirstOrDefault(t => t.Name == "Id");
-                        if (pp != null)
-                            dataItemContent += "public " + pp.Type + " " + pp.Name + "\r\n" +
-                                               "    {get\r\n" +
-                                               "    {\r\n" +
-                                               "        return Get<" + pp.Type + ">();\r\n" +
-                                               "    }\r\n" +
-                                               "    set\r\n" +
-                                               "    {\r\n" +
-                                               "        Set<" + pp.Type + ">(value);\r\n" +
-                                               "    }}\r\n\r\n";
-                    }
+	            if (string.IsNullOrEmpty(dataItem.Parent))
+	            {
+		            foreach (var preFilterDataItem in _configuration.DataLayout.Where(t =>
+			            t.IsPreFilterItem && t.Properties.Any(z => z.Name == "Id")))
+		            {
+			            var pp = preFilterDataItem.Properties.FirstOrDefault(t => t.Name == "Id");
+			            if (pp != null)
+				            dataItemContent += File.ReadAllText(_configuration.InputPath +
+				                                                @"Repository\DataItems\DataItemGetSetPart.txt").DoReplaces(null, null, string.Empty, pp.Type, pp.Name);
+					}
+	            }
 
-                foreach (var plusDataObject in dataItem.Properties)
+	            foreach (var plusDataObject in dataItem.Properties)
                 {
                     if (plusDataObject.IsRequired)
                     {
@@ -223,24 +213,20 @@ namespace PlusLayerCreator.Configure
                         }
                     }
 
-                    dataItemContent += "public " + plusDataObject.Type + " " + plusDataObject.Name + "\r\n" +
-                                       "    {get\r\n" +
-                                       "    {\r\n" +
-                                       "        return Get<" + plusDataObject.Type + ">();\r\n" +
-                                       "    }\r\n" +
-                                       "    set\r\n" +
-                                       "    {\r\n" +
-                                       "        Set<" + plusDataObject.Type + ">(value);\r\n" +
-                                       "    }}\r\n\r\n";
-
-                    foreach (var childDataItem in _configuration.DataLayout.Where(t => t.Parent == dataItem.Name))
-                        dataItemContent +=
-                            File.ReadAllText(_configuration.InputPath +
-                                             @"Repository\DataItems\DataItemCollectionPart.txt")
-                                .DoReplaces(childDataItem) + "\r\n";
+                    dataItemContent += File.ReadAllText(_configuration.InputPath +
+														@"Repository\DataItems\DataItemGetSetPart.txt").DoReplaces(null, null, string.Empty, plusDataObject.Type, plusDataObject.Name);
                 }
 
-	            if (dataItem.IsPreFilterItem || dataItem.IsDetailComboBoxItem)
+	            foreach (var childDataItem in _configuration.DataLayout.Where(t => t.Parent == dataItem.Name))
+				{
+					dataItemContent +=
+			            File.ReadAllText(_configuration.InputPath +
+			                             @"Repository\DataItems\DataItemCollectionPart.txt")
+				            .DoReplaces(childDataItem) + "\r\n";
+				}
+
+
+				if (dataItem.IsPreFilterItem || dataItem.IsDetailComboBoxItem)
 	            {
 					dataItemContent +=
 						File.ReadAllText(_configuration.InputPath +
@@ -306,14 +292,10 @@ namespace PlusLayerCreator.Configure
                 .DoReplaces(item) + "\r\n\r\n";
         }
 
-	    private string GetChildList(ConfigurationItem item, string childDataItem)
+	    private string GetChildList(ConfigurationItem item, ConfigurationItem childDataItem)
 	    {
-			return item.Name.ToPascalCase() + "DataItem." + childDataItem +
-			           "s = new PlusLazyLoadingAsyncObservableCollection<" + _configuration.Product +
-			           childDataItem + "DataItem>(" +
-			           "() => Get" + childDataItem + "sAsync(callContext, " +
-			           item.Name.ToPascalCase() + "DataItem))" +
-			           "{ AutoAcceptAfterSuccessfullyLoading = true, AutoOverwriteParent = true };";
+		    return File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\GetChildListPart.txt")
+			           .DoReplaces(item, childDataItem) + "\r\n\r\n";
 		}
 
         private string GetRepositoryGetPart(ConfigurationItem item, string template)
@@ -321,7 +303,7 @@ namespace PlusLayerCreator.Configure
             string getChild = string.Empty;
 			foreach (var child in _configuration.DataLayout.Where(t => t.Parent == item.Name))
 			{
-				getChild += GetChildList(item, child.Name);
+				getChild += GetChildList(item, child);
 			}
 
 			return File.ReadAllText(_configuration.InputPath + @"Repository\" + template)

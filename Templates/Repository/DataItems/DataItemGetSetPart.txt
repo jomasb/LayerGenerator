@@ -1,0 +1,11 @@
+public $Type$ $Name$
+{
+	get
+	{
+		return Get<$Type$>();
+	}
+	set
+	{
+		Set<$Type$>(value);
+	}
+}
