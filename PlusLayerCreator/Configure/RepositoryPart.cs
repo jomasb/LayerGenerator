@@ -205,7 +205,7 @@ namespace PlusLayerCreator.Configure
                     {
                         if (plusDataObject.Type == "int")
                         {
-                            dataItemContent +="[NumericRange(0, " + Helpers.GetMaxValue(plusDataObject.Length) + ")]\r\n";
+                            dataItemContent +="[Range(0, " + Helpers.GetMaxValue(plusDataObject.Length) + ")]\r\n";
                         }
                         if (plusDataObject.Type == "string")
                         {

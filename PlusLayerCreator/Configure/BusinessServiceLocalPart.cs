@@ -7,11 +7,23 @@ namespace PlusLayerCreator.Configure
     public class BusinessServiceLocalPart
     {
         private readonly Configuration _configuration;
+	    private readonly string _converterFillFromDto;
+	    private readonly string _converterFillFromMessage;
+	    private readonly string _converterReadReqRplPart;
+	    private readonly string _converterWriteReqRplPart;
 
-        public BusinessServiceLocalPart(Configuration configuration)
+		public BusinessServiceLocalPart(Configuration configuration)
         {
             _configuration = configuration;
-        }
+	        _converterFillFromDto =
+		        File.ReadAllText(configuration.InputPath + @"Service\Tandem\ConverterFillFromDtoPart.txt");
+	        _converterFillFromMessage =
+		        File.ReadAllText(configuration.InputPath + @"Service\Tandem\ConverterFillFromMessagePart.txt");
+	        _converterReadReqRplPart =
+		        File.ReadAllText(configuration.InputPath + @"Service\Tandem\ConverterReadReqRplPart.txt");
+	        _converterWriteReqRplPart =
+		        File.ReadAllText(configuration.InputPath + @"Service\Tandem\ConverterWriteReqRplPart.txt");
+		}
 
         public void CreateBusinessService(bool withBo)
         {
@@ -176,52 +188,110 @@ namespace PlusLayerCreator.Configure
 
         public void CreateTandem()
         {
-            var converterMessageToBoContent = string.Empty;
-            var converterBoToMessageContent = string.Empty;
-            foreach (var dataItem in _configuration.DataLayout)
-            {
-                var serverMappingWriteContent = string.Empty;
-
-                string serverMappingReadContent =
-                    (File.ReadAllText(_configuration.InputPath + @"Service\Tandem\ServerMappingGetPart.txt")
-                            .DoReplaces(dataItem) + "\r\n\r\n").ReplaceSpecialContent(new[]
-                        {dataItem.Server + "Server.Singleton.AddTransaction" + dataItem.TransactionCodeRead});
-
-                if (dataItem.CanEdit && !dataItem.CanEditMultiple)
-                    serverMappingWriteContent =
-                        (File.ReadAllText(_configuration.InputPath + @"Service\Tandem\ServerMappingSavePart.txt")
-                             .DoReplaces(dataItem) + "\r\n\r\n").ReplaceSpecialContent(new[]
-                        {
-                            dataItem.Server + "Server.Singleton.AddTransaction" + dataItem.TransactionCodeWrite,
-                            dataItem.Server + dataItem.RepRplWrite + "." + dataItem.TableCountProperty
-                        });
-
-                if (dataItem.CanEdit && dataItem.CanEditMultiple)
-                    serverMappingWriteContent =
-                        (File.ReadAllText(_configuration.InputPath + @"Service\Tandem\ServerMappingSaveMultiPart.txt")
-                             .DoReplaces(dataItem) + "\r\n\r\n").ReplaceSpecialContent(new[]
-                        {
-                            dataItem.Server + "Server.Singleton.AddTransaction" + dataItem.TransactionCodeWrite,
-                            dataItem.Server + dataItem.RepRplWrite + "." + dataItem.TableCountProperty
-                        });
-
-
-                foreach (var plusDataObject in dataItem.Properties)
-                {
-                    converterMessageToBoContent +=
-                        "serviceMessage." + plusDataObject.Name + "(" + plusDataObject.Name.ToPascalCase() + "." +
-                        plusDataObject.Name + ", i);\r\n";
-                    converterBoToMessageContent +=
-                        plusDataObject.Name + " = serviceMessage." + plusDataObject.Name + "(i),\r\n";
-                }
-
-                Helpers.CreateFileFromPath(_configuration.InputPath + @"Service\Tandem\Converter.cs",
-                    _configuration.OutputPath + @"Service\Tandem\" + _configuration.Product + dataItem.Name +
-                    "Converter.cs", new[] { converterMessageToBoContent, converterBoToMessageContent }, dataItem);
-                Helpers.CreateFileFromPath(_configuration.InputPath + @"Service\Tandem\ServerMapping.cs",
-                    _configuration.OutputPath + @"Service\Tandem\" + _configuration.Product + dataItem.Name +
-                    "ServerMapping.cs", new[] { serverMappingReadContent, serverMappingWriteContent }, dataItem);
-            }
+	        foreach (var dataItem in _configuration.DataLayout)
+	        {
+		        CreateServerMapping(dataItem);
+		        CreateConverter(dataItem);
+	        }
         }
-    }
+
+	    private void CreateServerMapping(ConfigurationItem dataItem)
+	    {
+			var serverMappingWriteContent = string.Empty;
+
+			string serverMappingReadContent =
+				(File.ReadAllText(_configuration.InputPath + @"Service\Tandem\ServerMappingGetPart.txt")
+						.DoReplaces(dataItem) + "\r\n\r\n").ReplaceSpecialContent(new[]
+					{dataItem.Server + "Server.Singleton.AddTransaction" + dataItem.TransactionCodeRead});
+
+			if (dataItem.CanEdit && !dataItem.CanEditMultiple)
+			{
+				serverMappingWriteContent =
+				(File.ReadAllText(_configuration.InputPath + @"Service\Tandem\ServerMappingSavePart.txt")
+						.DoReplaces(dataItem) + "\r\n\r\n").ReplaceSpecialContent(new[]
+				{
+					dataItem.Server + "Server.Singleton.AddTransaction" + dataItem.TransactionCodeWrite,
+					dataItem.Server + dataItem.RepRplWrite + "." + dataItem.TableCountProperty
+				});
+			}
+
+			if (dataItem.CanEdit && dataItem.CanEditMultiple)
+			{
+				serverMappingWriteContent =
+					(File.ReadAllText(_configuration.InputPath + @"Service\Tandem\ServerMappingSaveMultiPart.txt")
+							.DoReplaces(dataItem) + "\r\n\r\n").ReplaceSpecialContent(new[]
+					{
+						dataItem.Server + "Server.Singleton.AddTransaction" + dataItem.TransactionCodeWrite,
+						dataItem.Server + dataItem.RepRplWrite + "." + dataItem.TableCountProperty
+					});
+			}
+				
+			Helpers.CreateFileFromPath(_configuration.InputPath + @"Service\Tandem\ServerMapping.cs",
+				_configuration.OutputPath + @"Service\Tandem\" + _configuration.Product + dataItem.Name +
+				"ServerMapping.cs", new[] { serverMappingReadContent, serverMappingWriteContent }, dataItem);
+		}
+
+	    private void CreateConverter(ConfigurationItem dataItem)
+	    {
+		    string interfacePart = string.Empty;
+		    string readPart = GetReadPart(dataItem);
+		    string writePart = GetWritePart(dataItem);
+		    string fillPart = GetFillPart(dataItem);
+			
+		    interfacePart += ", I" + dataItem.Server + dataItem.RepRplRead + "BusinessObject";
+		    if (dataItem.CanEdit)
+		    {
+				interfacePart += ", I" + dataItem.Server + dataItem.RepRplWrite + "BusinessObject";
+			}
+			
+			Helpers.CreateFileFromPath(_configuration.InputPath + @"Service\Tandem\Converter.cs",
+				_configuration.OutputPath + @"Service\Tandem\" + _configuration.Product + dataItem.Name +
+				"Converter.cs", new[] { interfacePart, readPart, writePart, fillPart }, dataItem);
+		}
+
+	    private string GetReadPart(ConfigurationItem dataItem)
+	    {
+		    string getPart = _converterReadReqRplPart
+				.Replace("$Server$", dataItem.Server)
+			    .Replace("$ReqRpl$", dataItem.RepRplRead)
+				.Replace("$Transcode$", dataItem.TransactionCodeRead)
+			    .Replace("$TabAnz$", dataItem.TableCountProperty)
+				.DoReplaces(dataItem);
+
+		    return getPart;
+	    }
+	    private string GetWritePart(ConfigurationItem dataItem)
+	    {
+			string writePart = _converterWriteReqRplPart
+			    .Replace("$Server$", dataItem.Server)
+			    .Replace("$ReqRpl$", dataItem.RepRplWrite)
+			    .Replace("$Transcode$", dataItem.TransactionCodeWrite)
+			    .Replace("$TabAnz$", dataItem.TableCountProperty)
+			    .DoReplaces(dataItem);
+
+		    return writePart;
+		}
+
+		private string GetFillPart(ConfigurationItem dataItem)
+	    {
+		    string messageToDtoContent = string.Empty;
+		    string dtoToMessageContent = string.Empty;
+
+		    foreach (var plusDataObject in dataItem.Properties)
+		    {
+			    messageToDtoContent +=
+				    "serviceMessage." + plusDataObject.MessageField + "(" + plusDataObject.Name.ToPascalCase() + "." +
+				    plusDataObject.Name + ", i);\r\n";
+			    dtoToMessageContent +=
+				    plusDataObject.Name + " = serviceMessage." + plusDataObject.MessageField + "(i),\r\n";
+		    }
+
+		    string fillFromMessage = _converterFillFromMessage.DoReplaces(dataItem)
+			    .ReplaceSpecialContent(new[] {messageToDtoContent});
+			string fillFromDto = _converterFillFromDto.DoReplaces(dataItem)
+			    .ReplaceSpecialContent(new[] {dtoToMessageContent});
+
+			return fillFromMessage + "\r\n\r\n" + fillFromDto;
+	    }
+	}
 }

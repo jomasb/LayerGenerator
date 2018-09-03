@@ -1,0 +1,72 @@
+#region I$Server$$ReqRpl$BusinessObject Members
+
+/// <summary>
+/// Converts the business data to message data.
+/// </summary>
+/// <param name="serviceMessage">The service message.</param>
+public void ConvertBusinessDataToMessageData$Server$$ReqRpl$($Server$$ReqRpl$ serviceMessage)
+{
+	var transcode = serviceMessage.Transcode();
+	if (transcode.Equals($Server$$ReqRpl$Transcode.$Transcode$))
+	{
+		serviceMessage.MaxLupdTimestamp(PlusFormat.FormatTandemTimestamp26((DateTime)Arguments["MaxLupdTimestamp"]));
+
+		IList<$Product$$Item$> $item$s =
+			Arguments["$Item$sToSave"] as IList<$Product$$Item$>;
+
+		int offset = (int)Arguments["$Item$sToSaveOffset"];
+
+		int refCount = $item$s.Count;
+		serviceMessage.$TabAnz$(refCount);
+
+		int index = offset;
+
+		for (; index < refCount && (index - offset) < $Server$$ReqRpl$.$MaxTimes$; index++)
+		{
+			$Product$$Item$ $item$ = $item$s.ElementAt(index);
+			Fill$Item$FromDto(serviceMessage, $item$, index);
+			switch ($item$.SaveFlag)
+			{
+				case SaveFlag.Delete:
+					serviceMessage.BearbeitungsKz("D", index);
+					break;
+				case SaveFlag.Modified:
+					serviceMessage.BearbeitungsKz("U", index);
+					break;
+				case SaveFlag.New:
+					serviceMessage.BearbeitungsKz("I", index);
+					break;
+			}
+		}
+
+		Arguments["CheckpointReferencesToSaveOffset"] = index;
+	}
+}
+
+/// <summary>
+/// Converts the message data to business data.
+/// </summary>
+/// <param name="serviceMessage">The service message.</param>
+/// <exception cref="System.ArgumentNullException">serviceMessage</exception>
+public void ConvertMessageDataToBusinessData$Server$$ReqRpl$($Server$$ReqRpl$ serviceMessage)
+{
+	var transcode = serviceMessage.Transcode();
+	if (!transcode.Equals($Server$$ReqRpl$Transcode.$Transcode$))
+		return;
+	if (serviceMessage == null)
+	{
+		throw new ArgumentNullException("serviceMessage");
+	}
+	if (!serviceMessage.IsTranssteuerungOk())
+		return;
+
+	IList<$Product$$Item$> $item$s = Arguments["$Item$s"] as IList<$Product$$Item$>;
+	for (int i = 0; i < serviceMessage.$TabAnz$(); i++)
+	{
+		$Product$$Item$ $item$ = new $Product$$Item$();
+		Fill$Item$FromMessage($item$, serviceMessage, i);
+		$item$s.Add($item$);
+	}
+}
+
+#endregion I$Server$$ReqRpl$BusinessObject Members

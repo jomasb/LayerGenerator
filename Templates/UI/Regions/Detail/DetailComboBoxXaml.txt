@@ -1,4 +1,4 @@
-<plus:PlusComboBox plus:PlusSpinnerContainer.IsLoading="{Binding $Product$$Property$DataItemsList.IsLoading}"
+<plus:PlusComboBox $specialContent1$ plus:PlusSpinnerContainer.IsLoading="{Binding $Product$$Property$DataItemsList.IsLoading}"
 				   DisplayMemberPath="ComposedIdAndDescription"
 				   ItemsSource="{Binding $Product$$Property$DataItemsList.LoadedItems}"
 				   SelectedItem="{Binding Selected$Property$DataItem}" />

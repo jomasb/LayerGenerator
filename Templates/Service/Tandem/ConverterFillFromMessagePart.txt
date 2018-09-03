@@ -4,7 +4,7 @@
 /// <param name="$item$">The $item$.</param>
 /// <param name="serviceMessage">The service message.</param>
 /// <param name="position">The position.</param>
-private void FillCheckpointSystemFromMessage($Product$$Item$ $item$, $Server$$Reply$ serviceMessage, int postition)
+private void Fill$Item$FromMessage($Product$$Item$ $item$, $Server$$ReqRpl$ serviceMessage, int postition)
 {
 	$specialContent1$
 	checkpointSystem.LupdTimestamp = PlusFormat.ParseTandemTimestamp26(serviceMessage.LupdTimestampF6(i));

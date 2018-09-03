@@ -9,10 +9,6 @@ namespace PlusLayerCreator.Configure
         #region Members
 
         private readonly Configuration _configuration;
-        private readonly string _isNumericTemplate = " IsNumeric=\"True\"";
-
-        private readonly string _keyReadOnlyTemplate =
-            " IsReadOnly=\"{Binding IsNewItem, Converter={StaticResource InvertBoolConverter}}\"";
 
         private readonly string _masterGridMultiTemplate;
         private readonly string _masterGridReadonlyTemplate;
@@ -164,17 +160,17 @@ namespace PlusLayerCreator.Configure
                 File.ReadAllText(_configuration.InputPath + @"UI\Regions\Statusbar\DirectHopButtonCommandPart.txt");
 
 	        _detailViewModelComboBoxConstructorListLoad =
-		        File.ReadAllText(_configuration.InputPath + @"UI\Regions\Statusbar\DetailComboBoxConstructorListLoad.txt");
+		        File.ReadAllText(_configuration.InputPath + @"UI\Regions\Detail\DetailComboBoxConstructorListLoad.txt");
 	        _detailViewModelComboBoxMember =
-		        File.ReadAllText(_configuration.InputPath + @"UI\Regions\Statusbar\DetailComboBoxMember.txt");
+		        File.ReadAllText(_configuration.InputPath + @"UI\Regions\Detail\DetailComboBoxMember.txt");
 	        _detailViewModelComboBoxOnNavigatedTo =
-		        File.ReadAllText(_configuration.InputPath + @"UI\Regions\Statusbar\DetailComboBoxOnNavigatedTo.txt");
+		        File.ReadAllText(_configuration.InputPath + @"UI\Regions\Detail\DetailComboBoxOnNavigatedTo.txt");
 	        _detailViewModelComboBoxOnRegisteredLazyCollectionLoaded =
-		        File.ReadAllText(_configuration.InputPath + @"UI\Regions\Statusbar\DetailComboBoxOnRegisteredLazyCollectionLoaded.txt");
+		        File.ReadAllText(_configuration.InputPath + @"UI\Regions\Detail\DetailComboBoxOnRegisteredLazyCollectionLoaded.txt");
 	        _detailViewModelComboBoxProperties =
-		        File.ReadAllText(_configuration.InputPath + @"UI\Regions\Statusbar\DetailComboBoxProperties.txt");
+		        File.ReadAllText(_configuration.InputPath + @"UI\Regions\Detail\DetailComboBoxProperties.txt");
 	        _detailViewModelComboBoxXaml =
-		        File.ReadAllText(_configuration.InputPath + @"UI\Regions\Statusbar\DetailComboBoxXaml.txt");
+		        File.ReadAllText(_configuration.InputPath + @"UI\Regions\Detail\DetailComboBoxXaml.txt");
 		}
 
         /// <summary>
@@ -426,14 +422,9 @@ namespace PlusLayerCreator.Configure
 						propetiesContent += _detailViewModelComboBoxProperties.DoReplaces(propertyItem);
 						onNavigatedToContent += _detailViewModelComboBoxOnNavigatedTo.DoReplaces(propertyItem);
 						lazyLoadingContent += _detailViewModelComboBoxOnRegisteredLazyCollectionLoaded.DoReplaces(propertyItem);
-
-						detailViewContent += _detailViewModelComboBoxXaml.DoReplaces(propertyItem, null, property.Name);
 					}
-	                else
-	                {
-		                detailViewContent += GetItemControl(dataItem, property);
-	                }
 
+		            detailViewContent += GetItemControl(dataItem, property);
 	                detailViewContent += "        </plus:PlusFormRow>\r\n";
 
 				}
@@ -839,8 +830,9 @@ namespace PlusLayerCreator.Configure
         private string GetItemControl(ConfigurationItem item, ConfigurationProperty property)
         {
             string retValue = string.Empty;
+	        string specialContent = string.Empty;
 
-            if (!item.CanEdit || item.Name == "Sequence")
+			if (!item.CanEdit || item.Name == "Sequence")
             {
                 if (property.Type == "bool")
                     retValue += "            <plus:PlusLabel Content=\"{Binding DataItem." +
@@ -853,45 +845,45 @@ namespace PlusLayerCreator.Configure
             }
             else
             {
-                var addintionalInformation = string.Empty;
-                if (property.IsKey)
-                    addintionalInformation += _keyReadOnlyTemplate;
-                else if (property.IsReadOnly) addintionalInformation += _readOnlyTemplate;
+	            if (property.Order == item.Properties.Min(t => t.Order))
+	            {
+		            specialContent += " plus:FocusHelper.IsFocused=\"{Binding IsNewItem}\"";
+	            }
+	            if (property.IsKey)
+	            {
+		            specialContent += " IsNumeric=\"True\"";
+	            }
+	            if (property.IsReadOnly)
+	            {
+		            specialContent += _readOnlyTemplate;
+	            }
+	            switch (property.Type)
+	            {
+					case "bool":
+						retValue += File.ReadAllText(_configuration.InputPath + @"UI\Regions\Detail\DetailCheckBoxXaml.txt");
+						break;
+		            case "DateTime":
+			            retValue += File.ReadAllText(_configuration.InputPath + @"UI\Regions\Detail\DetailDateTimePickerXaml.txt");
+						break;
+		            case "DataItem":
+			            retValue += File.ReadAllText(_configuration.InputPath + @"UI\Regions\Detail\DetailComboBoxXaml.txt");
+						break;
+					default:
+						if (property.Length != string.Empty)
+						{
+							specialContent += " MaxLength =\"" + property.Length + "\"";
+						}
+						if (property.Type == "int")
+						{
+							specialContent += " IsReadOnly=\"{Binding IsNewItem, Converter={StaticResource InvertBoolConverter}}\"";
+						}
 
-                if (property.Type == "bool")
-                {
-                    retValue += "            <plus:PlusCheckBox " + addintionalInformation +
-                                         " IsChecked=\"{Binding DataItem." + property.Name + "}\" />\r\n";
-                }
-                else if (property.Type == "DateTime")
-                {
-                    retValue +=
-                        File.ReadAllText(_configuration.InputPath +
-                                         @"UI\Regions\Detail\DetailDateTimePickerXaml.txt")
-                            .DoReplaces(null, null, "DataItem." + property.Name);
-                }
-                else if (property.Type == "DataItem")
-                {
-                    retValue +=
-                        File.ReadAllText(_configuration.InputPath +
-										 @"UI\Regions\Detail\DetailComboBoxXaml.txt")
-                            .DoReplaces(null, null, "DataItem." + property.Name);
-                }
-                else
-                {
-                    if (property.Length != string.Empty)
-                        addintionalInformation += " MaxLength =\"" + property.Length + "\"";
+						retValue += File.ReadAllText(_configuration.InputPath + @"UI\Regions\Detail\DetailTextBoxXaml.txt");
+						break;
+				}
+			}
 
-                    if (property.Type == "int") addintionalInformation += _isNumericTemplate;
-
-                    retValue += "            <plus:PlusTextBox" + addintionalInformation +
-                                         " Text=\"{Binding DataItem." +
-                                         property.Name +
-                                         ", UpdateSourceTrigger=PropertyChanged}\" />\r\n";
-                }
-            }
-
-            return retValue;
+            return retValue.DoReplaces(null, null, "DataItem." + property.Name).ReplaceSpecialContent(new[] { specialContent });
         }
 
         private string GetParentInformation(ConfigurationItem parent, int level)
@@ -947,7 +939,7 @@ namespace PlusLayerCreator.Configure
 		        else if (plusDataObject.Type == "DataItem")
 		        {
 			        columnsContent +=
-						"                <plus:PlusGridViewTextColumnMinimal Width=\"*\" DataMemberBinding=\"{Binding " +
+						"                <plus:PlusGridViewCheckColumnMinimal Width=\"*\" DataMemberBinding=\"{Binding " +
 				        plusDataObject.Name + "}\".ComposedIdAndDescription Header=\"" +
 				        (dataItem.Name + plusDataObject.Name).GetLocalizedString() + "\"/>\r\n";
 		        }

@@ -1,0 +1,1 @@
+<plus:PlusCheckBox $specialContent1$ IsChecked={Binding DataItem.$Property$} />

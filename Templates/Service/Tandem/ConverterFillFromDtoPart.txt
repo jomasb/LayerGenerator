@@ -4,7 +4,7 @@
 /// <param name="serviceMessage">The service message.</param>
 /// <param name="$item$">The $item$.</param>
 /// <param name="position">The position.</param>
-private void Fill$Item$FromDto($Server$$Reply$ serviceMessage, $Product$$Item$ $item$, int position)
+private void Fill$Item$FromDto($Server$$ReqRpl$ serviceMessage, $Product$$Item$ $item$, int position)
 {
 	$specialContent1$
 	serviceMessage.LupdUser($item$.LupdUser, position);
