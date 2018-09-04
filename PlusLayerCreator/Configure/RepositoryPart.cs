@@ -294,7 +294,7 @@ namespace PlusLayerCreator.Configure
 
 	    private string GetChildList(ConfigurationItem item, ConfigurationItem childDataItem)
 	    {
-		    return File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\GetChildListPart.txt")
+		    return File.ReadAllText(_configuration.InputPath + @"Repository\GetChildListPart.txt")
 			           .DoReplaces(item, childDataItem) + "\r\n\r\n";
 		}
 

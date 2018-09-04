@@ -731,11 +731,7 @@ namespace PlusLayerCreator.Configure
                         string filter = _masterViewModelLazyLoadingFilter.DoReplaces(configurationItem);
 
                     }
-                    else if(configurationItem.Name != masterItem.Name)
-                    {
-                        lazyLoadingCollectionContent += _masterViewModelLazyLoadingChildCollection.ReplaceSpecialContent(new[] { string.Empty }).DoReplaces(configurationItem);
-                    }
-
+                    
                     if (configurationItem.CanSort)
                     {
                         initializeContent += "Sort$Item$UpCommand = CommandService.GetCommand(CommandNames.Sort$Item$UpCommand);\r\n".DoReplaces(configurationItem);
@@ -755,7 +751,12 @@ namespace PlusLayerCreator.Configure
                             .DoReplaces(configurationItem);
                     propertiesContent += _masterViewModelItemsList.DoReplaces(configurationItem);
                 }
-            }
+
+	            if (configurationItem.Name != masterItem.Name)
+	            {
+		            lazyLoadingCollectionContent += _masterViewModelLazyLoadingChildCollection.ReplaceSpecialContent(new[] { string.Empty }).DoReplaces(configurationItem);
+	            }
+			}
 
             if (_configuration.DataLayout.Any(t => t.CanEdit))
             {
@@ -851,7 +852,7 @@ namespace PlusLayerCreator.Configure
 	            }
 	            if (property.IsKey)
 	            {
-		            specialContent += " IsNumeric=\"True\"";
+		            specialContent += " IsReadOnly=\"{Binding IsNewItem, Converter={StaticResource InvertBoolConverter}}\"";
 	            }
 	            if (property.IsReadOnly)
 	            {
@@ -875,7 +876,7 @@ namespace PlusLayerCreator.Configure
 						}
 						if (property.Type == "int")
 						{
-							specialContent += " IsReadOnly=\"{Binding IsNewItem, Converter={StaticResource InvertBoolConverter}}\"";
+							specialContent += " IsNumeric=\"True\"";
 						}
 
 						retValue += File.ReadAllText(_configuration.InputPath + @"UI\Regions\Detail\DetailTextBoxXaml.txt");
@@ -931,15 +932,21 @@ namespace PlusLayerCreator.Configure
 	        {
 		        if (plusDataObject.Type == "bool")
 		        {
-			        columnsContent +=
-				        "                <plus:PlusGridViewCheckColumn Width=\"*\" DataMemberBinding=\"{Binding " +
-				        plusDataObject.Name + "}\" Header=\"" +
-				        (dataItem.Name + plusDataObject.Name).GetLocalizedString() + "\"/>\r\n";
+			        if (old)
+				        columnsContent +=
+					        "                <plus:PlusGridViewCheckColumn Width=\"*\" DataMemberBinding=\"{Binding " +
+					        plusDataObject.Name + "}\" Header=\"" +
+					        (dataItem.Name + plusDataObject.Name).GetLocalizedString() + "\"/>\r\n";
+			        else
+						columnsContent +=
+					        "                <plus:PlusGridViewCheckColumnMinimal Width=\"*\" DataMemberBinding=\"{Binding " +
+					        plusDataObject.Name + "}\" Header=\"" +
+					        (dataItem.Name + plusDataObject.Name).GetLocalizedString() + "\"/>\r\n";
 		        }
-		        else if (plusDataObject.Type == "DataItem")
+				else if (plusDataObject.Type == "DataItem")
 		        {
 			        columnsContent +=
-						"                <plus:PlusGridViewCheckColumnMinimal Width=\"*\" DataMemberBinding=\"{Binding " +
+						"                <plus:PlusGridViewTextColumnMinimal Width=\"*\" DataMemberBinding=\"{Binding " +
 				        plusDataObject.Name + "}\".ComposedIdAndDescription Header=\"" +
 				        (dataItem.Name + plusDataObject.Name).GetLocalizedString() + "\"/>\r\n";
 		        }

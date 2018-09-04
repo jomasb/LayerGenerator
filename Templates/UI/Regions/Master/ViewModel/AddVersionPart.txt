@@ -55,3 +55,8 @@ private async Task AddVersionCommandExecuted()
 	}
 }
 
+private void New$Product$$Version$DataItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
+{
+	RaiseCanExecuteChanged();
+}
+

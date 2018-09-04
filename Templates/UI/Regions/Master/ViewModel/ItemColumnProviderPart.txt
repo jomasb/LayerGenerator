@@ -21,7 +21,8 @@ public IPlusColumnProvider $Item$ColumnProvider
 /// <summary>
 /// Opens the settings dialog command execute.
 /// </summary>
-protected virtual void Open$Item$SettingsDialogCommand()
+protected virtual void Open$Item$SettingsDialogCommandExecuted()
 {
 	BaseServices.PopupDialogService.ShowGridViewOptionsDialog($Item$ColumnProvider, false);
 }
+
