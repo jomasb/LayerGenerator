@@ -12,7 +12,7 @@
 	xmlns:statusbar="clr-namespace:Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Statusbar"
 	ErrorCount="{Binding ErrorCount}"
 	WarningCount="{Binding WarningCount}"
-	WarningErrorMessage="{Binding MostRecentWarningErrorMessage}"
+	WarningErrorMessage="{Binding WarningErrorMessage}"
 	d:DataContext="{d:DesignInstance statusbar:StatusbarViewModel}"
 	d:DesignHeight="300"
 	d:DesignWidth="300"
