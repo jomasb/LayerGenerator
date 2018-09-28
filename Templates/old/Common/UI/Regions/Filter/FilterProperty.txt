@@ -1,9 +1,0 @@
-public $Type$ $Name$
-{
-	get { return _$name$; }
-	set
-	{
-		Set(ref _$name$, value);
-		RefreshCollectionView();
-	}
-};

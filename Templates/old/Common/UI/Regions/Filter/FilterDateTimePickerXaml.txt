@@ -1,8 +1,0 @@
-<plus:PlusFormRow Label="{localization:Localize Key=$Product$$Dialog$_lbl$Name$, Source=$Product$Localizer}">
-   <plus:PlusDateTimePicker
-		VerticalAlignment="Center"
-		ClockHeader="{localization:Localize Key=PlusDateTimePicker_lblClockHeader, Source=PlusUIWPFLocalizer}"
-		DateTimeWatermarkContent="{localization:Localize Key=PlusDateTimePicker_lblWatermarkContent, Source=PlusUIWPFLocalizer}"
-		SelectedValue="{Binding $Name$, UpdateSourceTrigger=PropertyChanged, Delay=300}"
-		TodayButtonLocalization="{localization:Localize Key=PlusDateTimePicker_lblNowButton, Source=PlusUIWPFLocalizer}" />
-</plus:PlusFormRow>"

@@ -1,8 +1,0 @@
-/// <summary>
-/// Clones the $Item$ asynchronous.
-/// </summary>
-/// <param name="callContext">The call context.</param>
-/// <param name="$item$">The $Item$.</param>
-/// <param name="$item$s">The $Item$s.</param>
-/// <returns></returns>
-Task<CallResponse<$Product$$Item$DataItem>> Clone$Item$Async(IRepositoryCallContext callContext, $Product$$Item$DataItem $item$, PlusObservableCollection<$Product$$Item$DataItem> $item$s);

@@ -1,8 +1,0 @@
-public MultiValueSelector<string> $Name$MultiSelector
-{
-	get { return _$name$MultiSelector; }
-	set
-	{
-		Set(ref _$name$MultiSelector, value);
-	}
-};

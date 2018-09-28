@@ -1,5 +1,0 @@
-		LupdUser = dto.LupdUser,
-		LupdTimestamp = dto.LupdTimestamp,
-		State = DataItemState.Persistent
-	});
-}
