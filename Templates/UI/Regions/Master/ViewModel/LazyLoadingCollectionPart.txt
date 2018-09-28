@@ -9,7 +9,9 @@ private void On$Product$$Item$DataItemListLoaded()
 	{
 		SourceCollection = $Product$$Item$DataItemsList.LoadedItems
 	});
-
+	
+	BaseServices.ValidationService.ClearValidationContext();
+	
 	ResetNavigation();
 	IsGlobalBusy = true;
 

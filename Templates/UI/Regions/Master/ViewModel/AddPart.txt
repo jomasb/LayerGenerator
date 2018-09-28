@@ -11,7 +11,7 @@ private async Task AddCommandExecuted()
 	{
 		$Product$$Item$DataItem new$Product$$Item$DataItem = response.Result;
 		Selected$Item$DataItem = new$Product$$Item$DataItem;
-		new$Product$$Item$DataItem.HasAnyChanges = true;
+		new$Product$$Item$DataItem.HasChanges = true;
 		new$Product$$Item$DataItem.PropertyChanged += New$Product$$Item$DataItem_PropertyChanged;
 		RaiseCanExecuteChanged();
 	}

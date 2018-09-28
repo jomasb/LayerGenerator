@@ -16,15 +16,7 @@ public $Product$$Item$DataItem Selected$Item$DataItem
 		{
 			if (_selected$Item$DataItem != null)
 			{
-				if (HasErrorsObserver != null)
-				{
-					HasErrorsObserver.UnregisterAllHandlers();
-				}
-				
 				$specialContent1$
-
-				HasErrorsObserver = new PropertyObserver<PlusNotifyDataErrorInfoBase>(_selected$Item$DataItem);
-				HasErrorsObserver.RegisterHandler(x => x.HasErrors, activeItem => RaiseCanExecuteChanged());
 				
 				NavigateTo$Item$Detail(_selected$Item$DataItem);
 			}

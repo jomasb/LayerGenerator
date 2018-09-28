@@ -11,6 +11,7 @@ private async Task DeleteCommandExecuted()
 		CallResponse<bool> response = await _$product$$Dialog$Repository.Delete$Item$Async(CreateNewCallContext(true), Selected$Item$DataItem, $Product$$Item$DataItemsList);
 		if (response.IsSuccess)
 		{
+			BaseServices.ValidationService.RemoveFromValidationContext(Selected$Item$DataItem, true);
 			if ($Product$$Item$DataItemsList.Count > 0)
 			{
 				Selected$Item$DataItem = null;

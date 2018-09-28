@@ -46,7 +46,7 @@ private async Task AddVersionCommandExecuted()
 			$Product$$Version$DataItem new$Version$ = response.Result;
 			$item$.MetaItem.IsExpanded = true;
 			ActiveItem = new$Version$;
-			new$Version$.HasAnyChanges = true;
+			new$Version$.HasChanges = true;
 			new$Version$.PropertyChanged += New$Product$$Version$DataItem_PropertyChanged;
 			$item$.$Item$Versions.HasAnyChanges = true;
 			RaiseCanExecuteChanged();
