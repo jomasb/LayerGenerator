@@ -1,7 +1,5 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace PlusLayerCreator.Items
@@ -21,14 +19,17 @@ namespace PlusLayerCreator.Items
         private bool _canDelete;
         private bool _canClone;
         private ObservableCollection<ConfigurationProperty> _properties;
-        private string _tableCountProperty;
         private string _transactionCodeWrite;
         private string _transactionCodeRead;
-        private string _repRplWrite;
-        private string _repRplRead;
+	    private string _repRplWrite = "REQ-RPL-2";
+		private string _repRplRead = "REQ-RPL-1";
+        private string _sys;
+	    private string _requirement;
         private string _server;
+	    private string _table;
+	    private string _tableDescription;
 
-        [DataMember]
+		[DataMember]
         public string Name
         {
             get => _name;
@@ -223,10 +224,38 @@ namespace PlusLayerCreator.Items
         }
 
         [DataMember]
+        public string Requirement
+        {
+            get => _requirement;
+            set => SetProperty(ref _requirement, value);
+        }
+
+        [DataMember]
+        public string Sys
+        {
+            get => _sys;
+            set => SetProperty(ref _sys, value);
+        }
+
+        [DataMember]
         public string Server
         {
             get => _server;
             set => SetProperty(ref _server, value);
+        }
+
+        [DataMember]
+        public string Table
+        {
+            get => _table;
+            set => SetProperty(ref _table, value);
+        }
+
+        [DataMember]
+        public string TableDescription
+		{
+            get => _tableDescription;
+            set => SetProperty(ref _tableDescription, value);
         }
 
         [DataMember]
@@ -255,13 +284,6 @@ namespace PlusLayerCreator.Items
         {
             get => _transactionCodeWrite;
             set => SetProperty(ref _transactionCodeWrite, value);
-        }
-
-        [DataMember]
-        public string TableCountProperty
-        {
-            get => _tableCountProperty;
-            set => SetProperty(ref _tableCountProperty, value);
         }
 
         [DataMember]

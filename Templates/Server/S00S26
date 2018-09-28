@@ -1,0 +1,159 @@
+!/******************************************************************************
+!/
+!/ A. ALLGEMEINES:
+!/
+!/    Projekt:     Daimler AG
+!/    Arb-Gebiet:  Methoden
+!/    Quelle:      S00S26
+!/
+!/    Autor:       SAP AG
+!/    Datum:       06.12.2017
+!/
+!/    Aenderungen:
+!/
+!/    Marke  Datum     Autor     Text
+!/    #000#  06.12.17  B.Meiser  A6131: Pflege S00D01
+!/
+!/
+!/ B. BESCHREIBUNG:
+!/
+!/    Definitionen zum Server S00S26
+!/    - Working-Storage-Variablen
+!/    - Host-Variablen
+!/    - Request-Strukturen
+!/    - Reply-Strukturen
+!/
+!/******************************************************************************
+
+*======================================================================
+?SECTION DELETE
+*======================================================================
+DELETE DEF S00S26-REQ-RPL-0.
+DELETE DEF S00S26-REQ-RPL-1.
+DELETE DEF S00S26-REQ-RPL-2.
+DELETE DEF S00S26-MSG-1.
+DELETE DEF S00S26-MSG-2.
+DELETE DEF S00S26-TAB-ZEILE-KOMPLETT.
+DELETE DEF S00S26-TAB-ZEILE-PF.
+DELETE DEF WS-S00S26.
+DELETE DEF HV-S00S26.
+
+DELETE CONSTANT CO-S00S26-ANZ-S00D01-KOMPLETT.
+DELETE CONSTANT CO-S00S26-ANZ-S00D01-PF.
+
+*======================================================================
+?SECTION INSERT
+*======================================================================
+?COMMENTS
+
+* ------------------------------------------------------------
+* - Konstanten
+* ------------------------------------------------------------
+
+CONSTANT CO-S00S26-ANZ-S00D01-KOMPLETT VALUE 198.
+CONSTANT CO-S00S26-ANZ-S00D01-PF       VALUE 198.
+
+* ------------------------------------------------------------
+* - Messages
+* ------------------------------------------------------------
+
+*                                      Tabellenzeile fuer Liste
+DEF S00S26-TAB-ZEILE-KOMPLETT.
+  02 RELATION                        Type *.
+  02 FELD-NAME                       Type *.
+  02 FELD-WERT                       Type *.
+  02 FSPRA                           Type *.
+  02 BEZEICHNUNG                     Type BEZEICHNUNG-48.
+  02 LUPD-TIMESTAMP                  Type *.
+  02 LUPD-PROZESSNAME                Type *.
+END.
+
+*                                      Tabellenzeile fuer Pflege
+DEF S00S26-TAB-ZEILE-PF.
+  02 BEARBEITUNGS-KZ                   TYPE BEARBEITUNGS-KZ-88.
+  02 RELATION                        Type *.
+  02 FELD-NAME                       Type *.
+  02 FELD-WERT                       Type *.
+  02 FSPRA                           Type *.
+  02 BEZEICHNUNG                     Type BEZEICHNUNG-48.
+  02 LUPD-TIMESTAMP                  Type *.
+  02 LUPD-PROZESSNAME                Type *.
+END.
+
+*                                      Liste S00D01 (komplett)
+DEF S00S26-MSG-1.
+  02 S00D01-TABELLE.
+    03 S00D01-TAB-ANZ                  PIC 9(4).
+    03 S00D01-TAB                      OCCURS CO-S00S26-ANZ-S00D01-KOMPLETT.
+      04 S00D01-TAB-ZEILE              TYPE S00S26-TAB-ZEILE-KOMPLETT.
+END.
+
+*                                      Pflege S00D01
+DEF S00S26-MSG-2.
+  02 S00D01-TABELLE.
+    03 S00D01-TAB-ANZ                  PIC 9(4).
+    03 S00D01-TAB                      OCCURS CO-S00S26-ANZ-S00D01-PF.
+      04 S00D01-TAB-ZEILE              TYPE S00S26-TAB-ZEILE-PF.
+END.
+
+* ------------------------------------------------------------
+* - Request/Reply
+* ------------------------------------------------------------
+
+*                                      Dummy-Request zur Sicherung des
+*                                      RPC-DIALOG-HDR-IN
+DEF S00S26-REQ-RPL-0.
+  02 FILLER                            TYPE RPC-DIALOG-HDR.
+END.
+
+*                                      Liste S00D01
+DEF S00S26-REQ-RPL-1.
+  02 FILLER                            TYPE RPC-DIALOG-HDR.
+  02 S00S26-MSG-1                      TYPE *.
+END.
+
+*                                      Pflege S00D01
+DEF S00S26-REQ-RPL-2.
+  02 FILLER                            TYPE RPC-DIALOG-HDR.
+  02 S00S26-MSG-2                      TYPE *.
+END.
+
+* ------------------------------------------------------------
+* - Working
+* ------------------------------------------------------------
+DEF WS-S00S26.
+  02 WS-S00S26-CONSTANT-VALUES.
+    03 WS-INDICATOR-VAR-KO             TYPE INDICATOR-VAR-KO.
+    03 WS-MAX-ANZ-S00D01-KOMPLETT      PIC 9(3)
+                                       VALUE CO-S00S26-ANZ-S00D01-KOMPLETT.
+    03 WS-MAX-ANZ-S00D01-PF            PIC 9(3)
+                                       VALUE CO-S00S26-ANZ-S00D01-PF.
+  02 WS-S00S26-INIT.
+    03 WS-LUPD-TIMESTAMP-STRUCT        TYPE DATETIMEYMDHSF3-STRUKTUR.
+    03 WS-SCHLEIFEN-ENDE-SW            TYPE KZ-JA-NEIN-88.
+END.
+
+
+* ------------------------------------------------------------
+* - Hosts
+* ------------------------------------------------------------
+DEF HV-S00S26.
+  02 HV-LUPD-TIMESTAMP                 TYPE LUPD-TIMESTAMP.
+END.
+
+
+*======================================================================
+?SECTION OUTPUT
+*======================================================================
+?SETCOBOL85
+?COBOL =S00S26 !
+?COBLEVEL 1
+
+OUTPUT DEF S00S26-REQ-RPL-0.
+OUTPUT DEF S00S26-REQ-RPL-1.
+OUTPUT DEF S00S26-REQ-RPL-2.
+
+OUTPUT DEF WS-S00S26.
+OUTPUT DEF HV-S00S26.
+
+?NOCOBOL

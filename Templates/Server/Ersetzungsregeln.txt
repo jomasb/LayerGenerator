@@ -1,0 +1,41 @@
+Ersetzungen:
+-----------
+
+%%ANF%%          => A5678/02
+%%AUTOR%%        => B.Meiser
+%%DATUM%%        => 17.09.2018
+%%PRODUKT%%      => METHODEN
+%%SERVER%%       => S00S26
+%%SYS%%          => ME26
+%%TBL%%          => S00D01
+%%Tabellen-Bezeichnung%% => Bezeichnung der Tabelle
+%%ANZ-KOMPLETT%% => Berechnete Konstante für Anzahl Tabellen-Eitnräge (Komplett)
+%%ANZ-PF%%       => Berechnete Konstante für Anzahl Tabellen-Eitnräge (Pflege)
+
+%%TRANSCODE-LESEN%%
+%%TRANSCODE-SCHREIBEN%%
+
+SQL:
+---
+%%CURSOR-FELDER%%        => Alle Felder der Tabelle für Lese-CURSOR
+%%FETCH-CURSOR%%         => Alle Felder, die über den Cursor gefüllt werden
+%%INSERT-FELDER%%        => Alle Felder der Tabelle für INSERT-Statement
+%%INSERT-WERTE%%         => Dazugehörige Werte der Tabellenfelder für INSERT-Statement
+%%DELETE-FELDER-WERTE%%  => Schlüsselfeld-/Wert-Paare für DELETE-Statement
+%%DATEN-AUS-REQUEST%%    => Übernahme der Daten aus der Request
+%%DATEN-IN-REPLY%%       => Übernahme der Daten in die Reply
+
+
+Meldungen
+---------
+ME-Datei:
+%%FELDER%%            => ##1/##2/##3/##4 (Beispiel siehe ME-Datei - maximal 7 !!!)
+
+Server:
+%%SCHLUESSELFELDER-PARAMETER%%  => Schlüsselfelder als Parameter für Meldungen
+
+
+Messages
+--------
+DLE-Datei:
+%%FELDER%%            => Alle Felder der Tabelle für Message

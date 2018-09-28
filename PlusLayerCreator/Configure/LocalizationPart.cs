@@ -147,7 +147,7 @@ namespace PlusLayerCreator.Configure
             foreach (var language in languages)
             {
                 var fileContent = File.ReadAllText(_configuration.InputPath + @"Localization\localization.txt");
-                fileContent = fileContent.DoReplaces();
+                fileContent = fileContent.DoReplacesClient();
                 fileContent = fileContent.Replace("$language$", language);
                 fileContent = fileContent.Replace("$date$", DateTime.Now.ToShortDateString());
                 fileContent = fileContent.Replace("$_configuration.Product$", _configuration.Product);

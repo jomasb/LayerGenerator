@@ -162,6 +162,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configure\ServerPart.cs" />
     <Compile Include="Detail\DirectHopDetailView.xaml.cs">
       <DependentUpon>DirectHopDetailView.xaml</DependentUpon>
     </Compile>

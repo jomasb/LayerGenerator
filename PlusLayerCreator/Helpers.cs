@@ -27,36 +27,23 @@ namespace PlusLayerCreator
             return obj;
         }
 
-        public static string GetLocaliatzionExtension(this string input)
-        {
-            if (input.EndsWith("e"))
-                return "n";
-            if (input.EndsWith("er"))
-                return "";
-            return "en";
-        }
+	    public static string ToCamelCase(this string input)
+	    {
+		    if (input == null || input.Length < 2)
+			    return input;
 
-        public static string ToPascalCase(this string input)
-        {
-            if (string.IsNullOrEmpty(input)) return input;
+		    string[] words = input.Split(new string[] {"-", "_", string.Empty}, StringSplitOptions.RemoveEmptyEntries);
 
-            return input[0].ToString().ToLower() + input.Substring(1, input.Length - 1);
-        }
+		    string result = string.Empty;
+		    for (int i = 0; i < words.Length; i++)
+		    {
+				result += words[i].Substring(0, 1).ToUpper() + words[i].Substring(1).ToLower();
+		    }
 
+		    return result;
+	    }
 
-        public static int GetMaxValue(string length)
-        {
-            if (length == string.Empty) return 999999;
-
-            int value;
-            var computedString = string.Empty;
-            if (int.TryParse(length, out value))
-                for (var i = 0; i < value; i++)
-                    computedString += "9";
-            return int.Parse(computedString);
-        }
-
-        public static string DoReplaces(this string input, ConfigurationItem item = null, ConfigurationItem child = null, string property = "", string type = "", string name = "")
+		public static string DoReplacesClient(this string input, ConfigurationItem item = null, ConfigurationItem child = null, string property = "", string type = "", string name = "")
         {
             input = input.Replace("$PRODUCT$", Configuration.Product.ToUpper());
             input = input.Replace("$Product$", Configuration.Product);
@@ -85,7 +72,70 @@ namespace PlusLayerCreator
 			return input;
         }
 
-        public static string ReplaceSpecialContent(this string fileContent, string[] contents = null)
+        public static string DoReplacesServer(this string input, ConfigurationItem item)
+        {
+            input = input.Replace("%%TRANSCODE-LESEN%%", item.TransactionCodeRead);
+            input = input.Replace("%%TRANSCODE-SCHREIBEN%%", item.TransactionCodeWrite);
+            input = input.Replace("%%ANF%%", item.Requirement);
+            input = input.Replace("%%AUTOR%%", "LayerCreator");
+            input = input.Replace("%%DATUM%%", DateTime.Now.ToShortDateString());
+            input = input.Replace("%%PRODUKT%%", Configuration.Product.ToUpper());
+            input = input.Replace("%%SERVER%%", item.Server);
+            input = input.Replace("%%SYS%%", item.Sys);
+	        input = input.Replace("%%TBL%%", item.Table);
+			input = input.Replace("%%Tabellen-Bezeichnung%%", item.TableDescription);
+            input = input.Replace("%%ANZ-KOMPLETT%%", CalculateServerRows(item, false).ToString());
+            input = input.Replace("%%ANZ-PF%%", CalculateServerRows(item, true).ToString());
+	        input = input.Replace("%%FELDER%%", ArrangeProperties(item));
+	        input = input.Replace("%%DELETE-FELDER-WERTE%%", ArrangeDelete(item));
+	        input = input.Replace("%%CURSOR-FELDER%%", ArrangCursorFields(item));
+	        input = input.Replace("%%DATEN-AUS-REQUEST%%", ArrangeDataFromRequest(item));
+	        input = input.Replace("%%DATEN-IN-REPLY%%", ArrangeDataForReply(item));
+	        input = input.Replace("%%INSERT-FELDER%%", ArrangInsertFields(item));
+	        input = input.Replace("%%INSERT-WERTE%%", ArrangInsertValues(item));
+	        input = input.Replace("%%SCHLUESSELFELDER-PARAMETER%%", ArrangKeys(item));
+	        input = input.Replace("%%FTECH-CURSOR%%", ArrangFetchCursor(item));
+	        input = input.Replace("%%CURSOR-FELDER-WHERE%%", ArrangCursorFieldsAdvanced(item, 0));
+	        input = input.Replace("%%CURSOR-FELDER-ROW%%", ArrangCursorFieldsAdvanced(item, 1));
+	        input = input.Replace("%%CURSOR-FELDER-ORDER%%", ArrangCursorFieldsAdvanced(item, 2));
+
+			return input;
+        }
+
+		#region Client methods
+
+	    public static string GetLocaliatzionExtension(this string input)
+	    {
+		    if (input.EndsWith("e"))
+			    return "n";
+		    if (input.EndsWith("er"))
+			    return "";
+		    return "en";
+	    }
+
+	    public static string ToPascalCase(this string input)
+	    {
+		    if (string.IsNullOrEmpty(input))
+			    return input;
+
+		    return input[0].ToString().ToLower() + input.Substring(1, input.Length - 1);
+	    }
+
+
+	    public static int GetMaxValue(string length)
+	    {
+		    if (length == string.Empty)
+			    return 999999;
+
+		    int value;
+		    var computedString = string.Empty;
+		    if (int.TryParse(length, out value))
+			    for (var i = 0; i < value; i++)
+				    computedString += "9";
+		    return int.Parse(computedString);
+	    }
+
+		public static string ReplaceSpecialContent(this string fileContent, string[] contents = null)
         {
             if (contents != null)
                 for (var i = 0; i < contents.Length; i++)
@@ -99,7 +149,7 @@ namespace PlusLayerCreator
         {
             var fileContent = input;
 
-            fileContent = DoReplaces(fileContent, item);
+            fileContent = DoReplacesClient(fileContent, item);
             fileContent = ReplaceSpecialContent(fileContent, contents);
 
             var fileInfo = new FileInfo(output);
@@ -141,7 +191,7 @@ namespace PlusLayerCreator
                     filterPredicateResetContent = plusDataObject.Name + " = string.Empty;";
                     filterPredicatesContent = ".Match(x => x." + plusDataObject.Name + filterSuffix + ", x => x." +
                                               plusDataObject.Name + ")";
-                    filterXamlContent = DoReplaces(FilterTextBoxXamlTemplate, plusDataItem);
+                    filterXamlContent = DoReplacesClient(FilterTextBoxXamlTemplate, plusDataItem);
                 }
 
                 if (plusDataObject.FilterPropertyType == "ComboBox")
@@ -156,7 +206,7 @@ namespace PlusLayerCreator
                         plusDataObject.Name +
                         "MultiSelector = new MultiValueSelector<string>(SourceCollection.Select(x => x." +
                         plusDataObject.Name + ".ToString()).Distinct(), RefreshCollectionView, AllValue);";
-                    filterXamlContent = DoReplaces(FilterComboBoxXamlTemplate, plusDataItem);
+                    filterXamlContent = DoReplacesClient(FilterComboBoxXamlTemplate, plusDataItem);
                 }
             }
 
@@ -169,7 +219,7 @@ namespace PlusLayerCreator
                 filterPredicateResetContent = plusDataObject.Name + " = null;";
                 filterPredicatesContent =
                     ".IsEqual(x => x." + plusDataObject.Name + ", x => x." + plusDataObject.Name + ")";
-                filterXamlContent = DoReplaces(FilterCheckBoxXamlTemplate, plusDataItem);
+                filterXamlContent = DoReplacesClient(FilterCheckBoxXamlTemplate, plusDataItem);
             }
 
             if (plusDataObject.Type == "DateTime")
@@ -187,8 +237,8 @@ namespace PlusLayerCreator
                 filterPredicatesContent = ".IsInRange(x => x." + plusDataObject.Name + ", x => x." +
                                           plusDataObject.Name + "From, x => x." + plusDataObject.Name + "To)";
                 filterXamlContent =
-                    DoReplaces(FilterDateTimePickerXamlTemplate + "\r\n", null, null, plusDataObject.Name + "From");
-                filterXamlContent += DoReplaces(FilterDateTimePickerXamlTemplate, null, null, plusDataObject.Name + "To");
+                    DoReplacesClient(FilterDateTimePickerXamlTemplate + "\r\n", null, null, plusDataObject.Name + "From");
+                filterXamlContent += DoReplacesClient(FilterDateTimePickerXamlTemplate, null, null, plusDataObject.Name + "To");
             }
 
             filterMembersContent = filterMembersContent.Replace("$Name$", plusDataObject.Name)
@@ -254,7 +304,7 @@ namespace PlusLayerCreator
             return Configuration.DataLayout.First(t => t.Name == item.Parent);
         }
 
-        public static string GetParentParameter(ConfigurationItem item, string type)
+	    public static string GetParentParameter(ConfigurationItem item, string type)
         {
             string retValue = string.Empty;
 
@@ -308,5 +358,206 @@ namespace PlusLayerCreator
 
             return filterParameter;
         }
-    }
+
+		#endregion Client methods
+
+		#region Server methods
+
+		private static int CalculateServerRows(ConfigurationItem item, bool modify)
+	    {
+		    int retValue = 0;
+
+		    foreach (ConfigurationProperty property in item.Properties)
+		    {
+			    if (string.IsNullOrEmpty(property.Length))
+			    {
+				    retValue += 1;
+			    }
+			    else
+			    {
+				    retValue += int.Parse(property.Length);
+			    }
+		    }
+
+		    if (modify)
+		    {
+			    retValue += 1;
+		    }
+
+		    retValue = (30000 - 4) / retValue;
+
+		    return retValue;
+	    }
+
+	    private static string ArrangeProperties(ConfigurationItem item)
+	    {
+		    string retValue = string.Empty;
+		    int level = 2; //temporary
+
+		    foreach (ConfigurationProperty property in item.Properties)
+		    {
+			    retValue += "  " + level.ToString("00") + " " + property.MessageField.PadRight(30) + "    TYPE *.\r\n";
+		    }
+
+		    retValue += "  " + level.ToString("00") + " " + "LUPD-TIMESTAMP".PadRight(30) + "    TYPE *.\r\n";
+			retValue += "  " + level.ToString("00") + " " + "LUPD-PROZESSNAME".PadRight(30) + "    TYPE *.\r\n";
+
+			return retValue.Substring(0, retValue.Length - 2);
+	    }
+
+	    private static string ArrangeDelete(ConfigurationItem item)
+	    {
+		    string retValue = string.Empty;
+
+		    foreach (ConfigurationProperty property in item.Properties)
+		    {
+			    retValue += "                   " + property.MessageField + "\r\n                = :" + property.MessageField.PadRight(30) + "    OF " + item.Table + "-ROW\r\n";
+		    }
+
+
+		    return retValue.Substring(0, retValue.Length - 2);
+	    }
+
+	    private static string ArrangCursorFields(ConfigurationItem item)
+	    {
+		    string retValue = string.Empty;
+
+		    for (int i = 0; i < item.Properties.Count; i++)
+		    {
+			    retValue += i == 0 ? "                   " : "                 , ";
+				retValue += item.Properties[i].MessageField + "\r\n";
+		    }
+
+		    retValue += "                 , LUPD_TIMESTAMP" + "\r\n";
+			retValue += "                 , LUPD_PROZESSNAME" + "\r\n";
+
+			return retValue.Substring(0, retValue.Length - 2);
+		}
+
+	    private static string ArrangCursorFieldsAdvanced(ConfigurationItem item, int mode)
+	    {
+		    string retValue = string.Empty;
+
+		    for (int i = 0; i < item.Properties.Count; i++)
+		    {
+				if (!item.Properties[i].IsKey)
+					continue;
+
+			    switch (mode)
+			    {
+					case 0:
+						retValue += i == 0 ? "                   " : "                 , ";
+						retValue += item.Properties[i].MessageField + "\r\n";
+						break;
+					case 1:
+						retValue += i == 0 ? "                  :" : "                 ,:";
+						retValue += item.Properties[i].MessageField.PadRight(30) + "   OF " + item.Table + "-ROW" + "\r\n";
+						break;
+					case 2:
+						retValue += i == 0 ? "                   " : "                 , ";
+						retValue += item.Properties[i].MessageField.PadRight(30) + "ASC" +"\r\n";
+						break;
+					    
+			    }
+			   
+			}
+			
+		    return retValue.Substring(0, retValue.Length - 2);
+		}
+
+	    private static string ArrangeDataFromRequest(ConfigurationItem item)
+	    {
+		    string retValue = string.Empty;
+
+		    foreach (ConfigurationProperty property in item.Properties)
+		    {
+			    retValue += "    MOVE " + property.MessageField.PadRight(30) + "    OF " + item.Server + "-REQ-2(I)" + "\r\n";
+			    retValue += "      TO " + property.MessageField.PadRight(30) + "    OF" + item.Table + "-ROW" + "\r\n";
+		    }
+
+
+		    return retValue.Substring(0, retValue.Length - 2);
+	    }
+
+	    private static string ArrangeDataForReply(ConfigurationItem item)
+	    {
+		    string retValue = string.Empty;
+
+		    foreach (ConfigurationProperty property in item.Properties)
+		    {
+			    retValue += "    MOVE " + property.MessageField.PadRight(30) + "    OF" + item.Table + "-ROW" + "\r\n";
+			    retValue += "      TO " + property.MessageField.PadRight(30) + "    OF " + item.Server + "-REPL-1(I)(WS-MR-ANZ-DS-AKTUELL)" + "\r\n";
+			}
+
+
+			return retValue.Substring(0, retValue.Length - 2);
+	    }
+
+	    private static string ArrangInsertFields(ConfigurationItem item)
+	    {
+		    string retValue = string.Empty;
+
+		    for (int i = 0; i < item.Properties.Count; i++)
+		    {
+			    retValue += i == 0 ? "                   " : "                 , ";
+			    retValue += item.Properties[i].MessageField + "\r\n";
+			}
+
+		    retValue += "                 , " + "LUPD_TIMESTAMP" + "\r\n";
+		    retValue += "                 , " + "LUPD_PROZESSNAME" + "\r\n";
+
+			return retValue.Substring(0, retValue.Length - 2);
+	    }
+
+	    private static string ArrangInsertValues(ConfigurationItem item)
+	    {
+		    string retValue = string.Empty;
+
+		    for (int i = 0; i < item.Properties.Count; i++)
+		    {
+			    retValue += i == 0 ? "                   " : "                 , ";
+			    retValue += item.Properties[i].MessageField.PadRight(30) + "   OF " + item.Table + "-ROW" + "\r\n";
+		    }
+
+		    retValue += "                 ,:HV-LUPD-TIMESTAMP                 OF HV-" + item.Server + "\r\n";
+		    retValue += "                   TYPE AS DATETIME YEAR TO FRACTION(3)" + "\r\n";
+			retValue += "                 ,:LUPD-PROZESSNAME                  OF " + item.Table + "-ROW" + "\r\n";
+
+			return retValue.Substring(0, retValue.Length - 2);
+	    }
+
+	    private static string ArrangKeys(ConfigurationItem item)
+	    {
+			string retValue = string.Empty;
+		    int i = 2;
+
+		    foreach (ConfigurationProperty property in item.Properties.Where(t => t.IsKey))
+		    {
+			    retValue += "       MOVE " + property.MessageField.PadRight(30) + "    OF" + item.Server + "-REQ-2(I)" + "\r\n";
+			    retValue += "         TO PARAMETERTEXT              OF EMS-MELD-LNK (" + i++ + ")" + "\r\n";
+		    }
+
+
+		    return retValue.Substring(0, retValue.Length - 2);
+		}
+
+		private static string ArrangFetchCursor(ConfigurationItem item)
+	    {
+		    string retValue = string.Empty;
+
+		    for (int i = 0; i < item.Properties.Count; i++)
+		    {
+			    retValue += i == 0 ? "                   " : "                 , ";
+				retValue += item.Properties[i].MessageField.PadRight(30) + "   OF " + item.Table + "-ROW" + "\r\n";
+		    }
+		
+		    retValue += "                 ,:HV-LUPD-TIMESTAMP                 OF HV-" + item.Server + "\r\n";
+		    retValue += "                   TYPE AS DATETIME YEAR TO FRACTION(3)" + "\r\n";
+		    retValue += "                 ,:LUPD-PROZESSNAME                  OF " + item.Table + "-ROW" + "\r\n";
+
+		    return retValue.Substring(0, retValue.Length - 2);
+	    }
+
+	    #endregion Server methods
+	}
 }

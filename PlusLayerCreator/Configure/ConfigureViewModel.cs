@@ -479,11 +479,15 @@ namespace PlusLayerCreator.Configure
             GetTemplatesFromDisk();
 
             var configuration = GetConfiguration();
+            var serverPart = new ServerPart(configuration);
             var gatewayPart = new GatewayPart(configuration);
             var businessServiceLocalPart = new BusinessServiceLocalPart(configuration);
             var repositoryPart = new RepositoryPart(configuration);
             var uiPart = new UiPart(configuration);
             var localizationPart = new LocalizationPart(configuration);
+
+			//Server
+	        serverPart.Create();
 
             // Gateway
             if (!IsUseBusinessServiceWithoutBo)

@@ -68,9 +68,9 @@ namespace PlusLayerCreator.Configure
                 {
                     interfaceContent +=
                         File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\ClonePart.txt")
-                            .DoReplaces(dataItem) + "\r\n\r\n";
+                            .DoReplacesClient(dataItem) + "\r\n\r\n";
                     repositoryContent +=
-                        File.ReadAllText(_configuration.InputPath + @"Repository\ClonePart.txt").DoReplaces(dataItem) +
+                        File.ReadAllText(_configuration.InputPath + @"Repository\ClonePart.txt").DoReplacesClient(dataItem) +
                         "\r\n\r\n";
                 }
 
@@ -78,14 +78,14 @@ namespace PlusLayerCreator.Configure
                 {
                     interfaceContent +=
                         File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\DeletePart.txt")
-                            .DoReplaces(dataItem) + "\r\n\r\n";
+                            .DoReplacesClient(dataItem) + "\r\n\r\n";
                     if (dataItem.CanEditMultiple)
                     {
-                        repositoryContent += File.ReadAllText(_configuration.InputPath + @"Repository\DeletePart.txt").DoReplaces(dataItem) + "\r\n\r\n";
+                        repositoryContent += File.ReadAllText(_configuration.InputPath + @"Repository\DeletePart.txt").DoReplacesClient(dataItem) + "\r\n\r\n";
                     }
                     else
                     {
-                        repositoryContent += File.ReadAllText(_configuration.InputPath + @"Repository\DeleteAndSavePart.txt").DoReplaces(dataItem) + "\r\n\r\n";
+                        repositoryContent += File.ReadAllText(_configuration.InputPath + @"Repository\DeleteAndSavePart.txt").DoReplacesClient(dataItem) + "\r\n\r\n";
                     }
                 }
 
@@ -93,9 +93,9 @@ namespace PlusLayerCreator.Configure
                 {
                     interfaceContent +=
                         File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\SortPart.txt")
-                            .DoReplaces(dataItem) + "\r\n\r\n";
+                            .DoReplacesClient(dataItem) + "\r\n\r\n";
                     repositoryContent +=
-                        File.ReadAllText(_configuration.InputPath + @"Repository\SortPart.txt").DoReplaces(dataItem) +
+                        File.ReadAllText(_configuration.InputPath + @"Repository\SortPart.txt").DoReplacesClient(dataItem) +
                         "\r\n\r\n";
                 }
 
@@ -109,18 +109,18 @@ namespace PlusLayerCreator.Configure
 					
 					interfaceContent +=
                         File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\AddPart.txt")
-                            .DoReplaces(dataItem) + "\r\n\r\n";
+                            .DoReplacesClient(dataItem) + "\r\n\r\n";
                     repositoryContent +=
-                        File.ReadAllText(_configuration.InputPath + @"Repository\AddPart.txt").DoReplaces(dataItem).ReplaceSpecialContent(new []{getChild}) +
+                        File.ReadAllText(_configuration.InputPath + @"Repository\AddPart.txt").DoReplacesClient(dataItem).ReplaceSpecialContent(new []{getChild}) +
                         "\r\n\r\n";
 
                     if (!dataItem.CanEditMultiple)
                     {
                         interfaceContent +=
                             File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\SavePart.txt")
-                                .DoReplaces(dataItem) + "\r\n\r\n";
+                                .DoReplacesClient(dataItem) + "\r\n\r\n";
                         var content = File.ReadAllText(_configuration.InputPath + @"Repository\SavePart.txt")
-                                            .DoReplaces(dataItem) + "\r\n\r\n";
+                                            .DoReplacesClient(dataItem) + "\r\n\r\n";
                         content = content.ReplaceSpecialContent(new[] { identifier, readOnly, GetParentParameter(dataItem, 1, true)});
                         repositoryContent += content;
                     }
@@ -130,16 +130,16 @@ namespace PlusLayerCreator.Configure
                         string parentParameter = string.Empty;
                         if (!string.IsNullOrEmpty(dataItem.Parent))
                         {
-                            parentParameter = ", $Product$$Parent$DataItem $parent$DataItem".DoReplaces(dataItem);
+                            parentParameter = ", $Product$$Parent$DataItem $parent$DataItem".DoReplacesClient(dataItem);
                         }
 
                         interfaceContent +=
                             File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\SaveMultiPart.txt")
                                 .ReplaceSpecialContent(new []{ parentParameter })
-                                .DoReplaces(dataItem) + "\r\n\r\n";
+                                .DoReplacesClient(dataItem) + "\r\n\r\n";
                         var content = File.ReadAllText(_configuration.InputPath + @"Repository\SaveMultiPart.txt")
                                     .ReplaceSpecialContent(new[] { identifier, readOnly, GetParentParameter(dataItem, 1), parentParameter })
-                                    .DoReplaces(dataItem) + "\r\n\r\n";
+                                    .DoReplacesClient(dataItem) + "\r\n\r\n";
                         repositoryContent += content;
                     }
                 }
@@ -150,9 +150,9 @@ namespace PlusLayerCreator.Configure
                     {
                         interfaceContent +=
                             File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\VersionPart.txt")
-                                .DoReplaces(dataItem) + "\r\n\r\n";
+                                .DoReplacesClient(dataItem) + "\r\n\r\n";
                         var content = File.ReadAllText(_configuration.InputPath + @"Repository\VersionPart.txt")
-                                          .DoReplaces(dataItem) + "\r\n\r\n";
+                                          .DoReplacesClient(dataItem) + "\r\n\r\n";
                         content = content.ReplaceSpecialContent(new[] { identifier, readOnly });
                         repositoryContent += content;
                     }
@@ -191,7 +191,7 @@ namespace PlusLayerCreator.Configure
 			            var pp = preFilterDataItem.Properties.FirstOrDefault(t => t.Name == "Id");
 			            if (pp != null)
 				            dataItemContent += File.ReadAllText(_configuration.InputPath +
-				                                                @"Repository\DataItems\DataItemGetSetPart.txt").DoReplaces(null, null, string.Empty, pp.Type, pp.Name);
+				                                                @"Repository\DataItems\DataItemGetSetPart.txt").DoReplacesClient(null, null, string.Empty, pp.Type, pp.Name);
 					}
 	            }
 
@@ -214,7 +214,7 @@ namespace PlusLayerCreator.Configure
                     }
 
                     dataItemContent += File.ReadAllText(_configuration.InputPath +
-														@"Repository\DataItems\DataItemGetSetPart.txt").DoReplaces(null, null, string.Empty, plusDataObject.Type, plusDataObject.Name);
+														@"Repository\DataItems\DataItemGetSetPart.txt").DoReplacesClient(null, null, string.Empty, plusDataObject.Type, plusDataObject.Name);
                 }
 
 	            foreach (var childDataItem in _configuration.DataLayout.Where(t => t.Parent == dataItem.Name))
@@ -222,7 +222,7 @@ namespace PlusLayerCreator.Configure
 					dataItemContent +=
 			            File.ReadAllText(_configuration.InputPath +
 			                             @"Repository\DataItems\DataItemCollectionPart.txt")
-				            .DoReplaces(childDataItem) + "\r\n";
+				            .DoReplacesClient(childDataItem) + "\r\n";
 				}
 
 
@@ -250,7 +250,7 @@ namespace PlusLayerCreator.Configure
                     itemContent += plusDataObject.Name + " = dataItem." + plusDataObject.Name + ",\r\n";
                 }
 
-                factoryContent += _createRepositoryDtoTemplatePart.DoReplaces(dataItem)
+                factoryContent += _createRepositoryDtoTemplatePart.DoReplacesClient(dataItem)
                                       .ReplaceSpecialContent(new[] {itemContent}) + "\r\n";
             }
 
@@ -270,7 +270,7 @@ namespace PlusLayerCreator.Configure
                 foreach (var plusDataObject in dataItem.Properties)
                     itemContent += plusDataObject.Name + " = dto." + plusDataObject.Name + ",\r\n";
                 factoryContent +=
-                    _createDataItemTemplatePart.DoReplaces(dataItem).ReplaceSpecialContent(new[] {itemContent}) +
+                    _createDataItemTemplatePart.DoReplacesClient(dataItem).ReplaceSpecialContent(new[] {itemContent}) +
                     "\r\n";
             }
 
@@ -289,13 +289,13 @@ namespace PlusLayerCreator.Configure
         {
             return File.ReadAllText(_configuration.InputPath + @"Repository\Contracts\" + template)
                 .ReplaceSpecialContent(new[] { GetPreFilterInformation(item, "parameter"), GetGetItemsInformation(item, 1) })
-                .DoReplaces(item) + "\r\n\r\n";
+                .DoReplacesClient(item) + "\r\n\r\n";
         }
 
 	    private string GetChildList(ConfigurationItem item, ConfigurationItem childDataItem)
 	    {
 		    return File.ReadAllText(_configuration.InputPath + @"Repository\GetChildListPart.txt")
-			           .DoReplaces(item, childDataItem) + "\r\n\r\n";
+			           .DoReplacesClient(item, childDataItem) + "\r\n\r\n";
 		}
 
         private string GetRepositoryGetPart(ConfigurationItem item, string template)
@@ -317,7 +317,7 @@ namespace PlusLayerCreator.Configure
                         GetPreFilterInformation(item, "listCall"),
                         GetGetItemsInformation(item, 3)
                     })
-                    .DoReplaces(item) + "\r\n\r\n";
+                    .DoReplacesClient(item) + "\r\n\r\n";
         }
 
         private string GetGetItemsInformation(ConfigurationItem item, int part)

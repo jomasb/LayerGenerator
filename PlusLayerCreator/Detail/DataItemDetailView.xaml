@@ -12,90 +12,173 @@
              mvvm:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d">
 	<UserControl.Resources>
-		<plusLayerCreator:InvertedMultiBoolConverter ConcatenationOperator="OR" x:Key="InvertedMultiBoolOrConverter" />
+		<plusLayerCreator:InvertedMultiBoolConverter x:Key="InvertedMultiBoolOrConverter" ConcatenationOperator="OR" />
 	</UserControl.Resources>
 
 	<plus:PlusExpandableHeader Header="Item Details">
-		<plus:PlusFormPanel>
-			<plus:PlusFormRow Label="Order">
-				<plus:PlusLabel Content="{Binding DataItem.Order}" />
-			</plus:PlusFormRow>
-			<plus:PlusFormRow Label="Name">
-				<plus:PlusTextBox Text="{Binding DataItem.Name, UpdateSourceTrigger=PropertyChanged}" />
-			</plus:PlusFormRow>
-			<plus:PlusFormRow Label="Translation">
-				<plus:PlusTextBox Text="{Binding DataItem.Translation, UpdateSourceTrigger=PropertyChanged}" />
-			</plus:PlusFormRow>
-			<plus:PlusFormRow Label="Parent">
-				<plus:PlusTextBox Text="{Binding DataItem.Parent, UpdateSourceTrigger=PropertyChanged}" />
-			</plus:PlusFormRow>
-			<plus:PlusFormRow Label="IsPreFilterItem">
-				<plus:PlusCheckBox IsChecked="{Binding DataItem.IsPreFilterItem}" />
-			</plus:PlusFormRow>
-			<plus:PlusFormRow Label="IsDetailComboBoxItem">
-				<plus:PlusCheckBox IsChecked="{Binding DataItem.IsDetailComboBoxItem}" />
-			</plus:PlusFormRow>
-			<plus:PlusFormRow Label="CanEdit">
-				<plus:PlusCheckBox IsChecked="{Binding DataItem.CanEdit}">
-					<plus:PlusCheckBox.IsEnabled>
-						<MultiBinding Converter="{StaticResource InvertedMultiBoolOrConverter}">
-							<Binding Path="DataItem.IsPreFilterItem" />
-							<Binding Path="DataItem.IsDetailComboBoxItem" />
-						</MultiBinding>
-					</plus:PlusCheckBox.IsEnabled>
-				</plus:PlusCheckBox>
-			</plus:PlusFormRow>
-			<plus:PlusFormRow Label="CanEditMultiple">
-				<plus:PlusCheckBox IsChecked="{Binding DataItem.CanEditMultiple}" IsEnabled="{Binding DataItem.CanEdit}" />
-			</plus:PlusFormRow>
-			<plus:PlusFormRow Label="CanDelete">
-				<plus:PlusCheckBox IsChecked="{Binding DataItem.CanDelete}">
-					<plus:PlusCheckBox.IsEnabled>
-						<MultiBinding Converter="{StaticResource InvertedMultiBoolOrConverter}">
-							<Binding Path="DataItem.IsPreFilterItem" />
-							<Binding Path="DataItem.IsDetailComboBoxItem" />
-						</MultiBinding>
-					</plus:PlusCheckBox.IsEnabled>
-				</plus:PlusCheckBox>
-			</plus:PlusFormRow>
-			<plus:PlusFormRow Label="CanClone">
-				<plus:PlusCheckBox IsChecked="{Binding DataItem.CanClone}">
-					<plus:PlusCheckBox.IsEnabled>
-						<MultiBinding Converter="{StaticResource InvertedMultiBoolOrConverter}">
-							<Binding Path="DataItem.IsPreFilterItem" />
-							<Binding Path="DataItem.IsDetailComboBoxItem" />
-						</MultiBinding>
-					</plus:PlusCheckBox.IsEnabled>
-				</plus:PlusCheckBox>
-			</plus:PlusFormRow>
-			<plus:PlusFormRow Label="CanSort">
-				<plus:PlusCheckBox IsChecked="{Binding DataItem.CanSort}">
-					<plus:PlusCheckBox.IsEnabled>
-						<MultiBinding Converter="{StaticResource InvertedMultiBoolOrConverter}">
-							<Binding Path="DataItem.IsPreFilterItem" />
-							<Binding Path="DataItem.IsDetailComboBoxItem" />
-						</MultiBinding>
-					</plus:PlusCheckBox.IsEnabled>
-				</plus:PlusCheckBox>
-			</plus:PlusFormRow>
-			<plus:PlusFormRow Label="Server">
-				<plus:PlusTextBox Text="{Binding DataItem.Server, UpdateSourceTrigger=PropertyChanged}" />
-			</plus:PlusFormRow>
-			<plus:PlusFormRow Label="RepRplRead">
-				<plus:PlusTextBox Text="{Binding DataItem.RepRplRead, UpdateSourceTrigger=PropertyChanged}" />
-			</plus:PlusFormRow>
-			<plus:PlusFormRow Label="RepRplWrite">
-				<plus:PlusTextBox IsEnabled="{Binding DataItem.IsPreFilterItem, Converter={StaticResource InvertBoolConverter}}" Text="{Binding DataItem.RepRplWrite, UpdateSourceTrigger=PropertyChanged}" />
-			</plus:PlusFormRow>
-			<plus:PlusFormRow Label="TransactionCodeRead">
-				<plus:PlusTextBox Text="{Binding DataItem.TransactionCodeRead, UpdateSourceTrigger=PropertyChanged}" />
-			</plus:PlusFormRow>
-			<plus:PlusFormRow Label="TransactionCodeWrite">
-				<plus:PlusTextBox IsEnabled="{Binding DataItem.IsPreFilterItem, Converter={StaticResource InvertBoolConverter}}" Text="{Binding DataItem.TransactionCodeWrite, UpdateSourceTrigger=PropertyChanged}" />
-			</plus:PlusFormRow>
-			<plus:PlusFormRow Label="TableCountProperty">
-				<plus:PlusTextBox Text="{Binding DataItem.TableCountProperty, UpdateSourceTrigger=PropertyChanged}" />
-			</plus:PlusFormRow>
-		</plus:PlusFormPanel>
+		<StackPanel>
+			<plus:PlusExpander Header="Client" IsExpanded="True">
+				<plus:PlusFormPanel>
+					<plus:PlusFormRow Label="Order">
+						<plus:PlusLabel Content="{Binding DataItem.Order}" />
+					</plus:PlusFormRow>
+					<plus:PlusFormRow Label="Name">
+						<plus:PlusTextBox Text="{Binding DataItem.Name, UpdateSourceTrigger=PropertyChanged}" />
+					</plus:PlusFormRow>
+					<plus:PlusFormRow Label="Translation">
+						<plus:PlusTextBox Text="{Binding DataItem.Translation, UpdateSourceTrigger=PropertyChanged}" />
+					</plus:PlusFormRow>
+					<plus:PlusFormRow Label="Parent">
+						<plus:PlusTextBox Text="{Binding DataItem.Parent, UpdateSourceTrigger=PropertyChanged}" />
+					</plus:PlusFormRow>
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+						</Grid.RowDefinitions>
+
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="10" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+
+
+						<plus:PlusFormRow Label="IsPreFilterItem">
+							<plus:PlusCheckBox IsChecked="{Binding DataItem.IsPreFilterItem}" />
+						</plus:PlusFormRow>
+						<plus:PlusFormRow Grid.Row="0"
+						                  Grid.Column="2"
+						                  Label="IsDetailComboBoxItem">
+							<plus:PlusCheckBox IsChecked="{Binding DataItem.IsDetailComboBoxItem}" />
+						</plus:PlusFormRow>
+						<plus:PlusFormRow Grid.Row="1"
+						                  Grid.Column="0"
+						                  Label="CanEdit">
+							<plus:PlusCheckBox IsChecked="{Binding DataItem.CanEdit}">
+								<plus:PlusCheckBox.IsEnabled>
+									<MultiBinding Converter="{StaticResource InvertedMultiBoolOrConverter}">
+										<Binding Path="DataItem.IsPreFilterItem" />
+										<Binding Path="DataItem.IsDetailComboBoxItem" />
+									</MultiBinding>
+								</plus:PlusCheckBox.IsEnabled>
+							</plus:PlusCheckBox>
+						</plus:PlusFormRow>
+						<plus:PlusFormRow Grid.Row="1"
+						                  Grid.Column="2"
+						                  Label="CanEditMultiple">
+							<plus:PlusCheckBox IsChecked="{Binding DataItem.CanEditMultiple}" IsEnabled="{Binding DataItem.CanEdit}" />
+						</plus:PlusFormRow>
+						<plus:PlusFormRow Grid.Row="2"
+						                  Grid.Column="0"
+						                  Label="CanDelete">
+							<plus:PlusCheckBox IsChecked="{Binding DataItem.CanDelete}">
+								<plus:PlusCheckBox.IsEnabled>
+									<MultiBinding Converter="{StaticResource InvertedMultiBoolOrConverter}">
+										<Binding Path="DataItem.IsPreFilterItem" />
+										<Binding Path="DataItem.IsDetailComboBoxItem" />
+									</MultiBinding>
+								</plus:PlusCheckBox.IsEnabled>
+							</plus:PlusCheckBox>
+						</plus:PlusFormRow>
+						<plus:PlusFormRow Grid.Row="2"
+						                  Grid.Column="2"
+						                  Label="CanClone">
+							<plus:PlusCheckBox IsChecked="{Binding DataItem.CanClone}">
+								<plus:PlusCheckBox.IsEnabled>
+									<MultiBinding Converter="{StaticResource InvertedMultiBoolOrConverter}">
+										<Binding Path="DataItem.IsPreFilterItem" />
+										<Binding Path="DataItem.IsDetailComboBoxItem" />
+									</MultiBinding>
+								</plus:PlusCheckBox.IsEnabled>
+							</plus:PlusCheckBox>
+						</plus:PlusFormRow>
+						<plus:PlusFormRow Grid.Row="3"
+						                  Grid.Column="0"
+						                  Label="CanSort">
+							<plus:PlusCheckBox IsChecked="{Binding DataItem.CanSort}">
+								<plus:PlusCheckBox.IsEnabled>
+									<MultiBinding Converter="{StaticResource InvertedMultiBoolOrConverter}">
+										<Binding Path="DataItem.IsPreFilterItem" />
+										<Binding Path="DataItem.IsDetailComboBoxItem" />
+									</MultiBinding>
+								</plus:PlusCheckBox.IsEnabled>
+							</plus:PlusCheckBox>
+						</plus:PlusFormRow>
+					</Grid>
+
+				</plus:PlusFormPanel>
+			</plus:PlusExpander>
+			<plus:PlusExpander Header="Server" IsExpanded="False">
+				<plus:PlusFormPanel>
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+						</Grid.RowDefinitions>
+
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="10" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+						<plus:PlusFormRow Grid.Row="0"
+						                  Grid.Column="0"
+						                  Label="Requirement">
+							<plus:PlusTextBox Text="{Binding DataItem.Requirement, UpdateSourceTrigger=PropertyChanged}" />
+						</plus:PlusFormRow>
+						<plus:PlusFormRow Grid.Row="0"
+						                  Grid.Column="2"
+						                  Label="Sys">
+							<plus:PlusTextBox Text="{Binding DataItem.Sys, UpdateSourceTrigger=PropertyChanged}" />
+						</plus:PlusFormRow>
+						<plus:PlusFormRow Grid.Row="1"
+						                  Grid.Column="0"
+						                  Label="Server">
+							<plus:PlusTextBox Text="{Binding DataItem.Server, UpdateSourceTrigger=PropertyChanged}" />
+						</plus:PlusFormRow>
+						<plus:PlusFormRow Grid.Row="1"
+						                  Grid.Column="2"
+						                  Label="Table">
+							<plus:PlusTextBox Text="{Binding DataItem.Table, UpdateSourceTrigger=PropertyChanged}" />
+						</plus:PlusFormRow>
+						<plus:PlusFormRow Grid.Row="2"
+						                  Grid.Column="0"
+						                  Grid.ColumnSpan="3"
+						                  Label="Table Description">
+							<plus:PlusTextBox Text="{Binding DataItem.TableDescription, UpdateSourceTrigger=PropertyChanged}" />
+						</plus:PlusFormRow>
+						<plus:PlusFormRow Grid.Row="3"
+						                  Grid.Column="0"
+						                  Label="RepRplRead">
+							<plus:PlusTextBox Text="{Binding DataItem.RepRplRead, UpdateSourceTrigger=PropertyChanged}" />
+						</plus:PlusFormRow>
+						<plus:PlusFormRow Grid.Row="3"
+						                  Grid.Column="2"
+						                  Label="RepRplWrite">
+							<plus:PlusTextBox IsEnabled="{Binding DataItem.IsPreFilterItem, Converter={StaticResource InvertBoolConverter}}" Text="{Binding DataItem.RepRplWrite, UpdateSourceTrigger=PropertyChanged}" />
+						</plus:PlusFormRow>
+						<plus:PlusFormRow Grid.Row="4"
+						                  Grid.Column="0"
+						                  IsEnabled="False"
+						                  Label="TransactionCodeRead">
+							<plus:PlusTextBox Text="{Binding DataItem.TransactionCodeRead, UpdateSourceTrigger=PropertyChanged}" />
+						</plus:PlusFormRow>
+						<plus:PlusFormRow Grid.Row="4"
+						                  Grid.Column="2"
+						                  IsEnabled="False"
+						                  Label="TransactionCodeWrite">
+							<plus:PlusTextBox IsEnabled="{Binding DataItem.IsPreFilterItem, Converter={StaticResource InvertBoolConverter}}" Text="{Binding DataItem.TransactionCodeWrite, UpdateSourceTrigger=PropertyChanged}" />
+						</plus:PlusFormRow>
+					</Grid>
+				</plus:PlusFormPanel>
+			</plus:PlusExpander>
+		</StackPanel>
 	</plus:PlusExpandableHeader>
 </UserControl>

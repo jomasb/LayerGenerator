@@ -225,27 +225,27 @@ namespace PlusLayerCreator.Configure
                             out var propertyFilterMultiSelectorsInitializeContent);
 
                         filterMembersContent +=
-                            propertyFilterMembersContent.DoReplaces(dataItem, null, plusDataObject.Name, 
+                            propertyFilterMembersContent.DoReplacesClient(dataItem, null, plusDataObject.Name, 
                                 plusDataObject.Type);
                         filterPredicatesContent +=
-                            propertyFilterPredicatesContent.DoReplaces(dataItem, null, plusDataObject.Name, 
+                            propertyFilterPredicatesContent.DoReplacesClient(dataItem, null, plusDataObject.Name, 
                                 plusDataObject.Type);
                         filterPredicateResetContent +=
-                            propertyFilterPredicateResetContent.DoReplaces(dataItem, null, plusDataObject.Name, 
+                            propertyFilterPredicateResetContent.DoReplacesClient(dataItem, null, plusDataObject.Name, 
                                 plusDataObject.Type);
                         filterMultiSelectorsInitializeContent +=
-                            propertyFilterMultiSelectorsInitializeContent.DoReplaces(dataItem, null, plusDataObject.Name, 
+                            propertyFilterMultiSelectorsInitializeContent.DoReplacesClient(dataItem, null, plusDataObject.Name, 
                                 plusDataObject.Type);
                         filterPropertiesContent +=
-                            propertyFilterPropertiesContent.DoReplaces(dataItem, null, plusDataObject.Name);
+                            propertyFilterPropertiesContent.DoReplacesClient(dataItem, null, plusDataObject.Name);
                         filterViewContent +=
-                            propertyFilterXamlContent.DoReplaces(dataItem, null, plusDataObject.Name,  plusDataObject.Type);
+                            propertyFilterXamlContent.DoReplacesClient(dataItem, null, plusDataObject.Name,  plusDataObject.Type);
                     }
 
                 filterViewContent += "</StackPanel>\r\n";
 
                 var childViewModel = Helpers.FilterChildViewModelTemplate;
-                childViewModel = childViewModel.DoReplaces(dataItem);
+                childViewModel = childViewModel.DoReplacesClient(dataItem);
                 childViewModel = childViewModel.Replace("$filterMembers$", filterMembersContent);
                 childViewModel = childViewModel.Replace("$filterPredicates$", filterPredicatesContent);
                 childViewModel = childViewModel.Replace("$filterPredicateReset$", filterPredicateResetContent);
@@ -326,7 +326,7 @@ namespace PlusLayerCreator.Configure
                 {
                     toolbarViewContent +=
                         (File.ReadAllText(_configuration.InputPath + @"UI\Regions\Toolbar\ToolbarAddButtonPart.txt") +
-                         "\r\n").DoReplaces(dataItem);
+                         "\r\n").DoReplacesClient(dataItem);
                     
                 }   
             }
@@ -338,7 +338,7 @@ namespace PlusLayerCreator.Configure
                     toolbarViewContent +=
                         (File.ReadAllText(_configuration.InputPath +
                                           @"UI\Regions\Toolbar\ToolbarAddVersionButtonPart.txt") + "\r\n")
-                        .DoReplaces(dataItem);
+                        .DoReplacesClient(dataItem);
                 }
             }
 
@@ -417,11 +417,11 @@ namespace PlusLayerCreator.Configure
 					{
 
 						ConfigurationItem propertyItem = _configuration.DataLayout.First(t => t.Name == property.Name);
-						memberContent += _detailViewModelComboBoxMember.DoReplaces(propertyItem);
-						constructorListContent += _detailViewModelComboBoxConstructorListLoad.DoReplaces(propertyItem);
-						propetiesContent += _detailViewModelComboBoxProperties.DoReplaces(propertyItem);
-						onNavigatedToContent += _detailViewModelComboBoxOnNavigatedTo.DoReplaces(propertyItem);
-						lazyLoadingContent += _detailViewModelComboBoxOnRegisteredLazyCollectionLoaded.DoReplaces(propertyItem);
+						memberContent += _detailViewModelComboBoxMember.DoReplacesClient(propertyItem);
+						constructorListContent += _detailViewModelComboBoxConstructorListLoad.DoReplacesClient(propertyItem);
+						propetiesContent += _detailViewModelComboBoxProperties.DoReplacesClient(propertyItem);
+						onNavigatedToContent += _detailViewModelComboBoxOnNavigatedTo.DoReplacesClient(propertyItem);
+						lazyLoadingContent += _detailViewModelComboBoxOnRegisteredLazyCollectionLoaded.DoReplacesClient(propertyItem);
 					}
 
 		            detailViewContent += GetItemControl(dataItem, property);
@@ -503,7 +503,7 @@ namespace PlusLayerCreator.Configure
                     startOrder = preFilterItem.Order + 1;
                     preFilterItemContent +=
                         File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\PreFilterItemPart.txt")
-                            .DoReplaces(preFilterItem);
+                            .DoReplacesClient(preFilterItem);
                 }
 
                 masterViewContent += preFilterContent.ReplaceSpecialContent(new[] {preFilterItemContent});
@@ -528,7 +528,7 @@ namespace PlusLayerCreator.Configure
                     gridTemplate = _masterGridReadonlyTemplate;
                 }
 
-                var gridContent = gridTemplate.DoReplaces(dataItem);
+                var gridContent = gridTemplate.DoReplacesClient(dataItem);
                 masterViewContent +=
                     gridContent.ReplaceSpecialContent(new[] {GetGridXaml(dataItem), rowNumber.ToString()});
                 masterViewCodeBehindContent +=
@@ -547,11 +547,11 @@ namespace PlusLayerCreator.Configure
                     masterViewCodeBehindContent +=
                         "viewModel.ColumnProvider = Filtered" + master.Name + "rGridView;\r\n\r\n";
 
-                    var gridContent = _masterGridVersionTemplate.DoReplaces(master);
+                    var gridContent = _masterGridVersionTemplate.DoReplacesClient(master);
                     masterViewContent +=
                         gridContent.ReplaceSpecialContent(new[] {GetGridXaml(master, true), rowNumber.ToString()});
                     masterViewResourcesContent = _masterGridVersionResourcesTemplate
-                        .Replace("$specialContent1$", GetGridXaml(version, true)).DoReplaces(master);
+                        .Replace("$specialContent1$", GetGridXaml(version, true)).DoReplacesClient(master);
                 }
                 else
                 {
@@ -561,7 +561,7 @@ namespace PlusLayerCreator.Configure
                         gridTemplate = _masterGridTemplate;
                     else
                         gridTemplate = _masterGridReadonlyTemplate;
-                    var gridContent = gridTemplate.DoReplaces(dataItem);
+                    var gridContent = gridTemplate.DoReplacesClient(dataItem);
                     masterViewContent +=
                         gridContent.ReplaceSpecialContent(new[] {GetGridXaml(dataItem), rowNumber.ToString()});
                     masterViewCodeBehindContent +=
@@ -586,18 +586,18 @@ namespace PlusLayerCreator.Configure
                     {
                         gridContent = File
                             .ReadAllText(_configuration.InputPath + @"UI\Regions\Master\Grid\ChildGridMultiPart.txt")
-                            .DoReplaces(dataItem);
+                            .DoReplacesClient(dataItem);
 
                         if (dataItem.CanSort)
                             buttons = File
                                 .ReadAllText(_configuration.InputPath +
                                              @"UI\Regions\Master\Grid\Toolbar\ChildGridCommandWithSortButtons.txt")
-                                .DoReplaces(dataItem);
+                                .DoReplacesClient(dataItem);
                         else
                             buttons = File
                                 .ReadAllText(_configuration.InputPath +
                                              @"UI\Regions\Master\Grid\Toolbar\ChildGridCommandButtons.txt")
-                                .DoReplaces(dataItem);
+                                .DoReplacesClient(dataItem);
                         masterViewContent +=
                             gridContent.ReplaceSpecialContent(new[] {columns, buttons, rowNumber.ToString()});
                     }
@@ -605,11 +605,11 @@ namespace PlusLayerCreator.Configure
                     {
                         gridContent = File
                             .ReadAllText(_configuration.InputPath + @"UI\Regions\Master\Grid\ChildGridPart.txt")
-                            .DoReplaces(dataItem);
+                            .DoReplacesClient(dataItem);
                         buttons = File
                             .ReadAllText(_configuration.InputPath +
                                          @"UI\Regions\Master\Grid\Toolbar\ChildGridCommandButtons.txt")
-                            .DoReplaces(dataItem);
+                            .DoReplacesClient(dataItem);
                         masterViewContent +=
                             gridContent.ReplaceSpecialContent(new[] {columns, buttons, rowNumber.ToString()});
                     }
@@ -648,7 +648,7 @@ namespace PlusLayerCreator.Configure
 
             initializeContent += "CommandService.SubscribeCommand(GlobalCommandNames.OpenSettingsDialogCommand, OpenSettingsDialogCommandExecuted);\r\n";
             initializeContent += "CommandService.SubscribeCommand(GlobalCommandNames.RefreshCommand, RefreshCommandExecuted, RefreshCommandCanExecute);\r\n";
-            membersContent += "private readonly I$Product$$Dialog$Repository _$product$$Dialog$Repository;".DoReplaces();
+            membersContent += "private readonly I$Product$$Dialog$Repository _$product$$Dialog$Repository;".DoReplacesClient();
 
             foreach (var configurationItem in _configuration.DataLayout)
             {
@@ -656,15 +656,15 @@ namespace PlusLayerCreator.Configure
                 {
                     resetNavigationContent = GetResetNavigationContent(configurationItem) + resetNavigationContent;
                     lazyLoadingContent += GetLazyLoadingPart(configurationItem);
-                    navigationContent += _masterViewModelNavigation.DoReplaces(configurationItem);
-                    membersContent += "private $Product$$Item$DataItem _selected$Item$DataItem;\r\n".DoReplaces(configurationItem);
+                    navigationContent += _masterViewModelNavigation.DoReplacesClient(configurationItem);
+                    membersContent += "private $Product$$Item$DataItem _selected$Item$DataItem;\r\n".DoReplacesClient(configurationItem);
 
                     string childListContent = string.Empty;
                     foreach (var child in _configuration.DataLayout.Where(t => t.Parent == configurationItem.Name))
                     {
-                        childListContent += _masterViewModelSelectedItemChildList.DoReplaces(configurationItem, child);
+                        childListContent += _masterViewModelSelectedItemChildList.DoReplacesClient(configurationItem, child);
                     }
-                    propertiesContent += _masterViewModelSelectedItem.ReplaceSpecialContent(new[] { childListContent }).DoReplaces(configurationItem);
+                    propertiesContent += _masterViewModelSelectedItem.ReplaceSpecialContent(new[] { childListContent }).DoReplacesClient(configurationItem);
 
                     if (configurationItem.Properties.Any(t => t.IsFilterProperty))
                     {
@@ -676,10 +676,10 @@ namespace PlusLayerCreator.Configure
                         if (string.IsNullOrEmpty(configurationItem.Parent))
                         {
                             string selectPart = _configuration.DataLayout.Any(t => t.Name.EndsWith("Version"))
-                                ? _masterViewModelLazyLoadingCollectionSelectVersion.DoReplaces(configurationItem)
-                                : _masterViewModelLazyLoadingCollectionSelect.DoReplaces(configurationItem);
+                                ? _masterViewModelLazyLoadingCollectionSelectVersion.DoReplacesClient(configurationItem)
+                                : _masterViewModelLazyLoadingCollectionSelect.DoReplacesClient(configurationItem);
 
-                            lazyLoadingCollectionContent += _masterViewModelLazyLoadingCollection.ReplaceSpecialContent(new []{selectPart}).DoReplaces(configurationItem);
+                            lazyLoadingCollectionContent += _masterViewModelLazyLoadingCollection.ReplaceSpecialContent(new []{selectPart}).DoReplacesClient(configurationItem);
                             
                             
                             if (configurationItem.CanEdit)
@@ -695,51 +695,51 @@ namespace PlusLayerCreator.Configure
                         }
                         else
                         {
-                            initializeContent += _masterViewModelChildItemSettingsCommand.DoReplaces(configurationItem);
+                            initializeContent += _masterViewModelChildItemSettingsCommand.DoReplacesClient(configurationItem);
                             propertiesContent +=
-                                _masterViewModelOpenChildItemSettingsDialogCommand.DoReplaces(configurationItem);
-                            propertiesContent += _masterViewModelItemFilterCollection.DoReplaces(configurationItem);
-                            propertiesContent += _masterViewModelItemColumnProvider.DoReplaces(configurationItem);
+                                _masterViewModelOpenChildItemSettingsDialogCommand.DoReplacesClient(configurationItem);
+                            propertiesContent += _masterViewModelItemFilterCollection.DoReplacesClient(configurationItem);
+                            propertiesContent += _masterViewModelItemColumnProvider.DoReplacesClient(configurationItem);
 
                             if (configurationItem.CanEdit)
                             {
-                                initializeContent += "Add$Item$Command = CommandService.GetCommand(CommandNames.Add$Item$Command);\r\n".DoReplaces(configurationItem);
-                                initializeContent += "CommandService.SubscribeAsyncCommand(CommandNames.Add$Item$Command, Add$Item$CommandExecuted, Add$Item$CommandCanExecute);\r\n".DoReplaces(configurationItem);
+                                initializeContent += "Add$Item$Command = CommandService.GetCommand(CommandNames.Add$Item$Command);\r\n".DoReplacesClient(configurationItem);
+                                initializeContent += "CommandService.SubscribeAsyncCommand(CommandNames.Add$Item$Command, Add$Item$CommandExecuted, Add$Item$CommandCanExecute);\r\n".DoReplacesClient(configurationItem);
                                 commandContent += GetAddCommand(configurationItem);
-                                propertiesContent += "public IPlusCommand Add$Item$Command { get; set; }\r\n".DoReplaces(configurationItem);
+                                propertiesContent += "public IPlusCommand Add$Item$Command { get; set; }\r\n".DoReplacesClient(configurationItem);
                             }
                             if (configurationItem.CanDelete)
                             {
-                                initializeContent += "Delete$Item$Command = CommandService.GetCommand(CommandNames.Delete$Item$Command);\r\n".DoReplaces(configurationItem);
-                                initializeContent += "CommandService.SubscribeAsyncCommand(CommandNames.Delete$Item$Command, Delete$Item$CommandExecuted, Delete$Item$CommandCanExecute);\r\n".DoReplaces(configurationItem);
+                                initializeContent += "Delete$Item$Command = CommandService.GetCommand(CommandNames.Delete$Item$Command);\r\n".DoReplacesClient(configurationItem);
+                                initializeContent += "CommandService.SubscribeAsyncCommand(CommandNames.Delete$Item$Command, Delete$Item$CommandExecuted, Delete$Item$CommandCanExecute);\r\n".DoReplacesClient(configurationItem);
                                 commandContent += GetDeleteCommand(configurationItem);
-                                propertiesContent += "public IPlusCommand Delete$Item$Command { get; set; }\r\n".DoReplaces(configurationItem);
+                                propertiesContent += "public IPlusCommand Delete$Item$Command { get; set; }\r\n".DoReplacesClient(configurationItem);
                             }
                         }
                     }
                     else
                     {
-                        membersContent += "private PlusStateDataItem _activeItem;\r\n".DoReplaces(configurationItem);
+                        membersContent += "private PlusStateDataItem _activeItem;\r\n".DoReplacesClient(configurationItem);
                         initializeContent += "CommandService.SubscribeAsyncCommand(GlobalCommandNames.AddVersionCommand, AddVersionCommandExecuted, AddVersionCommandCanExecute);\r\n";
                         commandContent += GetAddCommand(configurationItem);
-                        propertiesContent += _masterViewModelActiveItem.DoReplaces(_configuration.DataLayout.First(t => t.Name == configurationItem.Parent));
+                        propertiesContent += _masterViewModelActiveItem.DoReplacesClient(_configuration.DataLayout.First(t => t.Name == configurationItem.Parent));
                     }
 
                     if (configurationItem.Properties.Any(t => t.IsFilterProperty))
                     {
-                        filterSourceProviderContent += _masterViewModelFilterSourceProvider.DoReplaces(configurationItem);
-                        string filter = _masterViewModelLazyLoadingFilter.DoReplaces(configurationItem);
+                        filterSourceProviderContent += _masterViewModelFilterSourceProvider.DoReplacesClient(configurationItem);
+                        string filter = _masterViewModelLazyLoadingFilter.DoReplacesClient(configurationItem);
 
                     }
                     
                     if (configurationItem.CanSort)
                     {
-                        initializeContent += "Sort$Item$UpCommand = CommandService.GetCommand(CommandNames.Sort$Item$UpCommand);\r\n".DoReplaces(configurationItem);
-                        initializeContent += "Sort$Item$DownCommand = CommandService.GetCommand(CommandNames.Sort$Item$DownCommand);\r\n".DoReplaces(configurationItem);
-                        initializeContent += "CommandService.SubscribeAsyncCommand(CommandNames.Sort$Item$UpCommand, Sort$Item$UpCommandExecuted, Sort$Item$UpCommandCanExecute);\r\n".DoReplaces(configurationItem);
-                        initializeContent += "CommandService.SubscribeAsyncCommand(CommandNames.Sort$Item$DownCommand, Sort$Item$DownCommandExecuted, Sort$Item$DownCommandCanExecute);\r\n".DoReplaces(configurationItem);
-                        propertiesContent += "public IPlusCommand Sort$Item$UpCommand { get; set; }\r\n".DoReplaces(configurationItem);
-                        propertiesContent += "public IPlusCommand Sort$Item$DownCommand { get; set; }\r\n".DoReplaces(configurationItem);
+                        initializeContent += "Sort$Item$UpCommand = CommandService.GetCommand(CommandNames.Sort$Item$UpCommand);\r\n".DoReplacesClient(configurationItem);
+                        initializeContent += "Sort$Item$DownCommand = CommandService.GetCommand(CommandNames.Sort$Item$DownCommand);\r\n".DoReplacesClient(configurationItem);
+                        initializeContent += "CommandService.SubscribeAsyncCommand(CommandNames.Sort$Item$UpCommand, Sort$Item$UpCommandExecuted, Sort$Item$UpCommandCanExecute);\r\n".DoReplacesClient(configurationItem);
+                        initializeContent += "CommandService.SubscribeAsyncCommand(CommandNames.Sort$Item$DownCommand, Sort$Item$DownCommandExecuted, Sort$Item$DownCommandCanExecute);\r\n".DoReplacesClient(configurationItem);
+                        propertiesContent += "public IPlusCommand Sort$Item$UpCommand { get; set; }\r\n".DoReplacesClient(configurationItem);
+                        propertiesContent += "public IPlusCommand Sort$Item$DownCommand { get; set; }\r\n".DoReplacesClient(configurationItem);
                         commandContent += GetSortCommand(configurationItem);
                     }
                 }
@@ -748,27 +748,27 @@ namespace PlusLayerCreator.Configure
                 {
                     membersContent +=
                         "private PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem> _$product$$Item$DataItemsList;\r\n"
-                            .DoReplaces(configurationItem);
-                    propertiesContent += _masterViewModelItemsList.DoReplaces(configurationItem);
+                            .DoReplacesClient(configurationItem);
+                    propertiesContent += _masterViewModelItemsList.DoReplacesClient(configurationItem);
                 }
 
 	            if (configurationItem.Name != masterItem.Name)
 	            {
-		            lazyLoadingCollectionContent += _masterViewModelLazyLoadingChildCollection.ReplaceSpecialContent(new[] { string.Empty }).DoReplaces(configurationItem);
+		            lazyLoadingCollectionContent += _masterViewModelLazyLoadingChildCollection.ReplaceSpecialContent(new[] { string.Empty }).DoReplacesClient(configurationItem);
 	            }
 			}
 
             if (_configuration.DataLayout.Any(t => t.CanEdit))
             {
-                methodsContent += _masterViewModelMainCollectionHasAnyChanges.DoReplaces(masterItem);
-                membersContent += "private PropertyObserver<PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem>> _isDirtyObserver;\r\n".DoReplaces(masterItem);
+                methodsContent += _masterViewModelMainCollectionHasAnyChanges.DoReplacesClient(masterItem);
+                membersContent += "private PropertyObserver<PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem>> _isDirtyObserver;\r\n".DoReplacesClient(masterItem);
                 initializeContent += "CommandService.SubscribeAsyncCommand(GlobalCommandNames.CancelCommand, CancelCommandExecuted, CancelCommandCanExecute);\r\n";
                 initializeContent += "CommandService.SubscribeAsyncCommand(GlobalCommandNames.SaveCommand, SaveCommandExecuted, SaveCommandCanExecute);\r\n";
-                commandContent += _masterViewModelCancel.DoReplaces(masterItem);
+                commandContent += _masterViewModelCancel.DoReplacesClient(masterItem);
                 if (masterItem.CanEditMultiple)
                 {
                     string preFilter = string.Empty;
-                    commandContent += _masterViewModelSaveMulti.ReplaceSpecialContent(new []{ preFilter }).DoReplaces(masterItem);
+                    commandContent += _masterViewModelSaveMulti.ReplaceSpecialContent(new []{ preFilter }).DoReplacesClient(masterItem);
                 }
                 else
                 {
@@ -785,7 +785,7 @@ namespace PlusLayerCreator.Configure
                     cloneContent += GetCloneCommand(configurationItem);
                 }
 
-                commandContent += _masterViewModelClone.ReplaceSpecialContent(new[] {cloneContent}).DoReplaces(masterItem);//TODO falsch;
+                commandContent += _masterViewModelClone.ReplaceSpecialContent(new[] {cloneContent}).DoReplacesClient(masterItem);//TODO falsch;
             }
 
             if (masterItem.CanEdit && !masterItem.CanEditMultiple)
@@ -795,7 +795,7 @@ namespace PlusLayerCreator.Configure
 
             if (!_configuration.DataLayout.Any(t => t.IsPreFilterItem))
             {
-                initializeContent += _masterViewModelInitializeItemsList.DoReplaces(masterItem);
+                initializeContent += _masterViewModelInitializeItemsList.DoReplacesClient(masterItem);
             }
             else
             {
@@ -884,7 +884,7 @@ namespace PlusLayerCreator.Configure
 				}
 			}
 
-            return retValue.DoReplaces(null, null, "DataItem." + property.Name).ReplaceSpecialContent(new[] { specialContent });
+            return retValue.DoReplacesClient(null, null, "DataItem." + property.Name).ReplaceSpecialContent(new[] { specialContent });
         }
 
         private string GetParentInformation(ConfigurationItem parent, int level)
@@ -974,12 +974,12 @@ namespace PlusLayerCreator.Configure
 
         private string GetResetNavigationContent(ConfigurationItem item)
         {
-            return _masterViewModelResetNavigation.DoReplaces(item);
+            return _masterViewModelResetNavigation.DoReplacesClient(item);
         }
 
         private string GetLazyLoadingPart(ConfigurationItem item)
         {
-			return File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\GetLazyLoadingPart.txt").DoReplaces(item);
+			return File.ReadAllText(_configuration.InputPath + @"UI\Regions\Master\ViewModel\GetLazyLoadingPart.txt").DoReplacesClient(item);
         }
 
         private string GetSortCommand(ConfigurationItem item)
@@ -999,7 +999,7 @@ namespace PlusLayerCreator.Configure
             }
 
 
-            return content.ReplaceSpecialContent(new[] { acceptPoint, isNullCheck }).DoReplaces(item);
+            return content.ReplaceSpecialContent(new[] { acceptPoint, isNullCheck }).DoReplacesClient(item);
         }
 
         private string GetSaveCommand()
@@ -1020,23 +1020,23 @@ namespace PlusLayerCreator.Configure
                 if (string.IsNullOrEmpty(item.Parent))
                 {
                     acceptPoint = _configuration.Product + item.Name + "DataItemsList";
-                    commandContent += _masterViewModelSaveCommand.ReplaceSpecialContent(new[] { saveChildPart, acceptPoint }).DoReplaces(item);
+                    commandContent += _masterViewModelSaveCommand.ReplaceSpecialContent(new[] { saveChildPart, acceptPoint }).DoReplacesClient(item);
                 }
                 else if (!item.Name.EndsWith("Version"))
                 {
                     acceptPoint = "Selected" + item.Parent + "DataItem." + item.Name + "s";
-                    commandContent += _masterViewModelSaveCommand.ReplaceSpecialContent(new[] { saveChildPart, acceptPoint }).DoReplaces(item);
+                    commandContent += _masterViewModelSaveCommand.ReplaceSpecialContent(new[] { saveChildPart, acceptPoint }).DoReplacesClient(item);
                     commandContent += " else ";
                 }
                 else
                 {
-                    commandContent += _masterViewModelSaveVersionCommand.DoReplaces(item);
+                    commandContent += _masterViewModelSaveVersionCommand.DoReplacesClient(item);
                     break;
                 }
 
             }
 
-            return content.DoReplaces().ReplaceSpecialContent(new[] { commandContent });
+            return content.DoReplacesClient().ReplaceSpecialContent(new[] { commandContent });
         }
 
         private string GetAddCommand(ConfigurationItem item)
@@ -1044,15 +1044,15 @@ namespace PlusLayerCreator.Configure
             string content = string.Empty;
             if (item.Name == _configuration.GetMasterItem().Name)
             {
-                content = _masterViewModelAdd.DoReplaces(item);
+                content = _masterViewModelAdd.DoReplacesClient(item);
             }
             else if (item.Name.EndsWith("Version"))
             {
-                content = _masterViewModelAddVersion.DoReplaces(Helpers.GetParent(item));
+                content = _masterViewModelAddVersion.DoReplacesClient(Helpers.GetParent(item));
             }
             else
             {
-                content = _masterViewModelAddChild.DoReplaces(item);
+                content = _masterViewModelAddChild.DoReplacesClient(item);
             }
 
             return content;
@@ -1077,12 +1077,12 @@ namespace PlusLayerCreator.Configure
                 content = _masterViewModelDeleteChild;
             }
 
-            return content.DoReplaces(item);
+            return content.DoReplacesClient(item);
         }
 
         private string GetCloneCommand(ConfigurationItem item)
         {
-            return _masterViewModelCloneCommand.ReplaceSpecialContent(new []{ GetItemsList(item)}).DoReplaces(item);
+            return _masterViewModelCloneCommand.ReplaceSpecialContent(new []{ GetItemsList(item)}).DoReplacesClient(item);
         }
 
         private string GetItemsList(ConfigurationItem item)

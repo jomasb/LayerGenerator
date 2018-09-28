@@ -45,10 +45,10 @@ namespace PlusLayerCreator.Configure
                     //Parent
                     interfaceReadContent +=
                         File.ReadAllText(_configuration.InputPath + @"Service\Contracts\GetPart" +
-                                            fileNameExtension + ".txt").DoReplaces(dataItem).ReplaceSpecialContent(new[] { Helpers.GetPreFilterInformation(dataItem, "parameter") }) + "\r\n\r\n";
+                                            fileNameExtension + ".txt").DoReplacesClient(dataItem).ReplaceSpecialContent(new[] { Helpers.GetPreFilterInformation(dataItem, "parameter") }) + "\r\n\r\n";
                     serviceReadContent +=
                         File.ReadAllText(_configuration.InputPath + @"Service\GetPart" + fileNameExtension + ".txt")
-                            .DoReplaces(dataItem).ReplaceSpecialContent(new[] { Helpers.GetPreFilterInformation(dataItem, "parameter"), Helpers.GetPreFilterInformation(dataItem, "listCall"), Helpers.GetPreFilterInformation(dataItem, "arguments") }) + "\r\n\r\n";
+                            .DoReplacesClient(dataItem).ReplaceSpecialContent(new[] { Helpers.GetPreFilterInformation(dataItem, "parameter"), Helpers.GetPreFilterInformation(dataItem, "listCall"), Helpers.GetPreFilterInformation(dataItem, "arguments") }) + "\r\n\r\n";
 
                     if (!withBo)
                     {
@@ -56,7 +56,7 @@ namespace PlusLayerCreator.Configure
                         serviceMockReadContent +=
                             File.ReadAllText(_configuration.InputPath + @"Service\GetPartNoBOMock.txt")
                                 .ReplaceSpecialContent(new[] { propertyAssignments, Helpers.GetPreFilterInformation(dataItem, "parameter") })
-                                .DoReplaces(dataItem) + "\r\n\r\n";
+                                .DoReplacesClient(dataItem) + "\r\n\r\n";
                     }
                 }
                 else
@@ -64,14 +64,14 @@ namespace PlusLayerCreator.Configure
                     //Child
                     var content =
                         File.ReadAllText(_configuration.InputPath + @"Service\Contracts\GetChildPart" +
-                                            fileNameExtension + ".txt").DoReplaces(dataItem) +
+                                            fileNameExtension + ".txt").DoReplacesClient(dataItem) +
                         "\r\n\r\n";
                     content = content.ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param") });
                     interfaceReadContent += content;
 
 
                     content = File.ReadAllText(_configuration.InputPath + @"Service\GetChildPart" +
-                                                fileNameExtension + ".txt").DoReplaces(dataItem) +
+                                                fileNameExtension + ".txt").DoReplacesClient(dataItem) +
                                 "\r\n\r\n";
                     content = content.ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param"), Helpers.GetParentParameter(dataItem, "call"), Helpers.GetParentParameter(dataItem, "") });
                     serviceReadContent += content;
@@ -82,7 +82,7 @@ namespace PlusLayerCreator.Configure
                         serviceMockReadContent +=
                             File.ReadAllText(_configuration.InputPath + @"Service\GetChildPartNoBOMock.txt")
                                 .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param"), propertyAssignments })
-                                .DoReplaces(dataItem) +
+                                .DoReplacesClient(dataItem) +
                             "\r\n\r\n";
                     }
                 }
@@ -94,36 +94,36 @@ namespace PlusLayerCreator.Configure
                         File.ReadAllText(_configuration.InputPath + @"Service\Contracts\SavePart" +
                                             fileNameExtension + ".txt")
                             .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param") })
-                            .DoReplaces(dataItem) + "\r\n\r\n";
+                            .DoReplacesClient(dataItem) + "\r\n\r\n";
                     serviceSaveContent +=
                         File.ReadAllText(
                                 _configuration.InputPath + @"Service\SavePart" + fileNameExtension + ".txt")
                             .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param"), Helpers.GetParentParameter(dataItem, "call"), Helpers.GetParentParameter(dataItem, "") })
-                            .DoReplaces(dataItem) + "\r\n\r\n";
+                            .DoReplacesClient(dataItem) + "\r\n\r\n";
 
                     if (!withBo)
                         serviceMockSaveContent +=
                             File.ReadAllText(_configuration.InputPath + @"Service\SavePartNoBOMock.txt")
                                 .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param") })
-                                .DoReplaces(dataItem) + "\r\n\r\n";
+                                .DoReplacesClient(dataItem) + "\r\n\r\n";
 
                     //Delete
                     interfaceSaveContent +=
                         File.ReadAllText(_configuration.InputPath + @"Service\Contracts\DeletePart" +
                                          fileNameExtension + ".txt")
                             .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param") })
-                            .DoReplaces(dataItem) + "\r\n\r\n";
+                            .DoReplacesClient(dataItem) + "\r\n\r\n";
                     serviceSaveContent +=
                         File.ReadAllText(
                                 _configuration.InputPath + @"Service\DeletePart" + fileNameExtension + ".txt")
                             .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param"), Helpers.GetParentParameter(dataItem, "call"), Helpers.GetParentParameter(dataItem, "") })
-                            .DoReplaces(dataItem) + "\r\n\r\n";
+                            .DoReplacesClient(dataItem) + "\r\n\r\n";
 
                     if (!withBo)
                         serviceMockSaveContent +=
                             File.ReadAllText(_configuration.InputPath + @"Service\DeletePartNoBOMock.txt")
                                 .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param") })
-                                .DoReplaces(dataItem) + "\r\n\r\n";
+                                .DoReplacesClient(dataItem) + "\r\n\r\n";
                 }
 
                 if (dataItem.CanEdit && dataItem.CanEditMultiple)
@@ -132,18 +132,18 @@ namespace PlusLayerCreator.Configure
                         File.ReadAllText(_configuration.InputPath + @"Service\Contracts\SaveMultiPart" +
                                             fileNameExtension + ".txt")
                             .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param") })
-                            .DoReplaces(dataItem) + "\r\n\r\n";
+                            .DoReplacesClient(dataItem) + "\r\n\r\n";
                     serviceSaveContent +=
                         File.ReadAllText(_configuration.InputPath + @"Service\SaveMultiPart" + fileNameExtension +
                                             ".txt")
                             .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param"), Helpers.GetParentParameter(dataItem, "call"), Helpers.GetParentParameter(dataItem, "") })
-                            .DoReplaces(dataItem) + "\r\n\r\n";
+                            .DoReplacesClient(dataItem) + "\r\n\r\n";
 
                     if (!withBo)
                         serviceMockSaveContent +=
                             File.ReadAllText(_configuration.InputPath + @"Service\SaveMultiPartNoBOMock.txt")
                                 .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param") })
-                                .DoReplaces(dataItem) + "\r\n\r\n";
+                                .DoReplacesClient(dataItem) + "\r\n\r\n";
                 }
 
                 if (dataItem.Name.EndsWith("Version"))
@@ -151,15 +151,15 @@ namespace PlusLayerCreator.Configure
                     {
                         interfaceSaveContent +=
                             File.ReadAllText(_configuration.InputPath + @"Service\Contracts\VersionPart" +
-                                             fileNameExtension + ".txt").DoReplaces(dataItem) + "\r\n\r\n";
+                                             fileNameExtension + ".txt").DoReplacesClient(dataItem) + "\r\n\r\n";
                         serviceSaveContent +=
                             File.ReadAllText(_configuration.InputPath + @"Service\VersionPart" + fileNameExtension +
-                                             ".txt").DoReplaces(dataItem) + "\r\n\r\n";
+                                             ".txt").DoReplacesClient(dataItem) + "\r\n\r\n";
 
                         if (!withBo)
                             serviceMockSaveContent +=
                                 File.ReadAllText(_configuration.InputPath + @"Service\VersionPartNoBOMock.txt")
-                                    .DoReplaces(dataItem) + "\r\n\r\n";
+                                    .DoReplacesClient(dataItem) + "\r\n\r\n";
                     }
 
                 var servicePath = withBo
@@ -198,20 +198,21 @@ namespace PlusLayerCreator.Configure
 	    private void CreateServerMapping(ConfigurationItem dataItem)
 	    {
 			var serverMappingWriteContent = string.Empty;
+		    string tabAnz = dataItem.Server + "TabAnz";
 
 			string serverMappingReadContent =
 				(File.ReadAllText(_configuration.InputPath + @"Service\Tandem\ServerMappingGetPart.txt")
-						.DoReplaces(dataItem) + "\r\n\r\n").ReplaceSpecialContent(new[]
+						.DoReplacesClient(dataItem) + "\r\n\r\n").ReplaceSpecialContent(new[]
 					{dataItem.Server + "Server.Singleton.AddTransaction" + dataItem.TransactionCodeRead});
 
 			if (dataItem.CanEdit && !dataItem.CanEditMultiple)
 			{
 				serverMappingWriteContent =
 				(File.ReadAllText(_configuration.InputPath + @"Service\Tandem\ServerMappingSavePart.txt")
-						.DoReplaces(dataItem) + "\r\n\r\n").ReplaceSpecialContent(new[]
+						.DoReplacesClient(dataItem) + "\r\n\r\n").ReplaceSpecialContent(new[]
 				{
 					dataItem.Server + "Server.Singleton.AddTransaction" + dataItem.TransactionCodeWrite,
-					dataItem.Server + dataItem.RepRplWrite + "." + dataItem.TableCountProperty
+					dataItem.Server + dataItem.RepRplWrite + "." + tabAnz
 				});
 			}
 
@@ -219,10 +220,10 @@ namespace PlusLayerCreator.Configure
 			{
 				serverMappingWriteContent =
 					(File.ReadAllText(_configuration.InputPath + @"Service\Tandem\ServerMappingSaveMultiPart.txt")
-							.DoReplaces(dataItem) + "\r\n\r\n").ReplaceSpecialContent(new[]
+							.DoReplacesClient(dataItem) + "\r\n\r\n").ReplaceSpecialContent(new[]
 					{
 						dataItem.Server + "Server.Singleton.AddTransaction" + dataItem.TransactionCodeWrite,
-						dataItem.Server + dataItem.RepRplWrite + "." + dataItem.TableCountProperty
+						dataItem.Server + dataItem.RepRplWrite + "." + tabAnz
 					});
 			}
 				
@@ -250,24 +251,24 @@ namespace PlusLayerCreator.Configure
 		}
 
 	    private string GetReadPart(ConfigurationItem dataItem)
-	    {
-		    string getPart = _converterReadReqRplPart
+		{
+			string getPart = _converterReadReqRplPart
 				.Replace("$Server$", dataItem.Server)
 			    .Replace("$ReqRpl$", dataItem.RepRplRead)
 				.Replace("$Transcode$", dataItem.TransactionCodeRead)
-			    .Replace("$TabAnz$", dataItem.TableCountProperty)
-				.DoReplaces(dataItem);
+			    .Replace("$TabAnz$", dataItem.Server + "TabAnz")
+				.DoReplacesClient(dataItem);
 
 		    return getPart;
 	    }
 	    private string GetWritePart(ConfigurationItem dataItem)
 	    {
-			string writePart = _converterWriteReqRplPart
+		    string writePart = _converterWriteReqRplPart
 			    .Replace("$Server$", dataItem.Server)
 			    .Replace("$ReqRpl$", dataItem.RepRplWrite)
 			    .Replace("$Transcode$", dataItem.TransactionCodeWrite)
-			    .Replace("$TabAnz$", dataItem.TableCountProperty)
-			    .DoReplaces(dataItem);
+			    .Replace("$TabAnz$", dataItem.Server + "TabAnz")
+			    .DoReplacesClient(dataItem);
 
 		    return writePart;
 		}
@@ -280,15 +281,15 @@ namespace PlusLayerCreator.Configure
 		    foreach (var plusDataObject in dataItem.Properties)
 		    {
 			    messageToDtoContent +=
-				    "serviceMessage." + plusDataObject.MessageField + "(" + plusDataObject.Name.ToPascalCase() + "." +
+				    "serviceMessage." + plusDataObject.MessageField.ToCamelCase() + "(" + plusDataObject.Name.ToPascalCase() + "." +
 				    plusDataObject.Name + ", i);\r\n";
 			    dtoToMessageContent +=
-				    plusDataObject.Name + " = serviceMessage." + plusDataObject.MessageField + "(i),\r\n";
+				    plusDataObject.Name + " = serviceMessage." + plusDataObject.MessageField.ToCamelCase() + "(i),\r\n";
 		    }
 
-		    string fillFromMessage = _converterFillFromMessage.DoReplaces(dataItem)
+		    string fillFromMessage = _converterFillFromMessage.DoReplacesClient(dataItem)
 			    .ReplaceSpecialContent(new[] {messageToDtoContent});
-			string fillFromDto = _converterFillFromDto.DoReplaces(dataItem)
+			string fillFromDto = _converterFillFromDto.DoReplacesClient(dataItem)
 			    .ReplaceSpecialContent(new[] {dtoToMessageContent});
 
 			return fillFromMessage + "\r\n\r\n" + fillFromDto;
