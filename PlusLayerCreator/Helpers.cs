@@ -365,22 +365,29 @@ namespace PlusLayerCreator
 
 		#region Server methods
 
-	    private static string ToSqlName(this string name)
+	    public static string ToSqlName(this string name)
 	    {
 		    return name.Replace("-", "_");
 	    }
 
-	    private static string ToVariableName(this string name)
+	    public static string ToVariableName(this string name)
 	    {
 		    return name.Replace("_", "-");
 	    }
 
-	    private static int GetYearToFractionDigits(ConfigurationProperty property)
+	    public static int GetYearToFractionDigits(ConfigurationProperty property)
 	    {
-			return int.Parse(property.Length) % 20;
+		    int length;
+
+		    if (property == null || !int.TryParse(property.Length, out length))
+		    {
+			    return - 1;
+		    }
+
+			return length % 20;
 		}
 
-		private static int CalculateServerRows(ConfigurationItem item, bool modify)
+		public static int CalculateServerRows(ConfigurationItem item, bool modify)
 	    {
 		    int retValue = 0;
 
@@ -406,7 +413,7 @@ namespace PlusLayerCreator
 		    return retValue;
 	    }
 
-	    private static string ArrangeProperties(ConfigurationItem item)
+	    public static string ArrangeProperties(ConfigurationItem item)
 	    {
 		    string retValue = string.Empty;
 		    int level = 2; //temporary
@@ -419,7 +426,7 @@ namespace PlusLayerCreator
 			return retValue.Substring(0, retValue.Length - 2);
 	    }
 
-	    private static string ArrangeKeyProperties(ConfigurationItem item)
+	    public static string ArrangeKeyProperties(ConfigurationItem item)
 	    {
 		    string retValue = string.Empty;
 
@@ -431,7 +438,7 @@ namespace PlusLayerCreator
 			return retValue.Substring(0, retValue.Length - 1);
 	    }
 
-	    private static string ArrangeDelete(ConfigurationItem item)
+	    public static string ArrangeDelete(ConfigurationItem item)
 	    {
 		    string retValue = string.Empty;
 		    int i = 0;
@@ -446,7 +453,7 @@ namespace PlusLayerCreator
 		    return retValue.Substring(0, retValue.Length - 2);
 	    }
 
-	    private static string ArrangeCursorFields(ConfigurationItem item)
+	    public static string ArrangeCursorFields(ConfigurationItem item)
 	    {
 		    string retValue = string.Empty;
 
@@ -490,7 +497,7 @@ namespace PlusLayerCreator
 		//    return retValue.Substring(0, retValue.Length - 2);
 		//}
 
-	    private static string ArrangeDataFromRequest(ConfigurationItem item)
+	    public static string ArrangeDataFromRequest(ConfigurationItem item)
 	    {
 		    string retValue = string.Empty;
 
