@@ -212,7 +212,7 @@ namespace PlusLayerCreator.Configure
         {
             var layer = withBO ? "Gateway" : "Service";
 
-            foreach (var dataItem in _configuration.DataLayout)
+            foreach (var dataItem in _configuration.DataLayout.Where(t => t.Name != "LupdTimestamp" && t.Name != "LupdUser"))
             {
                 var dtoContent = string.Empty;
 

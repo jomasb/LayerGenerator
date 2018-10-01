@@ -218,7 +218,7 @@
 
  WORKING-STORAGE SECTION.
 
- 01 %%SERVER%%-CRE-QUALITY-GATE-STR     PIC X(20) EXTERNAL.
+ 01 %%SERVER%%-CRE-QUALITY-GATE-STR         PIC X(20) EXTERNAL.
  01 S00U05-CRE-QUALITY-GATE-STR         PIC X(20) EXTERNAL.
  01 S01U00-CRE-QUALITY-GATE-STR         PIC X(20) EXTERNAL.
  01 S69U09-CRE-QUALITY-GATE-STR         PIC X(20) EXTERNAL.
@@ -372,7 +372,7 @@
 *                                      SQL-DECLARE-SECTION
  EXEC SQL BEGIN DECLARE SECTION        END-EXEC.
 
- COPY HV-%%SERVER%%                    OF "=%%SERVER%%".
+ COPY HV-%%SERVER%%                        OF "=%%SERVER%%".
 
  EXEC SQL INVOKE =%%TBL%%-TAB AS %%TBL%%-ROW END-EXEC.
 
@@ -387,13 +387,6 @@
 %%CURSOR-FELDER%%
          FROM     =%%TBL%%-TAB
          FOR       BROWSE ACCESS
-		 WHERE  (
-%%CURSOR-FELDER-WHERE%%
-                ) >= (
-%%CURSOR-FELDER-ROW%%
-                )
-         ORDER BY  
-%%CURSOR-FELDER-ORDER%%
  END-EXEC.
 /
 *===============================================================================
@@ -742,7 +735,7 @@
     MOVE WS-MR-ANZ-DS-AKTUELL
       TO %%TBL%%-TAB-ANZ                 OF %%SERVER%%-RPL-1
 
-%%DATEN-IN-REPLY%%    
+%%DATEN-IN-REPLY%%
     .
 
  E321-EXIT.
@@ -897,7 +890,7 @@
        MOVE "%%SYS%%0007" TO MELDUNGSCODE OF EMS-MELD-LNK
        MOVE DATEI-MIT-FEHLER
          TO PARAMETERTEXT              OF EMS-MELD-LNK (1)
-%%SCHLUESSELFELDER-PARAMETER%%         
+%%SCHLUESSELFELDER-PARAMETER%%
        PERFORM U200-MELDUNGSPROTOKOLL
 
     WHEN     OTHER
@@ -930,7 +923,7 @@
        MOVE "%%SYS%%0009" TO MELDUNGSCODE OF EMS-MELD-LNK
        MOVE DATEI-MIT-FEHLER
          TO PARAMETERTEXT              OF EMS-MELD-LNK (1)
-%%SCHLUESSELFELDER-PARAMETER%%  
+%%SCHLUESSELFELDER-PARAMETER%%
        PERFORM U200-MELDUNGSPROTOKOLL
 
        WHEN     OTHER
@@ -1005,7 +998,7 @@
     EXEC SQL
          FETCH     CURSOR_%%TBL%%
          INTO     
-%%FETCH_CURSOR%%
+%%FETCH-CURSOR%%
     END-EXEC
 
  COPY TRANSLOG-READ                    OF "=S01TLOG"
@@ -1097,7 +1090,7 @@
     EXEC SQL
          UPDATE   =%%TBL%%-TAB
          SET       
-                 %%UPDATE-FELDER-WERTE%%
+%%UPDATE-FELDER-WERTE%%
     END-EXEC
 
  COPY TRANSLOG-WRITE                   OF "=S01TLOG"

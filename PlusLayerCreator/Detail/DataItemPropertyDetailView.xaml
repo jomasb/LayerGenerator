@@ -69,8 +69,11 @@
 			<plus:PlusFormRow Label="ShouldLazyLoad">
 				<plus:PlusCheckBox IsChecked="{Binding Property.ShouldLazyLoad}" IsEnabled="{Binding Path=Property.Type, Converter={StaticResource InvertEqualityConverter}, ConverterParameter=DataItem}" />
 			</plus:PlusFormRow>
-			<plus:PlusFormRow Label="MessagesField">
+			<plus:PlusFormRow Label="MessageField">
 				<plus:PlusTextBox IsEnabled="{Binding Path=Property.Type, Converter={StaticResource InvertEqualityConverter}, ConverterParameter=DataItem}" Text="{Binding Property.MessageField, UpdateSourceTrigger=PropertyChanged}" />
+			</plus:PlusFormRow>
+			<plus:PlusFormRow Label="MessageDataType">
+				<plus:PlusTextBox IsEnabled="{Binding Path=Property.Type, Converter={StaticResource InvertEqualityConverter}, ConverterParameter=DataItem}" Text="{Binding Property.MessageDataType, UpdateSourceTrigger=PropertyChanged}" />
 			</plus:PlusFormRow>
 		</plus:PlusFormPanel>
 	</plus:PlusExpandableHeader>

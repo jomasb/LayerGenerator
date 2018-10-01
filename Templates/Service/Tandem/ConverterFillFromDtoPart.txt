@@ -7,6 +7,4 @@
 private void Fill$Item$FromDto($Server$$ReqRpl$ serviceMessage, $Product$$Item$ $item$, int position)
 {
 	$specialContent1$
-	serviceMessage.LupdUser($item$.LupdUser, position);
-	serviceMessage.LupdTimestampF6(PlusFormat.FormatTandemTimestamp26($item$.LupdTimestamp), position);
 }

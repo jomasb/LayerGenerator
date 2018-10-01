@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Linq;
 using PlusLayerCreator.Items;
 
 namespace PlusLayerCreator.Configure
@@ -280,12 +279,17 @@ namespace PlusLayerCreator.Configure
 
 		    foreach (var plusDataObject in dataItem.Properties)
 		    {
-			    messageToDtoContent +=
-				    "serviceMessage." + plusDataObject.MessageField.ToCamelCase() + "(" + plusDataObject.Name.ToPascalCase() + "." +
-				    plusDataObject.Name + ", i);\r\n";
-			    dtoToMessageContent +=
-				    plusDataObject.Name + " = serviceMessage." + plusDataObject.MessageField.ToCamelCase() + "(i),\r\n";
-		    }
+			    if (plusDataObject.Name == "LupdTimestamp")
+			    {
+				    messageToDtoContent += "serviceMessage." + plusDataObject.MessageField.ToCamelCase() + "(PlusFormat.FormatTandemTimestamp26(" + plusDataObject.Name.ToPascalCase() + "." + plusDataObject.Name + ", i));\r\n";
+				    dtoToMessageContent += plusDataObject.Name + " = PlusFormat.ParseTandemTimestamp26(serviceMessage." + plusDataObject.MessageField.ToCamelCase() + "(i));\r\n";
+				}
+				else
+			    {
+				    messageToDtoContent += "serviceMessage." + plusDataObject.MessageField.ToCamelCase() + "(" + plusDataObject.Name.ToPascalCase() + "." + plusDataObject.Name + ", i);\r\n";
+				    dtoToMessageContent += plusDataObject.Name + " = serviceMessage." + plusDataObject.MessageField.ToCamelCase() + "(i);\r\n";
+				}
+			}
 
 		    string fillFromMessage = _converterFillFromMessage.DoReplacesClient(dataItem)
 			    .ReplaceSpecialContent(new[] {messageToDtoContent});

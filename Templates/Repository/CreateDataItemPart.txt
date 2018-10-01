@@ -8,8 +8,6 @@ public $Product$$Item$DataItem Create$Item$FromDto($Product$$Item$ dto)
 	{
 		IsChangeTrackingDisabled = true,
 		$specialContent1$
-		LupdUser = dto.LupdUser,
-		LupdTimestamp = dto.LupdTimestamp,
 		State = DataItemState.Persistent
 	});
 }

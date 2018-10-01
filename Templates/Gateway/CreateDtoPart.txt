@@ -8,8 +8,6 @@ public static $Product$$Item$ Create$Item$FromBO(I$Product$$Item$ bo)
 	$Product$$Item$ dto = new $Product$$Item$()
 	{
 		$specialContent1$
-		LupdTimestamp = bo.LupdTimestamp,
-		LupdUser = bo.LupdUser
 	};
 
 	return dto;

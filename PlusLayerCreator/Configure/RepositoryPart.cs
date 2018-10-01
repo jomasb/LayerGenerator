@@ -179,8 +179,8 @@ namespace PlusLayerCreator.Configure
         
         public void CreateDataItem()
         {
-            foreach (var dataItem in _configuration.DataLayout)
-            {
+            foreach (var dataItem in _configuration.DataLayout.Where(t => t.Name != "LupdTimestamp" && t.Name != "LupdUser"))
+			{
                 var dataItemContent = string.Empty;
 
 	            if (string.IsNullOrEmpty(dataItem.Parent))

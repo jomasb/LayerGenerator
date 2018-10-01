@@ -8,8 +8,6 @@ public $Product$$Item$ Create$Item$FromDataItem($Product$$Item$DataItem dataItem
 	$Product$$Item$ dto = new $Product$$Item$()
 	{
 		$specialContent1$
-		LupdUser = dataItem.LupdUser,
-		LupdTimestamp = dataItem.LupdTimestamp,
 	};
 	
 	return dto;

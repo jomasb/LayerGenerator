@@ -54,7 +54,7 @@ INSERT INTO =S71D01-TAB
 (SYS, MELDUNGS_NR, FSPRA, MELDUNGSTEXT, MELDUNGSKLASSE,
 MELDUNGSAUSGABE, MELDUNGSTYP, LOGISCHES_GERAET)
 VALUES ("%%SYS%%","0007","1",
-"Datensatz >%%FELDER%%< in Rel. >##0< schon vorhanden. " &
+"Datensatz >%%KEY-FELDER%%< in Rel. >##0< schon vorhanden. " &
 " ##8 / RPL:##9 " ,
 "SYSM","J","F","%%PRODUKT%%-DRUCKER");
 
@@ -69,7 +69,7 @@ INSERT INTO =S71D01-TAB
 (SYS, MELDUNGS_NR, FSPRA, MELDUNGSTEXT, MELDUNGSKLASSE,
 MELDUNGSAUSGABE, MELDUNGSTYP, LOGISCHES_GERAET)
 VALUES ("%%SYS%%","0009","1",
-"Datensatz >%%FELDER%%< in Rel. >##0< beim 'Aendern' nicht mehr " &
+"Datensatz >%%KEY-FELDER%%< in Rel. >##0< beim 'Aendern' nicht mehr " &
 "vorhanden. ##8 / RPL:##9 " ,
 "SYSM","J","F","%%PRODUKT%%-DRUCKER");
 
@@ -84,7 +84,7 @@ INSERT INTO =S71D01-TAB
 (SYS, MELDUNGS_NR, FSPRA, MELDUNGSTEXT, MELDUNGSKLASSE,
 MELDUNGSAUSGABE, MELDUNGSTYP, LOGISCHES_GERAET)
 VALUES ("%%SYS%%","0011","1",
-"Datensatz >%%FELDER%%< in Rel. >##0< beim 'Loeschen' nicht mehr vorhanden. " &
+"Datensatz >%%KEY-FELDER%%< in Rel. >##0< beim 'Loeschen' nicht mehr vorhanden. " &
 " ##8 / RPL:##9 " ,
 "SYSM","J","F","%%PRODUKT%%-DRUCKER");
 
@@ -153,7 +153,7 @@ INSERT INTO =S71D01-TAB
 (SYS, MELDUNGS_NR, FSPRA, MELDUNGSTEXT, MELDUNGSKLASSE,
 MELDUNGSAUSGABE, MELDUNGSTYP, LOGISCHES_GERAET)
 VALUES ("%%SYS%%","0007","2",
-"Record >%%FELDER%%< already exists in relation >##0<. " &
+"Record >%%KEY-FELDER%%< already exists in relation >##0<. " &
 " ##8 / RPL:##9 " ,
 "SYSM","J","F","%%PRODUKT%%-DRUCKER");
 
@@ -168,7 +168,7 @@ INSERT INTO =S71D01-TAB
 (SYS, MELDUNGS_NR, FSPRA, MELDUNGSTEXT, MELDUNGSKLASSE,
 MELDUNGSAUSGABE, MELDUNGSTYP, LOGISCHES_GERAET)
 VALUES ("%%SYS%%","0009","2",
-"Record >%%FELDER%%< doesn't exist in relation >##0<. " &
+"Record >%%KEY-FELDER%%< doesn't exist in relation >##0<. " &
 " ##8 / RPL:##9 " ,
 "SYSM","J","F","%%PRODUKT%%-DRUCKER");
 
@@ -183,7 +183,7 @@ INSERT INTO =S71D01-TAB
 (SYS, MELDUNGS_NR, FSPRA, MELDUNGSTEXT, MELDUNGSKLASSE,
 MELDUNGSAUSGABE, MELDUNGSTYP, LOGISCHES_GERAET)
 VALUES ("%%SYS%%","0011","2",
-"Record >%%FELDER%%< doesn't exist in relation >##0<. " &
+"Record >%%KEY-FELDER%%< doesn't exist in relation >##0<. " &
 " ##8 / RPL:##9 " ,
 "SYSM","J","F","%%PRODUKT%%-DRUCKER");
 

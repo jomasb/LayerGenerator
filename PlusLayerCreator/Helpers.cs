@@ -87,17 +87,19 @@ namespace PlusLayerCreator
             input = input.Replace("%%ANZ-KOMPLETT%%", CalculateServerRows(item, false).ToString());
             input = input.Replace("%%ANZ-PF%%", CalculateServerRows(item, true).ToString());
 	        input = input.Replace("%%FELDER%%", ArrangeProperties(item));
+	        input = input.Replace("%%KEY-FELDER%%", ArrangeKeyProperties(item));
 	        input = input.Replace("%%DELETE-FELDER-WERTE%%", ArrangeDelete(item));
-	        input = input.Replace("%%CURSOR-FELDER%%", ArrangCursorFields(item));
+	        input = input.Replace("%%CURSOR-FELDER%%", ArrangeCursorFields(item));
 	        input = input.Replace("%%DATEN-AUS-REQUEST%%", ArrangeDataFromRequest(item));
 	        input = input.Replace("%%DATEN-IN-REPLY%%", ArrangeDataForReply(item));
 	        input = input.Replace("%%INSERT-FELDER%%", ArrangInsertFields(item));
 	        input = input.Replace("%%INSERT-WERTE%%", ArrangInsertValues(item));
 	        input = input.Replace("%%SCHLUESSELFELDER-PARAMETER%%", ArrangKeys(item));
-	        input = input.Replace("%%FTECH-CURSOR%%", ArrangFetchCursor(item));
-	        input = input.Replace("%%CURSOR-FELDER-WHERE%%", ArrangCursorFieldsAdvanced(item, 0));
-	        input = input.Replace("%%CURSOR-FELDER-ROW%%", ArrangCursorFieldsAdvanced(item, 1));
-	        input = input.Replace("%%CURSOR-FELDER-ORDER%%", ArrangCursorFieldsAdvanced(item, 2));
+	        input = input.Replace("%%FETCH-CURSOR%%", ArrangFetchCursor(item));
+	        input = input.Replace("%%UPDATE-FELDER-WERTE%%", ArrangeUpdate(item));
+	        //input = input.Replace("%%CURSOR-FELDER-WHERE%%", ArrangeCursorFieldsAdvanced(item, 0));
+	        //input = input.Replace("%%CURSOR-FELDER-ROW%%", ArrangeCursorFieldsAdvanced(item, 1));
+	        //input = input.Replace("%%CURSOR-FELDER-ORDER%%", ArrangeCursorFieldsAdvanced(item, 2));
 
 			return input;
         }
@@ -363,6 +365,21 @@ namespace PlusLayerCreator
 
 		#region Server methods
 
+	    private static string ToSqlName(this string name)
+	    {
+		    return name.Replace("-", "_");
+	    }
+
+	    private static string ToVariableName(this string name)
+	    {
+		    return name.Replace("_", "-");
+	    }
+
+	    private static int GetYearToFractionDigits(ConfigurationProperty property)
+	    {
+			return int.Parse(property.Length) % 20;
+		}
+
 		private static int CalculateServerRows(ConfigurationItem item, bool modify)
 	    {
 		    int retValue = 0;
@@ -396,74 +413,82 @@ namespace PlusLayerCreator
 
 		    foreach (ConfigurationProperty property in item.Properties)
 		    {
-			    retValue += "  " + level.ToString("00") + " " + property.MessageField.PadRight(30) + "    TYPE *.\r\n";
+			    retValue += "  " + level.ToString("00") + " " + property.MessageField.ToVariableName().PadRight(30) + "  TYPE " + property.MessageDataType + ".\r\n";
 		    }
 
-		    retValue += "  " + level.ToString("00") + " " + "LUPD-TIMESTAMP".PadRight(30) + "    TYPE *.\r\n";
-			retValue += "  " + level.ToString("00") + " " + "LUPD-PROZESSNAME".PadRight(30) + "    TYPE *.\r\n";
-
 			return retValue.Substring(0, retValue.Length - 2);
+	    }
+
+	    private static string ArrangeKeyProperties(ConfigurationItem item)
+	    {
+		    string retValue = string.Empty;
+
+		    for (int i = 1; i <= item.Properties.Count(t => t.IsKey) || i == 7; i++)
+		    {
+			    retValue += "##" + i + "/";
+		    }
+
+			return retValue.Substring(0, retValue.Length - 1);
 	    }
 
 	    private static string ArrangeDelete(ConfigurationItem item)
 	    {
 		    string retValue = string.Empty;
+		    int i = 0;
 
-		    foreach (ConfigurationProperty property in item.Properties)
+		    foreach (ConfigurationProperty property in item.Properties.Where(t => t.IsKey))
 		    {
-			    retValue += "                   " + property.MessageField + "\r\n                = :" + property.MessageField.PadRight(30) + "    OF " + item.Table + "-ROW\r\n";
+			    retValue += i == 0 ? "                   " : "         AND       ";
+				retValue += property.MessageField.ToSqlName() + "\r\n                = :" + property.MessageField.ToVariableName().PadRight(30) + "    OF " + item.Table + "-ROW\r\n";
+			    i++;
 		    }
-
 
 		    return retValue.Substring(0, retValue.Length - 2);
 	    }
 
-	    private static string ArrangCursorFields(ConfigurationItem item)
+	    private static string ArrangeCursorFields(ConfigurationItem item)
 	    {
 		    string retValue = string.Empty;
 
 		    for (int i = 0; i < item.Properties.Count; i++)
 		    {
 			    retValue += i == 0 ? "                   " : "                 , ";
-				retValue += item.Properties[i].MessageField + "\r\n";
+				retValue += item.Properties[i].MessageField.ToSqlName() + "\r\n";
 		    }
-
-		    retValue += "                 , LUPD_TIMESTAMP" + "\r\n";
-			retValue += "                 , LUPD_PROZESSNAME" + "\r\n";
 
 			return retValue.Substring(0, retValue.Length - 2);
 		}
 
-	    private static string ArrangCursorFieldsAdvanced(ConfigurationItem item, int mode)
-	    {
-		    string retValue = string.Empty;
+	 //   private static string ArrangeCursorFieldsAdvanced(ConfigurationItem item, int mode)
+	 //   {
+		//    string retValue = string.Empty;
 
-		    for (int i = 0; i < item.Properties.Count; i++)
-		    {
-				if (!item.Properties[i].IsKey)
-					continue;
+		//    for (int i = 0; i < item.Properties.Count; i++)
+		//    {
+		//		if (!item.Properties[i].IsKey)
+		//			continue;
 
-			    switch (mode)
-			    {
-					case 0:
-						retValue += i == 0 ? "                   " : "                 , ";
-						retValue += item.Properties[i].MessageField + "\r\n";
-						break;
-					case 1:
-						retValue += i == 0 ? "                  :" : "                 ,:";
-						retValue += item.Properties[i].MessageField.PadRight(30) + "   OF " + item.Table + "-ROW" + "\r\n";
-						break;
-					case 2:
-						retValue += i == 0 ? "                   " : "                 , ";
-						retValue += item.Properties[i].MessageField.PadRight(30) + "ASC" +"\r\n";
-						break;
+		//	    switch (mode)
+		//	    {
+		//			case 0:
+		//				retValue += i == 0 ? "                   " : "                 , ";
+		//				retValue += item.Properties[i].MessageField + "\r\n";
+		//				break;
+		//			case 1:
+		//				retValue += i == 0 ? "                  :" : "                 ,:";
+		//				retValue += item.Properties[i].MessageField.PadRight(30) + "   OF " + item.Table + "-ROW" + "\r\n";
+		//				break;
+		//			case 2:
+		//				retValue += i == 0 ? "                   " : "                 , ";
+		//				retValue += item.Properties[i].MessageField.PadRight(30) + "ASC" +"\r\n";
+		//				break;
 					    
-			    }
+		//	    }
 			   
-			}
+		//	}
 			
-		    return retValue.Substring(0, retValue.Length - 2);
-		}
+		//    return retValue.Substring(0, retValue.Length - 2);
+		//}
 
 	    private static string ArrangeDataFromRequest(ConfigurationItem item)
 	    {
@@ -471,12 +496,11 @@ namespace PlusLayerCreator
 
 		    foreach (ConfigurationProperty property in item.Properties)
 		    {
-			    retValue += "    MOVE " + property.MessageField.PadRight(30) + "    OF " + item.Server + "-REQ-2(I)" + "\r\n";
-			    retValue += "      TO " + property.MessageField.PadRight(30) + "    OF" + item.Table + "-ROW" + "\r\n";
+			    retValue += "    MOVE " + property.MessageField.ToVariableName().PadRight(30) + "    OF " + item.Server + "-REQ-2(I)" + "\r\n";
+			    retValue += "      TO " + property.MessageField.ToVariableName().PadRight(30) + "    OF " + item.Table + "-ROW" + "\r\n";
 		    }
 
-
-		    return retValue.Substring(0, retValue.Length - 2);
+			return retValue.Substring(0, retValue.Length - 2);
 	    }
 
 	    private static string ArrangeDataForReply(ConfigurationItem item)
@@ -485,10 +509,9 @@ namespace PlusLayerCreator
 
 		    foreach (ConfigurationProperty property in item.Properties)
 		    {
-			    retValue += "    MOVE " + property.MessageField.PadRight(30) + "    OF" + item.Table + "-ROW" + "\r\n";
-			    retValue += "      TO " + property.MessageField.PadRight(30) + "    OF " + item.Server + "-REPL-1(I)(WS-MR-ANZ-DS-AKTUELL)" + "\r\n";
+			    retValue += "    MOVE " + property.MessageField.ToVariableName().PadRight(30) + " OF " + item.Table + "-ROW" + "\r\n";
+			    retValue += "      TO " + property.MessageField.ToVariableName().PadRight(30) + " OF " + item.Server + "-RPL-1(WS-MR-ANZ-DS-AKTUELL)" + "\r\n";
 			}
-
 
 			return retValue.Substring(0, retValue.Length - 2);
 	    }
@@ -500,11 +523,8 @@ namespace PlusLayerCreator
 		    for (int i = 0; i < item.Properties.Count; i++)
 		    {
 			    retValue += i == 0 ? "                   " : "                 , ";
-			    retValue += item.Properties[i].MessageField + "\r\n";
+			    retValue += item.Properties[i].MessageField.ToSqlName() + "\r\n";
 			}
-
-		    retValue += "                 , " + "LUPD_TIMESTAMP" + "\r\n";
-		    retValue += "                 , " + "LUPD_PROZESSNAME" + "\r\n";
 
 			return retValue.Substring(0, retValue.Length - 2);
 	    }
@@ -515,13 +535,17 @@ namespace PlusLayerCreator
 
 		    for (int i = 0; i < item.Properties.Count; i++)
 		    {
-			    retValue += i == 0 ? "                   " : "                 , ";
-			    retValue += item.Properties[i].MessageField.PadRight(30) + "   OF " + item.Table + "-ROW" + "\r\n";
+			    retValue += i == 0 ? "                  :" : "                 ,:";
+				if (item.Properties[i].MessageField.ToVariableName() == "LUPD-TIMESTAMP")
+				{
+					retValue += "HV-LUPD-TIMESTAMP                 OF HV-" + item.Server + "\r\n";
+				    retValue += "                   TYPE AS DATETIME YEAR TO FRACTION(" + GetYearToFractionDigits(item.Properties[i]) + ")" + "\r\n";
+			    }
+				else
+			    {
+				    retValue += item.Properties[i].MessageField.PadRight(30) + "    OF " + item.Table + "-ROW" + "\r\n";
+			    }
 		    }
-
-		    retValue += "                 ,:HV-LUPD-TIMESTAMP                 OF HV-" + item.Server + "\r\n";
-		    retValue += "                   TYPE AS DATETIME YEAR TO FRACTION(3)" + "\r\n";
-			retValue += "                 ,:LUPD-PROZESSNAME                  OF " + item.Table + "-ROW" + "\r\n";
 
 			return retValue.Substring(0, retValue.Length - 2);
 	    }
@@ -533,7 +557,7 @@ namespace PlusLayerCreator
 
 		    foreach (ConfigurationProperty property in item.Properties.Where(t => t.IsKey))
 		    {
-			    retValue += "       MOVE " + property.MessageField.PadRight(30) + "    OF" + item.Server + "-REQ-2(I)" + "\r\n";
+			    retValue += "       MOVE " + property.MessageField.ToVariableName().PadRight(30) + "    OF " + item.Server + "-REQ-2(I)" + "\r\n";
 			    retValue += "         TO PARAMETERTEXT              OF EMS-MELD-LNK (" + i++ + ")" + "\r\n";
 		    }
 
@@ -547,15 +571,55 @@ namespace PlusLayerCreator
 
 		    for (int i = 0; i < item.Properties.Count; i++)
 		    {
-			    retValue += i == 0 ? "                   " : "                 , ";
-				retValue += item.Properties[i].MessageField.PadRight(30) + "   OF " + item.Table + "-ROW" + "\r\n";
+			    retValue += i == 0 ? "                  :" : "                 ,:";
+			    if (item.Properties[i].MessageField.ToVariableName() == "LUPD-TIMESTAMP")
+			    {
+				    retValue += "LUPD-TIMESTAMP".PadRight(30) + "   OF " + item.Table + "-ROW" + "\r\n";
+				    retValue += "                      TYPE AS DATETIME YEAR TO FRACTION(" + GetYearToFractionDigits(item.Properties[i]) + ")" + "\r\n";
+				}
+				else
+			    {
+				    retValue += item.Properties[i].MessageField.ToVariableName().PadRight(30) + "   OF " + item.Table + "-ROW" + "\r\n";
+				}
 		    }
 		
-		    retValue += "                 ,:HV-LUPD-TIMESTAMP                 OF HV-" + item.Server + "\r\n";
-		    retValue += "                   TYPE AS DATETIME YEAR TO FRACTION(3)" + "\r\n";
-		    retValue += "                 ,:LUPD-PROZESSNAME                  OF " + item.Table + "-ROW" + "\r\n";
-
 		    return retValue.Substring(0, retValue.Length - 2);
+	    }
+
+		private static string ArrangeUpdate(ConfigurationItem item)
+	    {
+		    string retValue = string.Empty;
+		    int i = 0;
+
+		    foreach (var property in item.Properties.Where(t => !t.IsKey))
+		    {
+			    retValue += i == 0 ? "                   " : "               ,   :";
+				retValue += property.MessageField.ToSqlName() + "\r\n";
+			    retValue += "                = :";
+			    if (property.MessageField.ToVariableName() == "LUPD-TIMESTAMP")
+			    {
+				    retValue += "HV-LUPD-TIMESTAMP                 OF HV-" + item.Server + "" + "\r\n";
+				    retValue += "                   TYPE AS DATETIME YEAR TO FRACTION(" + GetYearToFractionDigits(property) + ")" + "\r\n";
+				}
+				else
+			    {
+				    retValue += property.MessageField.ToVariableName().PadRight(30) + "   OF " + item.Table + "-ROW" + "\r\n";
+				}
+			    
+			    i++;
+		    }
+
+		    i = 0;
+		    foreach (var property in item.Properties.Where(t => t.IsKey))
+		    {
+				retValue += i == 0 ? "         WHERE     " : "         AND       ";
+				retValue += property.MessageField.ToSqlName() + "\r\n";
+			    retValue += "                = :";
+			    retValue += property.MessageField.ToVariableName().PadRight(30) + "   OF " + item.Table + "-ROW" + "\r\n";
+			    i++;
+			}
+
+		    return retValue;
 	    }
 
 	    #endregion Server methods

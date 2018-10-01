@@ -20,6 +20,7 @@ namespace PlusLayerCreator.Items
         private string _length;
         private bool _shouldLazyLoad;
         private string _messageField;
+        private string _messageDataType = "*";
 
         [DataMember]
         public string Name
@@ -133,14 +134,19 @@ namespace PlusLayerCreator.Items
             get => _shouldLazyLoad;
             set => SetProperty(ref _shouldLazyLoad, value);
         }
-
-
-
+		
         [DataMember]
         public string MessageField
         {
             get => _messageField;
             set => SetProperty(ref _messageField, value);
+        }
+
+        [DataMember]
+        public string MessageDataType
+		{
+            get => _messageDataType;
+            set => SetProperty(ref _messageDataType, value);
         }
     }
 }

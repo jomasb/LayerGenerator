@@ -9,3 +9,4 @@ public PlusLazyLoadingAsyncObservableCollection<$Product$$Item$DataItem> $Item$s
 		Set(value);
 	}
 }
+

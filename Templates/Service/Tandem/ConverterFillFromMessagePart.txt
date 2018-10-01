@@ -7,6 +7,4 @@
 private void Fill$Item$FromMessage($Product$$Item$ $item$, $Server$$ReqRpl$ serviceMessage, int postition)
 {
 	$specialContent1$
-	checkpointSystem.LupdTimestamp = PlusFormat.ParseTandemTimestamp26(serviceMessage.LupdTimestampF6(i));
-	checkpointSystem.LupdUser = serviceMessage.LupdUser(i);
 }

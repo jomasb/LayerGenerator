@@ -97,13 +97,13 @@ END.
 *                                      Liste %%TBL%%
 DEF %%SERVER%%-REQ-RPL-1.
   02 FILLER                            TYPE RPC-DIALOG-HDR.
-  02 %%SERVER%%-MSG-1                  TYPE *.
+  02 %%SERVER%%-MSG-1                      TYPE *.
 END.
 
 *                                      Pflege %%TBL%%
 DEF %%SERVER%%-REQ-RPL-2.
   02 FILLER                            TYPE RPC-DIALOG-HDR.
-  02 %%SERVER%%-MSG-2                  TYPE *.
+  02 %%SERVER%%-MSG-2                      TYPE *.
 END.
 
 * ------------------------------------------------------------
