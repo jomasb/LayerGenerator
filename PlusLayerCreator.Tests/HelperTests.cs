@@ -8,6 +8,8 @@ namespace PlusLayerCreator.Tests
 	[TestClass]
 	public class HelperTests
 	{
+		#region Server
+
 		#region CamelCase
 
 		[TestMethod]
@@ -136,7 +138,7 @@ namespace PlusLayerCreator.Tests
 			});
 			item.Properties.Add(new ConfigurationProperty()
 			{
-				MessageField = "FELD-WERT",
+				MessageField = "FELD_WERT",
 				MessageDataType = "string"
 			});
 			item.Properties.Add(new ConfigurationProperty()
@@ -149,8 +151,7 @@ namespace PlusLayerCreator.Tests
 		}
 
 		#endregion
-
-
+		
 		#region ArrangeKeyProperties
 
 		[TestMethod]
@@ -169,7 +170,7 @@ namespace PlusLayerCreator.Tests
 			item.Properties.Add(new ConfigurationProperty()
 			{
 				IsKey = true,
-				MessageField = "FELD-WERT",
+				MessageField = "FELD_WERT",
 				MessageDataType = "string"
 			});
 			item.Properties.Add(new ConfigurationProperty()
@@ -182,9 +183,67 @@ namespace PlusLayerCreator.Tests
 			Assert.AreEqual(Helpers.ArrangeKeyProperties(item), expectedValue);
 		}
 
+		[TestMethod]
+		public void WhenConfigurationItemPropertiesIsSetButTheNumberIsGreaterThanSeven_ReturnsTheOnlySevenArrangedKeyProperties()
+		{
+			string expectedValue = "##1/##2/##3/##4/##5/##6/##7";
+
+			ConfigurationItem item = new ConfigurationItem();
+			item.Properties = new ObservableCollection<ConfigurationProperty>();
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD-NAME",
+				MessageDataType = "string"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD_WERT",
+				MessageDataType = "string"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD-NAME1",
+				MessageDataType = "string"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD_WERT1",
+				MessageDataType = "string"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD-NAME2",
+				MessageDataType = "string"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD_WERT2",
+				MessageDataType = "string"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD-NAME3",
+				MessageDataType = "string"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD_WERT3",
+				MessageDataType = "string"
+			});
+
+			Assert.AreEqual(Helpers.ArrangeKeyProperties(item), expectedValue);
+		}
+
 		#endregion
-
-
+		
 		#region ArrangeDelete
 
 		[TestMethod]
@@ -208,7 +267,7 @@ namespace PlusLayerCreator.Tests
 			item.Properties.Add(new ConfigurationProperty()
 			{
 				IsKey = true,
-				MessageField = "FELD-WERT"
+				MessageField = "FELD_WERT"
 			});
 			item.Properties.Add(new ConfigurationProperty()
 			{
@@ -243,7 +302,7 @@ namespace PlusLayerCreator.Tests
 			item.Properties.Add(new ConfigurationProperty()
 			{
 				IsKey = true,
-				MessageField = "FELD-WERT"
+				MessageField = "FELD_WERT"
 			});
 			item.Properties.Add(new ConfigurationProperty()
 			{
@@ -261,12 +320,12 @@ namespace PlusLayerCreator.Tests
 		[TestMethod]
 		public void WhenConfigurationItemPropertiesIsSet_ReturnsTheArrangedDataFromRequest()
 		{
-			string expectedValue = "    MOVE FELD-NAME                         OF S00S33-REQ-2(I)" + "\r\n" +
-			                       "      TO FELD-NAME                         OF S00D02-ROW" + "\r\n" +
-			                       "    MOVE FELD-WERT                         OF S00S33-REQ-2(I)" + "\r\n" +
-			                       "      TO FELD-WERT                         OF S00D02-ROW" + "\r\n" +
-								   "    MOVE LUPD-TIMESTAMP                    OF S00S33-REQ-2(I)" + "\r\n" +
-								   "      TO LUPD-TIMESTAMP                    OF S00D02-ROW";
+			string expectedValue = "    MOVE FELD-NAME                      OF S00S33-REQ-2(I)" + "\r\n" +
+			                       "      TO FELD-NAME                      OF S00D02-ROW" + "\r\n" +
+			                       "    MOVE FELD-WERT                      OF S00S33-REQ-2(I)" + "\r\n" +
+			                       "      TO FELD-WERT                      OF S00D02-ROW" + "\r\n" +
+								   "    MOVE LUPD-TIMESTAMP                 OF S00S33-REQ-2(I)" + "\r\n" +
+								   "      TO LUPD-TIMESTAMP                 OF S00D02-ROW";
 
 			ConfigurationItem item = new ConfigurationItem()
 			{
@@ -282,7 +341,7 @@ namespace PlusLayerCreator.Tests
 			item.Properties.Add(new ConfigurationProperty()
 			{
 				IsKey = true,
-				MessageField = "FELD-WERT"
+				MessageField = "FELD_WERT"
 			});
 			item.Properties.Add(new ConfigurationProperty()
 			{
@@ -294,5 +353,296 @@ namespace PlusLayerCreator.Tests
 		}
 
 		#endregion
+
+		#region ArrangeDataForReply
+
+		[TestMethod]
+		public void WhenConfigurationItemPropertiesIsSet_ReturnsTheArrangedDataForReply()
+		{
+			string expectedValue = "    MOVE FELD-NAME                      OF S00D02-ROW" + "\r\n" +
+								   "      TO FELD-NAME                      OF S00S33-RPL-1(WS-MR-ANZ-DS-AKTUELL)" + "\r\n" +
+								   "    MOVE FELD-WERT                      OF S00D02-ROW" + "\r\n" +
+								   "      TO FELD-WERT                      OF S00S33-RPL-1(WS-MR-ANZ-DS-AKTUELL)" + "\r\n" +
+								   "    MOVE LUPD-TIMESTAMP                 OF S00D02-ROW" + "\r\n" +
+								   "      TO LUPD-TIMESTAMP                 OF S00S33-RPL-1(WS-MR-ANZ-DS-AKTUELL)";
+
+			ConfigurationItem item = new ConfigurationItem()
+			{
+				Server = "S00S33",
+				Table = "S00D02"
+			};
+			item.Properties = new ObservableCollection<ConfigurationProperty>();
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD-NAME"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD_WERT"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = false,
+				MessageField = "LUPD-TIMESTAMP"
+			});
+
+			Assert.AreEqual(Helpers.ArrangeDataForReply(item), expectedValue);
+		}
+
+		#endregion
+
+		#region ArrangeInsertFields
+
+		[TestMethod]
+		public void WhenConfigurationItemPropertiesIsSet_ReturnsTheArrangedInsertFields()
+		{
+			string expectedValue = "                   FELD_NAME" + "\r\n" +
+								   "                 , FELD_WERT" + "\r\n" +
+								   "                 , LUPD_TIMESTAMP";
+
+			ConfigurationItem item = new ConfigurationItem();
+			item.Properties = new ObservableCollection<ConfigurationProperty>();
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				MessageField = "FELD-NAME"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				MessageField = "FELD_WERT"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				MessageField = "LUPD-TIMESTAMP"
+			});
+
+			Assert.AreEqual(Helpers.ArrangeInsertFields(item), expectedValue);
+		}
+
+		#endregion
+
+		#region ArrangeInsertValues
+
+		[TestMethod]
+		public void WhenConfigurationItemPropertiesIsSet_ReturnsTheArrangedInsertValues()
+		{
+			string expectedValue = "                  :FELD-NAME                         OF S00D02-ROW" + "\r\n" +
+			                       "                 ,:FELD-WERT                         OF S00D02-ROW" + "\r\n" +
+								   "                 ,:HV-LUPD-TIMESTAMP                 OF HV-S00S33" + "\r\n" +
+								   "                   TYPE AS DATETIME YEAR TO FRACTION(6)";
+
+			ConfigurationItem item = new ConfigurationItem()
+			{
+				Server = "S00S33",
+				Table = "S00D02"
+			};
+			item.Properties = new ObservableCollection<ConfigurationProperty>();
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				MessageField = "FELD-NAME"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				MessageField = "FELD_WERT"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				MessageField = "LUPD-TIMESTAMP",
+				Length = "26"
+			});
+
+			Assert.AreEqual(Helpers.ArrangeInsertValues(item), expectedValue);
+		}
+
+		#endregion
+
+		#region ArrangeKeys
+
+		[TestMethod]
+		public void WhenConfigurationItemPropertiesIsSet_ReturnsTheArrangedKeys()
+		{
+			string expectedValue = "       MOVE FELD-NAME                         OF S00S33-REQ-2(I)" + "\r\n" +
+			                       "         TO PARAMETERTEXT              OF EMS-MELD-LNK (2)" + "\r\n" +
+			                       "       MOVE FELD-WERT                         OF S00S33-REQ-2(I)" + "\r\n" +
+			                       "         TO PARAMETERTEXT              OF EMS-MELD-LNK (3)";
+
+			ConfigurationItem item = new ConfigurationItem()
+			{
+				Server = "S00S33",
+				Table = "S00D02"
+			};
+			item.Properties = new ObservableCollection<ConfigurationProperty>();
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD-NAME"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD_WERT"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				MessageField = "LUPD-TIMESTAMP",
+				Length = "26"
+			});
+
+			Assert.AreEqual(Helpers.ArrangeKeys(item), expectedValue);
+		}
+
+		[TestMethod]
+		public void WhenConfigurationItemPropertiesIsSetButTheNumberIsGreaterThanSeven_ReturnsTheOnlySevenArrangedKeys()
+		{
+			string expectedValue = "       MOVE FELD-NAME                         OF S00S33-REQ-2(I)" + "\r\n" +
+			                       "         TO PARAMETERTEXT              OF EMS-MELD-LNK (1)" + "\r\n" +
+			                       "       MOVE FELD-WERT                         OF S00S33-REQ-2(I)" + "\r\n" +
+			                       "         TO PARAMETERTEXT              OF EMS-MELD-LNK (2)" + "\r\n" +
+			                       "       MOVE FELD-NAME1                        OF S00S33-REQ-2(I)" + "\r\n" +
+			                       "         TO PARAMETERTEXT              OF EMS-MELD-LNK (3)" + "\r\n" +
+			                       "       MOVE FELD-WERT1                        OF S00S33-REQ-2(I)" + "\r\n" +
+			                       "         TO PARAMETERTEXT              OF EMS-MELD-LNK (4)" + "\r\n" +
+			                       "       MOVE FELD-NAME2                        OF S00S33-REQ-2(I)" + "\r\n" +
+			                       "         TO PARAMETERTEXT              OF EMS-MELD-LNK (5)" + "\r\n" +
+			                       "       MOVE FELD-WERT2                        OF S00S33-REQ-2(I)" + "\r\n" +
+			                       "         TO PARAMETERTEXT              OF EMS-MELD-LNK (6)" + "\r\n" +
+			                       "       MOVE FELD-NAME3                        OF S00S33-REQ-2(I)" + "\r\n" +
+			                       "         TO PARAMETERTEXT              OF EMS-MELD-LNK (7)";
+
+			ConfigurationItem item = new ConfigurationItem()
+			{
+				Server = "S00S33",
+				Table = "S00D02"
+			};
+			item.Properties = new ObservableCollection<ConfigurationProperty>();
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD-NAME"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD_WERT"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD-NAME1"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD_WERT1"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD-NAME2"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD_WERT2"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD-NAME3"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD_WERT3"
+			});
+
+			Assert.AreEqual(Helpers.ArrangeKeys(item), expectedValue);
+		}
+
+		#endregion
+
+		#region ArrangeFetchCursor
+
+		[TestMethod]
+		public void WhenConfigurationItemPropertiesIsSet_ReturnsTheArrangedFetchCursor()
+		{
+			string expectedValue = "                  :FELD-NAME                        OF S00D02-ROW" + "\r\n" +
+			                       "                 ,:FELD-WERT                        OF S00D02-ROW" + "\r\n" +
+								   "                 ,:LUPD-TIMESTAMP                   OF S00D02-ROW" + "\r\n" +
+			                       "                      TYPE AS DATETIME YEAR TO FRACTION(6)";
+
+			ConfigurationItem item = new ConfigurationItem()
+			{
+				Server = "S00S33",
+				Table = "S00D02"
+			};
+			item.Properties = new ObservableCollection<ConfigurationProperty>();
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				MessageField = "FELD-NAME"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				MessageField = "FELD_WERT"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				MessageField = "LUPD-TIMESTAMP",
+				Length = "26"
+			});
+
+			Assert.AreEqual(Helpers.ArrangeFetchCursor(item), expectedValue);
+		}
+
+		#endregion
+
+		#region ArrangeUpdate
+
+		[TestMethod]
+		public void WhenConfigurationItemPropertiesIsSet_ReturnsTheArrangedUpdate()
+		{
+			string expectedValue = "                   BEZEICHNUNG" + "\r\n" +
+			                       "                = :BEZEICHNUNG                      OF S00D02-ROW" + "\r\n" +
+			                       "               ,  :LUPD_TIMESTAMP" + "\r\n" +
+			                       "                = :HV-LUPD-TIMESTAMP                OF HV-S00S33" + "\r\n" +
+			                       "                   TYPE AS DATETIME YEAR TO FRACTION(6)" + "\r\n" +
+			                       "         WHERE     FELD_NAME" + "\r\n" +
+			                       "                = :FELD-NAME                        OF S00D02-ROW" + "\r\n" +
+			                       "         AND       FELD_WERT" + "\r\n" +
+			                       "                = :FELD-WERT                        OF S00D02-ROW" + "\r\n";
+
+			ConfigurationItem item = new ConfigurationItem()
+			{
+				Server = "S00S33",
+				Table = "S00D02"
+			};
+			item.Properties = new ObservableCollection<ConfigurationProperty>();
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD-NAME"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				IsKey = true,
+				MessageField = "FELD_WERT"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				MessageField = "BEZEICHNUNG"
+			});
+			item.Properties.Add(new ConfigurationProperty()
+			{
+				MessageField = "LUPD-TIMESTAMP",
+				Length = "26"
+			});
+
+			Assert.AreEqual(expectedValue, Helpers.ArrangeUpdate(item));
+		}
+
+		#endregion
+
+		#endregion Server
 	}
 }
