@@ -68,6 +68,9 @@ namespace PlusLayerCreator
 	        input = input.Replace("$type$", ToPascalCase(type));
 	        input = input.Replace("$Name$", name);
 	        input = input.Replace("$name$", ToPascalCase(name));
+	        input = input.Replace("$Server$", item == null ? string.Empty : item.Server);
+	        input = input.Replace("$server$", item == null ? string.Empty : ToPascalCase(item.Server));
+
 
 			return input;
         }
@@ -191,9 +194,9 @@ namespace PlusLayerCreator
                     filterMembersContent = "private string _" + ToPascalCase(plusDataObject.Name) + ";";
                     filterPropertiesContent = FilterPropertyTemplate;
                     filterPredicateResetContent = plusDataObject.Name + " = string.Empty;";
-                    filterPredicatesContent = ".Match(x => x." + plusDataObject.Name + filterSuffix + ", x => x." +
+                    filterPredicatesContent = ".IsMatch(x => x." + plusDataObject.Name + filterSuffix + ", x => x." +
                                               plusDataObject.Name + ")";
-                    filterXamlContent = DoReplacesClient(FilterTextBoxXamlTemplate, plusDataItem);
+                    filterXamlContent = DoReplacesClient(FilterTextBoxXamlTemplate, plusDataItem, null, plusDataObject.Name);
                 }
 
                 if (plusDataObject.FilterPropertyType == "ComboBox")
@@ -208,7 +211,7 @@ namespace PlusLayerCreator
                         plusDataObject.Name +
                         "MultiSelector = new MultiValueSelector<string>(SourceCollection.Select(x => x." +
                         plusDataObject.Name + ".ToString()).Distinct(), RefreshCollectionView, AllValue);";
-                    filterXamlContent = DoReplacesClient(FilterComboBoxXamlTemplate, plusDataItem);
+                    filterXamlContent = DoReplacesClient(FilterComboBoxXamlTemplate, plusDataItem, null, plusDataObject.Name);
                 }
             }
 
@@ -221,7 +224,7 @@ namespace PlusLayerCreator
                 filterPredicateResetContent = plusDataObject.Name + " = null;";
                 filterPredicatesContent =
                     ".IsEqual(x => x." + plusDataObject.Name + ", x => x." + plusDataObject.Name + ")";
-                filterXamlContent = DoReplacesClient(FilterCheckBoxXamlTemplate, plusDataItem);
+                filterXamlContent = DoReplacesClient(FilterCheckBoxXamlTemplate, plusDataItem, null, plusDataObject.Name);
             }
 
             if (plusDataObject.Type == "DateTime")

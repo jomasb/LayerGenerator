@@ -6,7 +6,7 @@
 /// <param name="transaction">The transaction.</param>
 /// <returns></returns>
 [BackendCommand("Save$Item$List")]
-public bool Save$Item$List(I$Product$$Item$Service dataProvider, IDictionary<string, object> arguments, ITransaction transaction)
+public bool Save$Item$List(I$Product$$Item$NoBOService dataProvider, IDictionary<string, object> arguments, ITransaction transaction)
 {
 	bool isSuccessful = true;
 

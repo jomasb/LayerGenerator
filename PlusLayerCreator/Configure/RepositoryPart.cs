@@ -179,7 +179,7 @@ namespace PlusLayerCreator.Configure
         
         public void CreateDataItem()
         {
-            foreach (var dataItem in _configuration.DataLayout.Where(t => t.Name != "LupdTimestamp" && t.Name != "LupdUser"))
+            foreach (var dataItem in _configuration.DataLayout)
 			{
                 var dataItemContent = string.Empty;
 
@@ -195,7 +195,7 @@ namespace PlusLayerCreator.Configure
 					}
 	            }
 
-	            foreach (var plusDataObject in dataItem.Properties)
+	            foreach (var plusDataObject in dataItem.Properties.Where(t => t.Name != "LupdTimestamp" && t.Name != "LupdUser"))
                 {
                     if (plusDataObject.IsRequired)
                     {
@@ -432,12 +432,10 @@ namespace PlusLayerCreator.Configure
             var identifier = string.Empty;
             foreach (var plusDataObject in dataItem.Properties.Where(t => t.IsKey))
             {
-                if (identifier != string.Empty) identifier = " && " + identifier;
-
-                identifier += "x." + plusDataObject.Name + ".Equals(dto." + plusDataObject.Name + ")";
+                identifier += "x." + plusDataObject.Name + ".Equals(dto." + plusDataObject.Name + ") && ";
             }
 
-            return identifier;
+            return identifier.Substring(0, identifier.Length - 4);
         }
 
         private string GetReadOnly(ConfigurationItem dataItem)

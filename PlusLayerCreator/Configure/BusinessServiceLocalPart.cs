@@ -197,7 +197,7 @@ namespace PlusLayerCreator.Configure
 	    private void CreateServerMapping(ConfigurationItem dataItem)
 	    {
 			var serverMappingWriteContent = string.Empty;
-		    string tabAnz = dataItem.Server + "TabAnz";
+		    string tabAnz = GetMaxTimes(dataItem);
 
 			string serverMappingReadContent =
 				(File.ReadAllText(_configuration.InputPath + @"Service\Tandem\ServerMappingGetPart.txt")
@@ -235,7 +235,7 @@ namespace PlusLayerCreator.Configure
 	    {
 		    string interfacePart = string.Empty;
 		    string readPart = GetReadPart(dataItem);
-		    string writePart = GetWritePart(dataItem);
+		    string writePart = dataItem.CanEdit ? GetWritePart(dataItem) : string.Empty;
 		    string fillPart = GetFillPart(dataItem);
 			
 		    interfacePart += ", I" + dataItem.Server + dataItem.RepRplRead + "BusinessObject";
@@ -255,7 +255,7 @@ namespace PlusLayerCreator.Configure
 				.Replace("$Server$", dataItem.Server)
 			    .Replace("$ReqRpl$", dataItem.RepRplRead)
 				.Replace("$Transcode$", dataItem.TransactionCodeRead)
-			    .Replace("$TabAnz$", dataItem.Server + "TabAnz")
+			    .Replace("$TabAnz$", GetTabAnz(dataItem))
 				.DoReplacesClient(dataItem);
 
 		    return getPart;
@@ -266,8 +266,9 @@ namespace PlusLayerCreator.Configure
 			    .Replace("$Server$", dataItem.Server)
 			    .Replace("$ReqRpl$", dataItem.RepRplWrite)
 			    .Replace("$Transcode$", dataItem.TransactionCodeWrite)
-			    .Replace("$TabAnz$", dataItem.Server + "TabAnz")
-			    .DoReplacesClient(dataItem);
+			    .Replace("$TabAnz$", GetTabAnz(dataItem))
+			    .Replace("$MaxTimes$", GetMaxTimes(dataItem))
+				.DoReplacesClient(dataItem);
 
 		    return writePart;
 		}
@@ -281,22 +282,39 @@ namespace PlusLayerCreator.Configure
 		    {
 			    if (plusDataObject.Name == "LupdTimestamp")
 			    {
-				    messageToDtoContent += "serviceMessage." + plusDataObject.MessageField.ToCamelCase() + "(PlusFormat.FormatTandemTimestamp26(" + plusDataObject.Name.ToPascalCase() + "." + plusDataObject.Name + ", i));\r\n";
-				    dtoToMessageContent += plusDataObject.Name + " = PlusFormat.ParseTandemTimestamp26(serviceMessage." + plusDataObject.MessageField.ToCamelCase() + "(i));\r\n";
+				    string timestampFormat = "TandemTimestamp2" + Helpers.GetYearToFractionDigits(plusDataObject);
+
+				    dtoToMessageContent += "serviceMessage." + plusDataObject.MessageField.ToCamelCase() + "(PlusFormat.Format" + timestampFormat + "(" + dataItem.Name.ToPascalCase() + "." + plusDataObject.Name + "), position);\r\n";
+				    messageToDtoContent += dataItem.Name.ToPascalCase() + "." + plusDataObject.Name + " = PlusFormat.Parse" + timestampFormat + "(serviceMessage." + plusDataObject.MessageField.ToCamelCase() + "(position));\r\n";
 				}
 				else
 			    {
-				    messageToDtoContent += "serviceMessage." + plusDataObject.MessageField.ToCamelCase() + "(" + plusDataObject.Name.ToPascalCase() + "." + plusDataObject.Name + ", i);\r\n";
-				    dtoToMessageContent += plusDataObject.Name + " = serviceMessage." + plusDataObject.MessageField.ToCamelCase() + "(i);\r\n";
+				    string name = plusDataObject.MessageField.ToCamelCase() == "Fspra" ? "Fspra1" : plusDataObject.MessageField.ToCamelCase();
+
+				    dtoToMessageContent += "serviceMessage." + name + "(" + dataItem.Name.ToPascalCase() + "." + plusDataObject.Name + ", position);\r\n";
+				    messageToDtoContent += dataItem.Name.ToPascalCase() + "." + plusDataObject.Name + " = serviceMessage." + name + "(position);\r\n";
 				}
 			}
 
-		    string fillFromMessage = _converterFillFromMessage.DoReplacesClient(dataItem)
-			    .ReplaceSpecialContent(new[] {messageToDtoContent});
-			string fillFromDto = _converterFillFromDto.DoReplacesClient(dataItem)
-			    .ReplaceSpecialContent(new[] {dtoToMessageContent});
+		    string fillFromMessage1 = _converterFillFromMessage.DoReplacesClient(dataItem).Replace("$ReqRpl$", dataItem.RepRplRead)
+				.ReplaceSpecialContent(new[] { messageToDtoContent });
+		    string fillFromMessage2 = _converterFillFromMessage.DoReplacesClient(dataItem).Replace("$ReqRpl$", dataItem.RepRplWrite)
+				.ReplaceSpecialContent(new[] { messageToDtoContent });
+			string fillFromDto = _converterFillFromDto.DoReplacesClient(dataItem).Replace("$ReqRpl$", dataItem.RepRplWrite)
+				.ReplaceSpecialContent(new[] {dtoToMessageContent});
 
-			return fillFromMessage + "\r\n\r\n" + fillFromDto;
+			return fillFromMessage1 + "\r\n\r\n" + fillFromMessage2 + "\r\n\r\n" + fillFromDto;
+	    }
+
+	    private string GetTabAnz(ConfigurationItem item)
+	    {
+		    return item.Table.ToCamelCase() + "TabAnz";
+	    }
+
+	    private string GetMaxTimes(ConfigurationItem item)
+	    {
+		    return item.Table.ToCamelCase() + "Tab_MaxTimes";
+
 	    }
 	}
 }

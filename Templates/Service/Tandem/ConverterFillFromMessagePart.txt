@@ -4,7 +4,7 @@
 /// <param name="$item$">The $item$.</param>
 /// <param name="serviceMessage">The service message.</param>
 /// <param name="position">The position.</param>
-private void Fill$Item$FromMessage($Product$$Item$ $item$, $Server$$ReqRpl$ serviceMessage, int postition)
+private void Fill$Item$FromMessage($Product$$Item$ $item$, $Server$$ReqRpl$ serviceMessage, int position)
 {
 	$specialContent1$
 }

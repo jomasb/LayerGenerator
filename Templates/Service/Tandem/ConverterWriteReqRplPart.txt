@@ -9,8 +9,6 @@ public void ConvertBusinessDataToMessageData$Server$$ReqRpl$($Server$$ReqRpl$ se
 	var transcode = serviceMessage.Transcode();
 	if (transcode.Equals($Server$$ReqRpl$Transcode.$Transcode$))
 	{
-		serviceMessage.MaxLupdTimestamp(PlusFormat.FormatTandemTimestamp26((DateTime)Arguments["MaxLupdTimestamp"]));
-
 		IList<$Product$$Item$> $item$s =
 			Arguments["$Item$sToSave"] as IList<$Product$$Item$>;
 
@@ -39,7 +37,7 @@ public void ConvertBusinessDataToMessageData$Server$$ReqRpl$($Server$$ReqRpl$ se
 			}
 		}
 
-		Arguments["CheckpointReferencesToSaveOffset"] = index;
+		Arguments["$Item$sToSaveOffset"] = index;
 	}
 }
 

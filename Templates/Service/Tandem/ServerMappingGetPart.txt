@@ -6,7 +6,7 @@
 /// <param name="transaction">The transaction.</param>
 /// <returns></returns>
 [BackendCommand("Get$Item$List")]
-public bool Read$Item$List(I$Product$$Item$Service dataProvider, IDictionary<string, object> arguments, ITransaction transaction)
+public bool Read$Item$List(I$Product$$Item$NoBOService dataProvider, IDictionary<string, object> arguments, ITransaction transaction)
 {
 	return CallBackend<$Product$$Item$Converter>(dataProvider, arguments, $specialContent1$);
 }

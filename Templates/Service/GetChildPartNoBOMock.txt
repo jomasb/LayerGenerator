@@ -14,8 +14,6 @@ public Task<CallResponse<IList<$Product$$Item$>>> Get$Item$sAsync(IServiceCallCo
 			$product$$Item$s.Add(new $Product$$Item$()
 			{
 				$specialContent2$
-				LupdTimestamp = new DateTime(2016, 1, 12),
-				LupdUser = "JMA"
 			});
 		}
 		

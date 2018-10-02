@@ -116,7 +116,7 @@ namespace PlusLayerCreator.Configure
                     lblDeOut += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name +
                                 plusDataObject.Name + "=@@" + plusDataObject.TranslationDe + "\r\n";
 
-                    if (plusDataObject.Type == "DateTime")
+                    if (plusDataObject.Type == "DateTime" && !plusDataObject.Name.ToLower().StartsWith("lupd"))
                     {
                         lblEn += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name +
                                  plusDataObject.Name +

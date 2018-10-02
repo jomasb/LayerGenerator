@@ -4,7 +4,7 @@ using Dcx.Plus.Data.Contracts;
 using Dcx.Plus.Data.Tandem.Adapter;
 using Dcx.Plus.Data.Tandem.Contracts;
 using Dcx.Plus.Data.Tandem.Modules.$Product$;
-using Dcx.Plus.BusinessServiceLocal.Modules.$Product$.Contracts.DTOs;
+using Dcx.Plus.BusinessServiceLocal.Modules.$Product$.Contracts.Dtos;
 
 namespace Dcx.Plus.BusinessServiceLocal.Modules.$Product$.Tandem
 {
@@ -15,8 +15,8 @@ namespace Dcx.Plus.BusinessServiceLocal.Modules.$Product$.Tandem
 	/// <author></author>
 	/// <company>abat+ GmbH</company>
 	/// <date></date>
-	[ServerMapping(typeof(I$Product$$Item$Service))]
-	public class $Product$$Item$ServerMapping : ServerMapping<I$Product$$Item$Service>
+	[ServerMapping(typeof(I$Product$$Item$NoBOService))]
+	public class $Product$$Item$ServerMapping : ServerMapping<I$Product$$Item$NoBOService>
 	{
 		#region Get
 		

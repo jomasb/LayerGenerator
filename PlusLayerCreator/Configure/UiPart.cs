@@ -405,7 +405,7 @@ namespace PlusLayerCreator.Configure
                     detailViewContent +=
                         File.ReadAllText(_configuration.InputPath + @"UI\Regions\Detail\VersionDetailButtonXaml.txt");
 
-                foreach (var property in dataItem.Properties)
+                foreach (var property in dataItem.Properties.Where(t => !t.Name.ToLower().StartsWith("lupd")))
                 {
 	                if (dataItem.Name.EndsWith("Version") && property.Name == "IsActive")
 		                continue;
@@ -429,14 +429,14 @@ namespace PlusLayerCreator.Configure
 
 				}
 
-				detailViewContent +=
-                    "				<plus:PlusFormRow Label=\"{localization:Localize Key=Global_lblLupdTimestamp, Source=GlobalLocalizer}\">";
-                detailViewContent += "				    <plus:PlusLabel Content=\"{Binding DataItem.LupdTimestamp}\" />\r\n";
-                detailViewContent += "				</plus:PlusFormRow>\r\n";
-                detailViewContent +=
-                    "				<plus:PlusFormRow Label=\"{localization:Localize Key=Global_lblLupdUser, Source=GlobalLocalizer}\">";
-                detailViewContent += "				    <plus:PlusLabel Content=\"{Binding DataItem.LupdUser}\" />\r\n";
-                detailViewContent += "				</plus:PlusFormRow>\r\n";
+	            foreach (var property in dataItem.Properties.Where(t => t.Name.ToLower().StartsWith("lupd")))
+	            {
+		            string name = property.Name == "LupdProzessname" ? "LupdUser" : property.Name;
+
+					detailViewContent += "				<plus:PlusFormRow Label=\"{localization:Localize Key=Global_lbl" + name + ", Source=GlobalLocalizer}\">";
+		            detailViewContent += "				    <plus:PlusLabel Content=\"{Binding DataItem." + property.Name + "}\" />\r\n";
+		            detailViewContent += "				</plus:PlusFormRow>\r\n";
+				}
 
                 detailViewContent += "    </StackPanel>\r\n";
                 detailViewContent += "</plus:PlusGroupBox>\r\n";

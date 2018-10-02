@@ -212,11 +212,11 @@ namespace PlusLayerCreator.Configure
         {
             var layer = withBO ? "Gateway" : "Service";
 
-            foreach (var dataItem in _configuration.DataLayout.Where(t => t.Name != "LupdTimestamp" && t.Name != "LupdUser"))
+            foreach (var dataItem in _configuration.DataLayout)
             {
                 var dtoContent = string.Empty;
 
-                foreach (var plusDataObject in dataItem.Properties)
+                foreach (var plusDataObject in dataItem.Properties.Where(t => t.Name != "LupdTimestamp" && t.Name != "LupdUser"))
                     dtoContent += "public " + plusDataObject.Type + " " + plusDataObject.Name + " {get; set;}\r\n\r\n";
 
                 Helpers.CreateFileFromPath(_configuration.InputPath + layer + @"\Dtos\DtoTemplate.cs",

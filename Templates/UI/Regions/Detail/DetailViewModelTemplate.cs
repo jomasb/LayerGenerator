@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dcx.Plus.Localization;
+using Dcx.Plus.Repository.FW.Contracts;
+using Dcx.Plus.Repository.Modules.$Product$.Contracts;
 using Dcx.Plus.Repository.Modules.$Product$.DataItems;
 using Dcx.Plus.UI.WPF.FW.Shell.Infrastructure;
 using Dcx.Plus.UI.WPF.FW.Shell.Interfaces;

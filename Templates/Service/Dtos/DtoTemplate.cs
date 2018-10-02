@@ -1,5 +1,6 @@
 #region Usings
 
+using System;
 using Dcx.Plus.Gateway.FW.Contracts;
 
 #endregion Usings
