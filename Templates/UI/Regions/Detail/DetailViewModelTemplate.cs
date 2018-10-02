@@ -76,5 +76,6 @@ namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Detail
 			
 		}
 
+		$specialContent6$
     }	
 }

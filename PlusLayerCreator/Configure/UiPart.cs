@@ -382,7 +382,8 @@ namespace PlusLayerCreator.Configure
 	            string propetiesContent = string.Empty;
 	            string onNavigatedToContent = string.Empty;
 	            string lazyLoadingContent = string.Empty;
-
+	            string multiEditContent = string.Empty;
+				
 				if (!string.IsNullOrEmpty(dataItem.Parent))
                 {
                     int level = 0;
@@ -405,7 +406,17 @@ namespace PlusLayerCreator.Configure
                     detailViewContent +=
                         File.ReadAllText(_configuration.InputPath + @"UI\Regions\Detail\VersionDetailButtonXaml.txt");
 
-                foreach (var property in dataItem.Properties.Where(t => !t.Name.ToLower().StartsWith("lupd")))
+	            if (dataItem.CanEditMultiple && string.IsNullOrEmpty(dataItem.Parent))
+	            {
+		            detailViewContent +=
+			            File.ReadAllText(_configuration.InputPath + @"UI\Regions\Detail\CancelDetailButtonXaml.txt");
+
+					multiEditContent +=
+						File.ReadAllText(_configuration.InputPath + @"UI\Regions\Detail\CancelDetailViewModelPart.txt");
+				}
+
+
+	            foreach (var property in dataItem.Properties.Where(t => !t.Name.ToLower().StartsWith("lupd")))
                 {
 	                if (dataItem.Name.EndsWith("Version") && property.Name == "IsActive")
 		                continue;
@@ -450,7 +461,7 @@ namespace PlusLayerCreator.Configure
 	            else
 	            {
 		            Helpers.CreateFileFromPath(Files.DetailViewModelTemplate,
-						_configuration.OutputPath + @"UI\Regions\Detail\" + dataItem.Name + "DetailViewModel.cs", new[] { memberContent, constructorListContent, propetiesContent, onNavigatedToContent, lazyLoadingContent },
+						_configuration.OutputPath + @"UI\Regions\Detail\" + dataItem.Name + "DetailViewModel.cs", new[] { memberContent, constructorListContent, propetiesContent, onNavigatedToContent, lazyLoadingContent, multiEditContent },
 						dataItem);
 	            }
 

@@ -1,0 +1,15 @@
+protected override bool CancelEditCommandCanExecute()
+{
+	if (DataItem == null)
+		return false;
+
+	return DataItem.HasChanges;
+}
+
+protected override async Task CancelEditCommandExecuted()
+{
+	IsBusy = true;
+	await DataItem.Rollback();
+	IsBusy = false;
+}
+

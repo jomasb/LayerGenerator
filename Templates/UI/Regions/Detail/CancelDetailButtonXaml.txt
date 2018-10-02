@@ -1,0 +1,5 @@
+<plus:PlusButton
+	Margin="0 16"
+	Command="{Binding CancelEditCommand}"
+	Content="{localization:Localize Key=Global_btnCancel, Source=GlobalLocalizer}"
+	Style="{StaticResource ActionButton.Standard}" />
