@@ -24,7 +24,7 @@ SQL:
 %%DELETE-FELDER-WERTE%%  => Schlüsselfeld-/Wert-Paare für DELETE-Statement
 %%DATEN-AUS-REQUEST%%    => Übernahme der Daten aus der Request
 %%DATEN-IN-REPLY%%       => Übernahme der Daten in die Reply
-
+%%UPDATE-FELDER-WERTE%%  => Alle Felder, die für ein Update benötigt werden (UPDATE und WHERE)
 
 Meldungen
 ---------
