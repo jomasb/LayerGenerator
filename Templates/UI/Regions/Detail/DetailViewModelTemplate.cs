@@ -7,7 +7,7 @@ using Dcx.Plus.Localization;
 using Dcx.Plus.Repository.FW.Contracts;
 using Dcx.Plus.Repository.Modules.$Product$.Contracts;
 using Dcx.Plus.Repository.Modules.$Product$.DataItems;
-using Dcx.Plus.UI.WPF.FW.Shell.Infrastructure;
+using Dcx.Plus.UI.WPF.FW.Shell.Infrastructure.ViewModels;
 using Dcx.Plus.UI.WPF.FW.Shell.Interfaces;
 
 namespace Dcx.Plus.UI.WPF.Modules.$Product$.Windows.$Dialog$.Regions.Detail

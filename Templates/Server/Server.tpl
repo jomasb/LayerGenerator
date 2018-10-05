@@ -879,7 +879,7 @@
     EVALUATE TRUE
     WHEN     SQL-STATUS-OK
        MOVE HV-LUPD-TIMESTAMP       OF HV-%%SERVER%%
-         TO LUPD-TIMESTAMP          OF %%TBL%%-TAB OF %%SERVER%%-RPL-2(I)
+%%LUPD-TIMESTAMP-RPL%%
 
     WHEN     SQL-STATUS-DUP
 *                                      Daten bereits vorhanden
@@ -912,7 +912,7 @@
     EVALUATE TRUE
     WHEN     SQL-STATUS-OK
        MOVE HV-LUPD-TIMESTAMP       OF HV-%%SERVER%%
-         TO LUPD-TIMESTAMP          OF %%TBL%%-TAB OF %%SERVER%%-RPL-2(I)
+%%LUPD-TIMESTAMP-RPL%%
 
     WHEN     SQL-STATUS-NOT-FOUND
 *                                      Daten nicht gefunden
