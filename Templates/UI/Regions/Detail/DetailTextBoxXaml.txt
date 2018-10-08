@@ -1,1 +1,1 @@
-<plus:PlusTextBox $specialContent1$ Text="{Binding $Property$, UpdateSourceTrigger=PropertyChanged}" />
+<plus:PlusTextBox$specialContent1$ Text="{Binding $Property$, UpdateSourceTrigger=PropertyChanged}" />

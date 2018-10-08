@@ -388,11 +388,11 @@ namespace PlusLayerCreator.Configure
                 {
                     int level = 0;
                     string parentContent = string.Empty;
-                    ConfigurationItem parent = Helpers.GetParent(dataItem);
+                    ConfigurationItem parent = dataItem.GetParent();
                     while (parent != null)
                     {
-                        parentContent = GetParentInformation(parent, level) + parentContent;
-                        parent = Helpers.GetParent(parent);
+                        parentContent = GetParentInformation(dataItem, level) + parentContent;
+                        parent = parent.GetParent();
                         level++;
                     }
 
@@ -541,7 +541,7 @@ namespace PlusLayerCreator.Configure
 
                 var gridContent = gridTemplate.DoReplacesClient(dataItem);
                 masterViewContent +=
-                    gridContent.ReplaceSpecialContent(new[] {GetGridXaml(dataItem), rowNumber.ToString()});
+                    gridContent.ReplaceSpecialContent(new[] {GetGridColumnsXaml(dataItem), rowNumber.ToString()});
                 masterViewCodeBehindContent +=
                     "viewModel.ColumnProvider = Filtered" + dataItem.Name + "GridView;\r\n\r\n";
             }
@@ -560,9 +560,9 @@ namespace PlusLayerCreator.Configure
 
                     var gridContent = _masterGridVersionTemplate.DoReplacesClient(master);
                     masterViewContent +=
-                        gridContent.ReplaceSpecialContent(new[] {GetGridXaml(master, true), rowNumber.ToString()});
+                        gridContent.ReplaceSpecialContent(new[] {GetGridColumnsXaml(master, true), rowNumber.ToString()});
                     masterViewResourcesContent = _masterGridVersionResourcesTemplate
-                        .Replace("$specialContent1$", GetGridXaml(version, true)).DoReplacesClient(master);
+                        .Replace("$specialContent1$", GetGridColumnsXaml(version, true)).DoReplacesClient(master);
                 }
                 else
                 {
@@ -574,7 +574,7 @@ namespace PlusLayerCreator.Configure
                         gridTemplate = _masterGridReadonlyTemplate;
                     var gridContent = gridTemplate.DoReplacesClient(dataItem);
                     masterViewContent +=
-                        gridContent.ReplaceSpecialContent(new[] {GetGridXaml(dataItem), rowNumber.ToString()});
+                        gridContent.ReplaceSpecialContent(new[] {GetGridColumnsXaml(dataItem), rowNumber.ToString()});
                     masterViewCodeBehindContent +=
                         "viewModel.ColumnProvider = Filtered" + dataItem.Name + "GridView;\r\n\r\n";
                     nextDataItem = dataItem.Order + 1;
@@ -592,7 +592,7 @@ namespace PlusLayerCreator.Configure
                     string gridContent;
                     string buttons;
                     var dataItem = _configuration.DataLayout.First(t => t.Order == i);
-                    var columns = GetGridXaml(dataItem);
+                    var columns = GetGridColumnsXaml(dataItem);
                     if (dataItem.CanEditMultiple)
                     {
                         gridContent = File
@@ -839,7 +839,7 @@ namespace PlusLayerCreator.Configure
 
         #region View
 
-        private string GetItemControl(ConfigurationItem item, ConfigurationProperty property)
+        public string GetItemControl(ConfigurationItem item, ConfigurationProperty property)
         {
             string retValue = string.Empty;
 	        string specialContent = string.Empty;
@@ -898,9 +898,11 @@ namespace PlusLayerCreator.Configure
             return retValue.DoReplacesClient(null, null, "DataItem." + property.Name).ReplaceSpecialContent(new[] { specialContent });
         }
 
-        private string GetParentInformation(ConfigurationItem parent, int level)
+        public string GetParentInformation(ConfigurationItem dataItem, int level)
         {
-            string detailViewContent = string.Empty;
+	        ConfigurationItem parent = dataItem.GetParent();
+
+			string detailViewContent = string.Empty;
             string parentLevelString = string.Empty;
 
             for (int i = 0; i <= level; i++)
@@ -911,9 +913,9 @@ namespace PlusLayerCreator.Configure
             // Parent key fields
             detailViewContent += "<plus:PlusGroupBox Header=\"" + parent.Name.GetLocalizedString() +
                                  "\">\r\n";
-            detailViewContent += "    <StackPanel\r\n>";
+            detailViewContent += "    <StackPanel>\r\n";
 
-            foreach (var property in parent.Properties.Where(t => t.IsKey || t.IsRequired))
+            foreach (var property in parent.Properties.Where(t => t.IsKey))
             {
                 detailViewContent += "        <plus:PlusFormRow Label=\"" +
                                      (parent.Name + property.Name).GetLocalizedString() + "\">\r\n";
@@ -936,7 +938,7 @@ namespace PlusLayerCreator.Configure
             return detailViewContent;
         }
 
-        private string GetGridXaml(ConfigurationItem dataItem, bool old = false)
+        public string GetGridColumnsXaml(ConfigurationItem dataItem, bool old = false)
         {
             var columnsContent = string.Empty;
 	        foreach (var plusDataObject in dataItem.Properties.Where(t => t.IsVisibleInGrid))
@@ -1059,7 +1061,7 @@ namespace PlusLayerCreator.Configure
             }
             else if (item.Name.EndsWith("Version"))
             {
-                content = _masterViewModelAddVersion.DoReplacesClient(Helpers.GetParent(item));
+                content = _masterViewModelAddVersion.DoReplacesClient(item.GetParent());
             }
             else
             {

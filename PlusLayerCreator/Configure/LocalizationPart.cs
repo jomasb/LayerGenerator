@@ -49,17 +49,18 @@ namespace PlusLayerCreator.Configure
                 lblEnOut += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name + "=@@" +
                             dataItem.Name + "\r\n";
                 lblDe += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name + "=" +
-                         dataItem.Translation + dataItem.Translation.GetLocaliatzionExtension() + "\r\n";
+                         dataItem.Translation + "\r\n";
                 lblDeOut += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name + "=@@" +
-                            dataItem.Translation + dataItem.Translation.GetLocaliatzionExtension() + "\r\n";
-                lblEn += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name + "s=" +
-                         dataItem.Name + "s\r\n";
+                            dataItem.Translation + "\r\n";
+
+	            lblEn += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name + "s=" +
+                         dataItem.Name.ToLocalizedPlural(2) + "\r\n";
                 lblEnOut += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name + "s=@@" +
-                            dataItem.Name + "s\r\n";
+                            dataItem.Name.ToLocalizedPlural(2) + "\r\n";
                 lblDe += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name + "s=" +
-                         dataItem.Translation + dataItem.Translation.GetLocaliatzionExtension() + "\r\n";
+                         dataItem.Translation.ToLocalizedPlural(1) + "\r\n";
                 lblDeOut += _configuration.Product + _configuration.DialogName + "_lbl" + dataItem.Name + "s=@@" +
-                            dataItem.Translation + dataItem.Translation.GetLocaliatzionExtension() + "\r\n";
+                            dataItem.Translation.ToLocalizedPlural(1) + "\r\n";
 
                 if ((dataItem.CanEdit || dataItem.CanEditMultiple) && (string.IsNullOrEmpty(dataItem.Parent) || _configuration.DataLayout.Any(x => x.Name == dataItem.Parent && x.IsPreFilterItem)))
                 {

@@ -40,15 +40,15 @@ namespace PlusLayerCreator.Configure
                     //Parent
                     interfaceReadContent +=
                         File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\GetPart" +
-                                            fileNameExtension + ".txt").DoReplacesClient(dataItem).ReplaceSpecialContent(new[] { Helpers.GetPreFilterInformation(dataItem, "parameter") }) + "\r\n\r\n";
+                                            fileNameExtension + ".txt").DoReplacesClient(dataItem).ReplaceSpecialContent(new[] { dataItem.GetPreFilterInformation("parameter") }) + "\r\n\r\n";
                     gatewayReadContent +=
                         File.ReadAllText(_configuration.InputPath + @"Gateway\GetPart" + fileNameExtension + ".txt")
-                            .DoReplacesClient(dataItem).ReplaceSpecialContent(new[] { Helpers.GetPreFilterInformation(dataItem, "parameter"), Helpers.GetPreFilterInformation(dataItem, "listCall"), Helpers.GetPreFilterInformation(dataItem, "arguments") }) + "\r\n\r\n";
+                            .DoReplacesClient(dataItem).ReplaceSpecialContent(new[] { dataItem.GetPreFilterInformation("parameter"), dataItem.GetPreFilterInformation("listCall"), dataItem.GetPreFilterInformation("arguments") }) + "\r\n\r\n";
 
                     var propertyAssignments = Helpers.GetBusinessServiceLocalGetMock(dataItem);
                     gatewayMockReadContent +=
                         File.ReadAllText(_configuration.InputPath + @"Gateway\GetPartMock.txt")
-                            .ReplaceSpecialContent(new[] { propertyAssignments, Helpers.GetPreFilterInformation(dataItem, "parameter") })
+                            .ReplaceSpecialContent(new[] { propertyAssignments, dataItem.GetPreFilterInformation("parameter") })
                             .DoReplacesClient(dataItem) + "\r\n\r\n";
                 }
                 else
@@ -58,20 +58,20 @@ namespace PlusLayerCreator.Configure
                         File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\GetChildPart" +
                                             fileNameExtension + ".txt").DoReplacesClient(dataItem) +
                         "\r\n\r\n";
-                    content = content.ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param") });
+                    content = content.ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param") });
                     interfaceReadContent += content;
 
 
                     content = File.ReadAllText(_configuration.InputPath + @"Gateway\GetChildPart" +
                                                 fileNameExtension + ".txt").DoReplacesClient(dataItem) +
                                 "\r\n\r\n";
-                    content = content.ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param"), Helpers.GetParentParameter(dataItem, "call"), Helpers.GetParentParameter(dataItem, "") });
+                    content = content.ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param"), dataItem.GetParentParameter("call"), dataItem.GetParentParameter("") });
                     gatewayReadContent += content;
 
                     var propertyAssignments = Helpers.GetBusinessServiceLocalGetMock(dataItem);
                     gatewayMockReadContent +=
                         File.ReadAllText(_configuration.InputPath + @"Gateway\GetChildPartMock.txt")
-                            .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param"), propertyAssignments })
+                            .ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param"), propertyAssignments })
                             .DoReplacesClient(dataItem) +
                         "\r\n\r\n";
                 }
@@ -82,34 +82,34 @@ namespace PlusLayerCreator.Configure
                     interfaceSaveContent +=
                         File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\SavePart" +
                                             fileNameExtension + ".txt")
-                            .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param") })
+                            .ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param") })
                             .DoReplacesClient(dataItem) + "\r\n\r\n";
                     gatewaySaveContent +=
                         File.ReadAllText(
                                 _configuration.InputPath + @"Gateway\SavePart" + fileNameExtension + ".txt")
-                            .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param"), Helpers.GetParentParameter(dataItem, "call"), Helpers.GetParentParameter(dataItem, "") })
+                            .ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param"), dataItem.GetParentParameter("call"), dataItem.GetParentParameter("") })
                             .DoReplacesClient(dataItem) + "\r\n\r\n";
 
                     gatewayMockSaveContent +=
                         File.ReadAllText(_configuration.InputPath + @"Gateway\SavePartMock.txt")
-                            .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param") })
+                            .ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param") })
                             .DoReplacesClient(dataItem) + "\r\n\r\n";
 
                     //Delete
                     interfaceSaveContent +=
                         File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\DeletePart" +
                                          fileNameExtension + ".txt")
-                            .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param") })
+                            .ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param") })
                             .DoReplacesClient(dataItem) + "\r\n\r\n";
                     gatewaySaveContent +=
                         File.ReadAllText(
                                 _configuration.InputPath + @"Gateway\DeletePart" + fileNameExtension + ".txt")
-                            .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param"), Helpers.GetParentParameter(dataItem, "call"), Helpers.GetParentParameter(dataItem, "") })
+                            .ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param"), dataItem.GetParentParameter("call"), dataItem.GetParentParameter("") })
                             .DoReplacesClient(dataItem) + "\r\n\r\n";
 
                     gatewayMockSaveContent +=
                         File.ReadAllText(_configuration.InputPath + @"Gateway\DeletePartMock.txt")
-                            .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param") })
+                            .ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param") })
                             .DoReplacesClient(dataItem) + "\r\n\r\n";
                 }
 
@@ -118,17 +118,17 @@ namespace PlusLayerCreator.Configure
                     interfaceSaveContent +=
                         File.ReadAllText(_configuration.InputPath + @"Gateway\Contracts\SaveMultiPart" +
                                             fileNameExtension + ".txt")
-                            .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param") })
+                            .ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param") })
                             .DoReplacesClient(dataItem) + "\r\n\r\n";
                     gatewaySaveContent +=
                         File.ReadAllText(_configuration.InputPath + @"Gateway\SaveMultiPart" + fileNameExtension +
                                             ".txt")
-                            .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param"), Helpers.GetParentParameter(dataItem, "call"), Helpers.GetParentParameter(dataItem, "") })
+                            .ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param"), dataItem.GetParentParameter("call"), dataItem.GetParentParameter("") })
                             .DoReplacesClient(dataItem) + "\r\n\r\n";
 
                     gatewayMockSaveContent +=
                         File.ReadAllText(_configuration.InputPath + @"Gateway\SaveMultiPartMock.txt")
-                            .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param") })
+                            .ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param") })
                             .DoReplacesClient(dataItem) + "\r\n\r\n";
                 }
 

@@ -358,7 +358,7 @@ namespace PlusLayerCreator.Configure
             string retValue = string.Empty;
             int counter = startLevel;
 
-            ConfigurationItem parent = Helpers.GetParent(item);
+            ConfigurationItem parent = item.GetParent();
             ConfigurationItem ii = item;
             while (parent != null)
             {
@@ -367,7 +367,7 @@ namespace PlusLayerCreator.Configure
                 retValue = ", _" + _configuration.Product.ToLower() + "DtoFactory.Create" + parent.Name +
                             "FromDataItem(" + GetParentString(ii, startP, counter) + ")" + retValue;
                 ii = parent;
-                parent = Helpers.GetParent(parent);
+                parent = parent.GetParent();
                 counter++;
             }
 

@@ -139,26 +139,51 @@ namespace PlusLayerCreator
 
 		#region Client methods
 
-		public static string GetLocaliatzionExtension(this string input)
+		public static string ToLocalizedPlural(this string input, int language = 1)
 	    {
-		    if (input.EndsWith("e"))
-			    return "n";
-		    if (input.EndsWith("er"))
-			    return "";
-		    return "en";
+		    if (language == 1)
+		    {
+			    if (input.EndsWith("e"))
+				    return input + "n";
+			    if (input.EndsWith("eur") || input.EndsWith("ich") || input.EndsWith("ier") || input.EndsWith("ig") || input.EndsWith("ling") || input.EndsWith("ör"))
+				    return input + "e";
+			    if (input.EndsWith("ent") || input.EndsWith("and") || input.EndsWith("ant") || input.EndsWith("ist") || input.EndsWith("or"))
+				    return input + "en";
+			    if (input.EndsWith("ion") || input.EndsWith("in") || input.EndsWith("ik") || input.EndsWith("helt") || input.EndsWith("kelt") || input.EndsWith("schaft") || input.EndsWith("tät") || input.EndsWith("ung"))
+				    return input + "en";
+			    if (input.EndsWith("el") || input.EndsWith("er") || input.EndsWith("en"))
+				    return input;
+			    if (input.EndsWith("a") || input.EndsWith("i") || input.EndsWith("o") || input.EndsWith("u") || input.EndsWith("y"))
+				    return input + "s";
+		    }
+
+		    if (language == 2)
+		    {
+			    if (input.EndsWith("y"))
+				    return input.Substring(0, input.Length - 1) + "ies";
+
+				return input + "s";
+			}
+
+		    return input;
 	    }
 		
 	    public static int GetMaxValue(string length)
 	    {
-		    if (length == string.Empty)
+		    if (string.IsNullOrEmpty(length))
 			    return 999999;
 
-		    int value;
+			int value;
 		    var computedString = string.Empty;
 		    if (int.TryParse(length, out value))
 			    for (var i = 0; i < value; i++)
 				    computedString += "9";
-		    return int.Parse(computedString);
+
+		    bool result = int.TryParse(computedString, out value);
+		    if (result)
+			    return value;
+
+		    return 0;
 	    }
 
 		public static string ReplaceSpecialContent(this string fileContent, string[] contents = null)
@@ -320,7 +345,7 @@ namespace PlusLayerCreator
                    "Localizer}";
         }
 
-        public static ConfigurationItem GetParent(ConfigurationItem item)
+        public static ConfigurationItem GetParent(this ConfigurationItem item)
         {
             if (string.IsNullOrEmpty(item.Parent))
             {
@@ -330,7 +355,7 @@ namespace PlusLayerCreator
             return Configuration.DataLayout.First(t => t.Name == item.Parent);
         }
 
-	    public static string GetParentParameter(ConfigurationItem item, string type)
+	    public static string GetParentParameter(this ConfigurationItem item, string type)
         {
             string retValue = string.Empty;
 
@@ -348,13 +373,13 @@ namespace PlusLayerCreator
                 {
                     retValue = "arguments.Add(\"" + item.Parent + "\", parent" + item.Parent + ");\r\n";
                 }
-                return GetParentParameter(Configuration.DataLayout.First(t => t.Name == item.Parent), type) + retValue;
+                return Configuration.DataLayout.First(t => t.Name == item.Parent).GetParentParameter(type) + retValue;
             }
 
             return retValue;
         }
 
-        public static string GetPreFilterInformation(ConfigurationItem item, string information)
+        public static string GetPreFilterInformation(this ConfigurationItem item, string information)
         {
             if (item.IsPreFilterItem)
             {
@@ -373,7 +398,7 @@ namespace PlusLayerCreator
                 if (information == "arguments")
                 {
                     filterParameter += "arguments.Add(\"" + Configuration.Product + configurationItem.Name + "\", " +
-                                       configurationItem.Name.ToPascalCase() + ");";
+                                       configurationItem.Name.ToPascalCase() + ");\r\n";
                 }
 
                 if (information == "listCall")

@@ -44,17 +44,17 @@ namespace PlusLayerCreator.Configure
                     //Parent
                     interfaceReadContent +=
                         File.ReadAllText(_configuration.InputPath + @"Service\Contracts\GetPart" +
-                                            fileNameExtension + ".txt").DoReplacesClient(dataItem).ReplaceSpecialContent(new[] { Helpers.GetPreFilterInformation(dataItem, "parameter") }) + "\r\n\r\n";
+                                            fileNameExtension + ".txt").DoReplacesClient(dataItem).ReplaceSpecialContent(new[] { dataItem.GetPreFilterInformation("parameter") }) + "\r\n\r\n";
                     serviceReadContent +=
                         File.ReadAllText(_configuration.InputPath + @"Service\GetPart" + fileNameExtension + ".txt")
-                            .DoReplacesClient(dataItem).ReplaceSpecialContent(new[] { Helpers.GetPreFilterInformation(dataItem, "parameter"), Helpers.GetPreFilterInformation(dataItem, "listCall"), Helpers.GetPreFilterInformation(dataItem, "arguments") }) + "\r\n\r\n";
+                            .DoReplacesClient(dataItem).ReplaceSpecialContent(new[] { dataItem.GetPreFilterInformation("parameter"), dataItem.GetPreFilterInformation("listCall"), dataItem.GetPreFilterInformation("arguments") }) + "\r\n\r\n";
 
                     if (!withBo)
                     {
                         var propertyAssignments = Helpers.GetBusinessServiceLocalGetMock(dataItem);
                         serviceMockReadContent +=
                             File.ReadAllText(_configuration.InputPath + @"Service\GetPartNoBOMock.txt")
-                                .ReplaceSpecialContent(new[] { propertyAssignments, Helpers.GetPreFilterInformation(dataItem, "parameter") })
+                                .ReplaceSpecialContent(new[] { propertyAssignments, dataItem.GetPreFilterInformation("parameter") })
                                 .DoReplacesClient(dataItem) + "\r\n\r\n";
                     }
                 }
@@ -65,14 +65,14 @@ namespace PlusLayerCreator.Configure
                         File.ReadAllText(_configuration.InputPath + @"Service\Contracts\GetChildPart" +
                                             fileNameExtension + ".txt").DoReplacesClient(dataItem) +
                         "\r\n\r\n";
-                    content = content.ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param") });
+                    content = content.ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param") });
                     interfaceReadContent += content;
 
 
                     content = File.ReadAllText(_configuration.InputPath + @"Service\GetChildPart" +
                                                 fileNameExtension + ".txt").DoReplacesClient(dataItem) +
                                 "\r\n\r\n";
-                    content = content.ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param"), Helpers.GetParentParameter(dataItem, "call"), Helpers.GetParentParameter(dataItem, "") });
+                    content = content.ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param"), dataItem.GetParentParameter("call"), dataItem.GetParentParameter("") });
                     serviceReadContent += content;
 
                     if (!withBo)
@@ -80,7 +80,7 @@ namespace PlusLayerCreator.Configure
                         var propertyAssignments = Helpers.GetBusinessServiceLocalGetMock(dataItem);
                         serviceMockReadContent +=
                             File.ReadAllText(_configuration.InputPath + @"Service\GetChildPartNoBOMock.txt")
-                                .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param"), propertyAssignments })
+                                .ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param"), propertyAssignments })
                                 .DoReplacesClient(dataItem) +
                             "\r\n\r\n";
                     }
@@ -92,36 +92,36 @@ namespace PlusLayerCreator.Configure
                     interfaceSaveContent +=
                         File.ReadAllText(_configuration.InputPath + @"Service\Contracts\SavePart" +
                                             fileNameExtension + ".txt")
-                            .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param") })
+                            .ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param") })
                             .DoReplacesClient(dataItem) + "\r\n\r\n";
                     serviceSaveContent +=
                         File.ReadAllText(
                                 _configuration.InputPath + @"Service\SavePart" + fileNameExtension + ".txt")
-                            .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param"), Helpers.GetParentParameter(dataItem, "call"), Helpers.GetParentParameter(dataItem, "") })
+                            .ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param"), Helpers.GetParentParameter(dataItem, "call"), Helpers.GetParentParameter(dataItem, "") })
                             .DoReplacesClient(dataItem) + "\r\n\r\n";
 
                     if (!withBo)
                         serviceMockSaveContent +=
                             File.ReadAllText(_configuration.InputPath + @"Service\SavePartNoBOMock.txt")
-                                .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param") })
+                                .ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param") })
                                 .DoReplacesClient(dataItem) + "\r\n\r\n";
 
                     //Delete
                     interfaceSaveContent +=
                         File.ReadAllText(_configuration.InputPath + @"Service\Contracts\DeletePart" +
                                          fileNameExtension + ".txt")
-                            .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param") })
+                            .ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param") })
                             .DoReplacesClient(dataItem) + "\r\n\r\n";
                     serviceSaveContent +=
                         File.ReadAllText(
                                 _configuration.InputPath + @"Service\DeletePart" + fileNameExtension + ".txt")
-                            .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param"), Helpers.GetParentParameter(dataItem, "call"), Helpers.GetParentParameter(dataItem, "") })
+                            .ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param"), Helpers.GetParentParameter(dataItem, "call"), Helpers.GetParentParameter(dataItem, "") })
                             .DoReplacesClient(dataItem) + "\r\n\r\n";
 
                     if (!withBo)
                         serviceMockSaveContent +=
                             File.ReadAllText(_configuration.InputPath + @"Service\DeletePartNoBOMock.txt")
-                                .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param") })
+                                .ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param") })
                                 .DoReplacesClient(dataItem) + "\r\n\r\n";
                 }
 
@@ -130,18 +130,18 @@ namespace PlusLayerCreator.Configure
                     interfaceSaveContent +=
                         File.ReadAllText(_configuration.InputPath + @"Service\Contracts\SaveMultiPart" +
                                             fileNameExtension + ".txt")
-                            .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param") })
+                            .ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param") })
                             .DoReplacesClient(dataItem) + "\r\n\r\n";
                     serviceSaveContent +=
                         File.ReadAllText(_configuration.InputPath + @"Service\SaveMultiPart" + fileNameExtension +
                                             ".txt")
-                            .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param"), Helpers.GetParentParameter(dataItem, "call"), Helpers.GetParentParameter(dataItem, "") })
+                            .ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param"), Helpers.GetParentParameter(dataItem, "call"), Helpers.GetParentParameter(dataItem, "") })
                             .DoReplacesClient(dataItem) + "\r\n\r\n";
 
                     if (!withBo)
                         serviceMockSaveContent +=
                             File.ReadAllText(_configuration.InputPath + @"Service\SaveMultiPartNoBOMock.txt")
-                                .ReplaceSpecialContent(new[] { Helpers.GetParentParameter(dataItem, "param") })
+                                .ReplaceSpecialContent(new[] { dataItem.GetParentParameter("param") })
                                 .DoReplacesClient(dataItem) + "\r\n\r\n";
                 }
 
