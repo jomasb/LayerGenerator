@@ -605,7 +605,11 @@ namespace PlusLayerCreator
 				else
 			    {
 				    retValue += property.MessageField.ToVariableName().PadRight(30) + "    OF " + item.Table + "-ROW" + "\r\n";
-			    }
+				    if (property.Type == "DateTime")
+				    {
+						retValue += "                   TYPE AS DATETIME YEAR TO FRACTION(" + GetYearToFractionDigits(property) + ")" + "\r\n";
+					}
+				}
 
 				i++;
 			}
@@ -644,6 +648,10 @@ namespace PlusLayerCreator
 				else
 			    {
 				    retValue += property.MessageField.ToVariableName().PadRight(30) + "   OF " + item.Table + "-ROW" + "\r\n";
+				    if (property.Type == "DateTime")
+				    {
+					    retValue += "                      TYPE AS DATETIME YEAR TO FRACTION(" + GetYearToFractionDigits(property) + ")\r\n";
+				    }
 				}
 
 				i++;
@@ -670,9 +678,13 @@ namespace PlusLayerCreator
 				else
 			    {
 				    retValue += property.MessageField.ToVariableName().PadRight(30) + "   OF " + item.Table + "-ROW" + "\r\n";
+				    if (property.Type == "DateTime")
+				    {
+						retValue += "                   TYPE AS DATETIME YEAR TO FRACTION(" + GetYearToFractionDigits(property) + ")" + "\r\n";
+					}
 				}
-			    
-			    i++;
+
+				i++;
 		    }
 
 		    i = 0;
@@ -682,7 +694,11 @@ namespace PlusLayerCreator
 				retValue += property.MessageField.ToSqlName() + "\r\n";
 			    retValue += "                = :";
 			    retValue += property.MessageField.ToVariableName().PadRight(30) + "   OF " + item.Table + "-ROW" + "\r\n";
-			    i++;
+			    if (property.Type == "DateTime")
+			    {
+				    retValue += "                   TYPE AS DATETIME YEAR TO FRACTION(" + GetYearToFractionDigits(property) + ")" + "\r\n";
+			    }
+				i++;
 			}
 
 		    return retValue;

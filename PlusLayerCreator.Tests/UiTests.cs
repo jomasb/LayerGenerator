@@ -232,7 +232,7 @@ namespace PlusLayerCreator.Tests
 			};
 
 			_uiPart = new UiPart(_configuration);
-			Helpers.Configuration = _configuration;
+			PlusLayerCreator.Helpers.Configuration = _configuration;
 		}
 
 		#endregion
