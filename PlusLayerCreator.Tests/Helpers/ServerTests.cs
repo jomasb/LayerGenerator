@@ -270,6 +270,31 @@ namespace PlusLayerCreator.Tests.Helpers
 
 		#endregion
 
+		#region ArrangeCursorFieldsAdvanced
+
+		[TestMethod]
+		public void WhenConfigurationItemPropertiesIsSet_ReturnsTheArrangedCursorFieldsAdvanced()
+		{
+			string expectedValueMode1 = "                   ID-TYP\r\n" +
+			                            "                   ID-WERT\r\n" +
+			                            "                   WERK\r\n" +
+			                            "                   TERMIN";
+			string expectedValueMode2 = "                  :ID-TYP                           OF S00DX1-ROW\r\n" +
+			                            "                  :ID-WERT                          OF S00DX1-ROW\r\n" +
+			                            "                  :WERK                             OF S00DX1-ROW\r\n" +
+			                            "                  :TERMIN                           OF S00DX1-ROW";
+			string expectedValueMode3 = "                   ID-TYP                        ASC\r\n" +
+			                            "                   ID-WERT                       ASC\r\n" +
+			                            "                   WERK                          ASC\r\n" +
+			                            "                   TERMIN                        ASC";
+
+			Assert.AreEqual(expectedValueMode1, PlusLayerCreator.Helpers.ArrangeCursorFieldsAdvanced(_item, 0));
+			Assert.AreEqual(expectedValueMode2, PlusLayerCreator.Helpers.ArrangeCursorFieldsAdvanced(_item, 1));
+			Assert.AreEqual(expectedValueMode3, PlusLayerCreator.Helpers.ArrangeCursorFieldsAdvanced(_item, 2));
+		}
+
+		#endregion
+
 		#region ArrangeDataFromRequest
 
 		[TestMethod]

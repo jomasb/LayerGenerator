@@ -156,25 +156,21 @@
 						</plus:PlusFormRow>
 						<plus:PlusFormRow Grid.Row="3"
 						                  Grid.Column="0"
-						                  IsEnabled="False"
-						                  Label="RepRplRead">
+						                  Label="ReqRplRead">
 							<plus:PlusTextBox Text="{Binding DataItem.ReqRplRead, UpdateSourceTrigger=PropertyChanged}" />
 						</plus:PlusFormRow>
 						<plus:PlusFormRow Grid.Row="3"
 						                  Grid.Column="2"
-						                  IsEnabled="False"
-						                  Label="RepRplWrite">
+						                  Label="ReqRplWrite">
 							<plus:PlusTextBox Text="{Binding DataItem.ReqRplWrite, UpdateSourceTrigger=PropertyChanged}" />
 						</plus:PlusFormRow>
 						<plus:PlusFormRow Grid.Row="4"
 						                  Grid.Column="0"
-						                  IsEnabled="False"
 						                  Label="TransactionCodeRead">
 							<plus:PlusTextBox Text="{Binding DataItem.TransactionCodeRead, UpdateSourceTrigger=PropertyChanged}" />
 						</plus:PlusFormRow>
 						<plus:PlusFormRow Grid.Row="4"
 						                  Grid.Column="2"
-						                  IsEnabled="False"
 						                  Label="TransactionCodeWrite">
 							<plus:PlusTextBox Text="{Binding DataItem.TransactionCodeWrite, UpdateSourceTrigger=PropertyChanged}" />
 						</plus:PlusFormRow>

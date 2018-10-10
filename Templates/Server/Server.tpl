@@ -271,16 +271,16 @@
            ==01 RPC-DIALOG-MR-HDR==
         BY ==01 RPC-DIALOG-MR-HDR-IN==.
 
- COPY %%SERVER%%-REQ-RPL-1                 OF "=%%SERVER%%"
- REPLACING ==01 %%SERVER%%-REQ-RPL-1==
+ COPY %%SERVER%%-%%REQRPL-LESEN%%                 OF "=%%SERVER%%"
+ REPLACING ==01 %%SERVER%%-%%REQRPL-LESEN%%==
         BY ==01 %%SERVER%%-REQ-1 REDEFINES WS-IN-BUFFER==
-           ==%%SERVER%%-REQ-RPL-1==
+           ==%%SERVER%%-%%REQRPL-LESEN%%==
         BY ==%%SERVER%%-REQ-1==.
 
- COPY %%SERVER%%-REQ-RPL-2                 OF "=%%SERVER%%"
- REPLACING ==01 %%SERVER%%-REQ-RPL-2==
+ COPY %%SERVER%%-%%REQRPL-SCHREIBEN%%                 OF "=%%SERVER%%"
+ REPLACING ==01 %%SERVER%%-%%REQRPL-SCHREIBEN%%==
         BY ==01 %%SERVER%%-REQ-2 REDEFINES WS-IN-BUFFER==
-           ==%%SERVER%%-REQ-RPL-2==
+           ==%%SERVER%%-%%REQRPL-SCHREIBEN%%==
         BY ==%%SERVER%%-REQ-2==.
 
  COPY WS-OUT-BUFFER                     OF "=W999IO"
@@ -310,16 +310,16 @@
            ==01 RPC-DIALOG-MR-HDR==
         BY ==01 RPC-DIALOG-MR-HDR-OUT==.
 
- COPY %%SERVER%%-REQ-RPL-1                 OF "=%%SERVER%%"
- REPLACING ==01 %%SERVER%%-REQ-RPL-1==
+ COPY %%SERVER%%-%%REQRPL-LESEN%%                 OF "=%%SERVER%%"
+ REPLACING ==01 %%SERVER%%-%%REQRPL-LESEN%%==
         BY ==01 %%SERVER%%-RPL-1 REDEFINES WS-OUT-BUFFER==
-           ==%%SERVER%%-REQ-RPL-1==
+           ==%%SERVER%%-%%REQRPL-LESEN%%==
         BY ==%%SERVER%%-RPL-1==.
 
- COPY %%SERVER%%-REQ-RPL-2                 OF "=%%SERVER%%"
- REPLACING ==01 %%SERVER%%-REQ-RPL-2==
+ COPY %%SERVER%%-%%REQRPL-SCHREIBEN%%                 OF "=%%SERVER%%"
+ REPLACING ==01 %%SERVER%%-%%REQRPL-SCHREIBEN%%==
         BY ==01 %%SERVER%%-RPL-2 REDEFINES WS-OUT-BUFFER==
-           ==%%SERVER%%-REQ-RPL-2==
+           ==%%SERVER%%-%%REQRPL-SCHREIBEN%%==
         BY ==%%SERVER%%-RPL-2==.
 
 *                                      Standardcopys
@@ -386,6 +386,13 @@
          SELECT    
 %%CURSOR-FELDER%%
          FROM     =%%TBL%%-TAB
+         WHERE  (
+%%CURSOR-FELDER-WHERE%%
+                ) >= (
+%%CURSOR-FELDER-ROW%%
+                )
+         ORDER BY
+%%CURSOR-FELDER-ORDER%%
          FOR       BROWSE ACCESS
  END-EXEC.
 /

@@ -29,8 +29,8 @@
 ?SECTION DELETE
 *======================================================================
 DELETE DEF %%SERVER%%-REQ-RPL-0.
-DELETE DEF %%SERVER%%-REQ-RPL-1.
-DELETE DEF %%SERVER%%-REQ-RPL-2.
+DELETE DEF %%SERVER%%-%%REQRPL-LESEN%%.
+DELETE DEF %%SERVER%%-%%REQRPL-SCHREIBEN%%.
 DELETE DEF %%SERVER%%-MSG-1.
 DELETE DEF %%SERVER%%-MSG-2.
 DELETE DEF %%SERVER%%-TAB-ZEILE-KOMPLETT.
@@ -95,13 +95,13 @@ DEF %%SERVER%%-REQ-RPL-0.
 END.
 
 *                                      Liste %%TBL%%
-DEF %%SERVER%%-REQ-RPL-1.
+DEF %%SERVER%%-%%REQRPL-LESEN%%.
   02 FILLER                            TYPE RPC-DIALOG-HDR.
   02 %%SERVER%%-MSG-1                      TYPE *.
 END.
 
 *                                      Pflege %%TBL%%
-DEF %%SERVER%%-REQ-RPL-2.
+DEF %%SERVER%%-%%REQRPL-SCHREIBEN%%.
   02 FILLER                            TYPE RPC-DIALOG-HDR.
   02 %%SERVER%%-MSG-2                      TYPE *.
 END.
@@ -138,8 +138,8 @@ END.
 ?COBLEVEL 1
 
 OUTPUT DEF %%SERVER%%-REQ-RPL-0.
-OUTPUT DEF %%SERVER%%-REQ-RPL-1.
-OUTPUT DEF %%SERVER%%-REQ-RPL-2.
+OUTPUT DEF %%SERVER%%-%%REQRPL-LESEN%%.
+OUTPUT DEF %%SERVER%%-%%REQRPL-SCHREIBEN%%.
 
 OUTPUT DEF WS-%%SERVER%%.
 OUTPUT DEF HV-%%SERVER%%.

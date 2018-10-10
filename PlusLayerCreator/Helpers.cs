@@ -84,10 +84,10 @@ namespace PlusLayerCreator
 	        input = input.Replace("%%SCHLUESSELFELDER-PARAMETER%%", ArrangeKeys(item));
 	        input = input.Replace("%%FETCH-CURSOR%%", ArrangeFetchCursor(item));
 	        input = input.Replace("%%UPDATE-FELDER-WERTE%%", ArrangeUpdate(item));
-	        input = input.Replace("%%LUPD-TIMESTAMP-RPL%%", ArrangeLupdTimestampRpl(item));
-			//input = input.Replace("%%CURSOR-FELDER-WHERE%%", ArrangeCursorFieldsAdvanced(item, 0));
-			//input = input.Replace("%%CURSOR-FELDER-ROW%%", ArrangeCursorFieldsAdvanced(item, 1));
-			//input = input.Replace("%%CURSOR-FELDER-ORDER%%", ArrangeCursorFieldsAdvanced(item, 2));
+			input = input.Replace("%%LUPD-TIMESTAMP-RPL%%", ArrangeLupdTimestampRpl(item));
+			input = input.Replace("%%CURSOR-FELDER-WHERE%%", ArrangeCursorFieldsAdvanced(item, 0));
+			input = input.Replace("%%CURSOR-FELDER-ROW%%", ArrangeCursorFieldsAdvanced(item, 1));
+			input = input.Replace("%%CURSOR-FELDER-ORDER%%", ArrangeCursorFieldsAdvanced(item, 2));
 
 			return input;
         }
@@ -517,38 +517,37 @@ namespace PlusLayerCreator
 			return retValue.Substring(0, retValue.Length - 2);
 		}
 
-	 //   private static string ArrangeCursorFieldsAdvanced(ConfigurationItem item, int mode)
-	 //   {
-		//    string retValue = string.Empty;
+		public static string ArrangeCursorFieldsAdvanced(ConfigurationItem item, int mode)
+		{
+			string retValue = string.Empty;
+			int i = 0;
 
-		//    for (int i = 0; i < item.Properties.Count; i++)
-		//    {
-		//		if (!property.IsKey)
-		//			continue;
+			foreach (ConfigurationProperty property in item.Properties.OrderBy(t => t.Order))
+			{
+				if (!property.IsKey)
+					continue;
 
-		//	    switch (mode)
-		//	    {
-		//			case 0:
-		//				retValue += i == 0 ? "                   " : "                 , ";
-		//				retValue += property.MessageField + "\r\n";
-		//				break;
-		//			case 1:
-		//				retValue += i == 0 ? "                  :" : "                 ,:";
-		//				retValue += property.MessageField.PadRight(30) + "   OF " + item.Table + "-ROW" + "\r\n";
-		//				break;
-		//			case 2:
-		//				retValue += i == 0 ? "                   " : "                 , ";
-		//				retValue += property.MessageField.PadRight(30) + "ASC" +"\r\n";
-		//				break;
-					    
-		//	    }
-			   
-		//	}
-			
-		//    return retValue.Substring(0, retValue.Length - 2);
-		//}
+				switch (mode)
+				{
+					case 0:
+						retValue += i == 0 ? "                   " : "                 , ";
+						retValue += property.MessageField + "\r\n";
+						break;
+					case 1:
+						retValue += i == 0 ? "                  :" : "                 ,:";
+						retValue += property.MessageField.PadRight(30) + "   OF " + item.Table + "-ROW" + "\r\n";
+						break;
+					case 2:
+						retValue += i == 0 ? "                   " : "                 , ";
+						retValue += property.MessageField.PadRight(30) + "ASC" + "\r\n";
+						break;
+				}
+			}
 
-	    public static string ArrangeDataFromRequest(ConfigurationItem item)
+			return retValue.Substring(0, retValue.Length - 2);
+		}
+
+		public static string ArrangeDataFromRequest(ConfigurationItem item)
 	    {
 		    string retValue = string.Empty;
 

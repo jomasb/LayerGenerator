@@ -108,19 +108,41 @@
         
         public bool IsRequired
         {
-            get => _isRequired;
-            set => SetProperty(ref _isRequired, value);
+			get
+			{
+		        return _isRequired;
+	        }
+
+	        set
+	        {
+		        if (SetProperty(ref _isRequired, value))
+		        {
+			        if (value && !IsKey)
+				        IsKey = true;
+		        }
+	        }
         }
 
         
         public bool IsKey
-        {
-            get => _isKey;
-            set => SetProperty(ref _isKey, value);
-        }
+		{
+			get
+			{
+				return _isKey;
+			}
 
-        
-        public bool IsVisibleInGrid
+			set
+			{
+				if (SetProperty(ref _isKey, value))
+				{
+					if (value && !IsRequired)
+						IsRequired = true;
+				}
+			}
+		}
+
+
+		public bool IsVisibleInGrid
         {
             get => _isVisibleInGrid;
             set => SetProperty(ref _isVisibleInGrid, value);

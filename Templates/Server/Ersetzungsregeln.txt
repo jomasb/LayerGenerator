@@ -15,6 +15,9 @@ Ersetzungen:
 %%TRANSCODE-LESEN%%
 %%TRANSCODE-SCHREIBEN%%
 
+%%REQRPL-LESEN%%
+%%REQRPL-SCHREIBEN%%
+
 SQL:
 ---
 %%CURSOR-FELDER%%        => Alle Felder der Tabelle für Lese-CURSOR

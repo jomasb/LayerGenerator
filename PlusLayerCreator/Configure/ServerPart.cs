@@ -32,10 +32,13 @@ namespace PlusLayerCreator.Configure
 					dleContent = _dlePart.DoReplacesServer(item);
 					messagesContent = _messagesPart.DoReplacesServer(item);
 				}
-				
-				Helpers.CreateFileFromString(serverContent, _configuration.OutputPath + @"Server\" + item.Server + "01");
-				Helpers.CreateFileFromString(dleContent, _configuration.OutputPath + @"Server\" + item.Server);
-				Helpers.CreateFileFromString(messagesContent, _configuration.OutputPath + @"Server\ME" + item.Server);
+
+				if (!string.IsNullOrEmpty(item.Server))
+				{
+					Helpers.CreateFileFromString(serverContent, _configuration.OutputPath + @"Server\" + item.Server + "01");
+					Helpers.CreateFileFromString(dleContent, _configuration.OutputPath + @"Server\" + item.Server);
+					Helpers.CreateFileFromString(messagesContent, _configuration.OutputPath + @"Server\ME" + item.Server);
+				}
 			}
 		}
 	}

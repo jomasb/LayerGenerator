@@ -435,7 +435,7 @@ namespace PlusLayerCreator.Configure
                 identifier += "x." + plusDataObject.Name + ".Equals(dto." + plusDataObject.Name + ") && ";
             }
 
-            return identifier.Substring(0, identifier.Length - 4);
+            return identifier == string.Empty ? identifier : identifier.Substring(0, identifier.Length - 4);
         }
 
         private string GetReadOnly(ConfigurationItem dataItem)
