@@ -27,7 +27,7 @@ namespace PlusLayerCreator.Tests
 				DialogName = "AdminOfAbc",
 				Product = "Tools",
 				InputPath = Environment.CurrentDirectory + @"\..\..\..\Templates\",
-				DataLayout = new List<ConfigurationItem>()
+				DataLayout = new ObservableCollection<ConfigurationItem>()
 				{
 					new ConfigurationItem()
 					{

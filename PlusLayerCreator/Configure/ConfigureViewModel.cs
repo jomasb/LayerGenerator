@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Json;
-using System.Text;
 using System.Windows;
 using System.Windows.Data;
 using Microsoft.Win32;
@@ -17,7 +13,7 @@ using Prism.Regions;
 
 namespace PlusLayerCreator.Configure
 {
-    public class ConfigureViewModel : RegionViewModelBase, INotifyPropertyChanged
+    public class ConfigureViewModel : RegionViewModelBase
     {
         #region Construction
 
@@ -51,12 +47,26 @@ namespace PlusLayerCreator.Configure
 	        SortDirectHopDownCommand = new DelegateCommand(SortDirectHopDownCommandExecuted, SortDirectHopDownCommandCanExecute);
         }
 
-		public CollectionView ItemCollection { get; set; }
-        public CollectionView DirectHopCollection { get; set; }
 
-        #endregion Construction
+	    public CollectionView ItemCollection
+		{
+		    get => _itemCollection;
+		    set => SetProperty(ref _itemCollection, value);
+	    }
+	    public CollectionView DirectHopCollection
+		{
+		    get => _directHopCollection;
+		    set => SetProperty(ref _directHopCollection, value);
+	    }
+	    public CollectionView PropertyCollection
+	    {
+		    get => _propertyCollection;
+		    set => SetProperty(ref _propertyCollection, value);
+	    }
 
-        public void UnloadDetailRegion()
+		#endregion Construction
+
+		public void UnloadDetailRegion()
         {
             _navigationService.Navigate(RegionNames.DetailRegion, ViewNames.EmptyView);
         }
@@ -101,7 +111,7 @@ namespace PlusLayerCreator.Configure
         private string _dialogTranslationEnglish;
         private string _dialogTranslationGerman;
 
-        private string _inputhPath = @"C:\Projects\LayerGenerator\Templates\";
+        private string _inputPath = @"C:\Projects\LayerGenerator\Templates\";
         private string _outputPath = @"C:\Output\";
 
         private bool _isCreateDto = true;
@@ -146,35 +156,25 @@ namespace PlusLayerCreator.Configure
 
 		#region Import/Export
 
-		public readonly DataContractJsonSerializerSettings Settings =
-            new DataContractJsonSerializerSettings
-            {
-                UseSimpleDictionaryFormat = true
-            };
+		private CollectionView _itemCollection;
+		private CollectionView _propertyCollection;
+		private CollectionView _directHopCollection;
 
-        private CollectionView _propertyCollection;
+		private void ExportSettingsExecuted()
+		{
+			var dialog = new SaveFileDialog();
+			dialog.Title = "Export settings";
+			dialog.Filter = "Config files (*.json)|*.json";
+			dialog.ShowDialog();
 
-        private void ExportSettingsExecuted()
-        {
-            var dialog = new SaveFileDialog();
-            dialog.Title = "Export settings";
-            dialog.Filter = "Config files (*.json)|*.json";
-            dialog.ShowDialog();
+			if (dialog.FileName != string.Empty)
+			{
+				Settings settings = new Settings();
+				settings.Export(dialog.FileName, GetConfiguration());
+			}
+		}
 
-            if (dialog.FileName != string.Empty)
-            {
-                var stream = new FileStream(dialog.FileName, FileMode.Create);
-                using (var writer = JsonReaderWriterFactory.CreateJsonWriter(
-                    stream, Encoding.UTF8, true, true, "  "))
-                {
-                    var ser = new DataContractJsonSerializer(typeof(Configuration), Settings);
-                    ser.WriteObject(writer, GetConfiguration());
-                    writer.Flush();
-                }
-            }
-        }
-
-        private void ImportSettingsExecuted()
+		private void ImportSettingsExecuted()
         {
             var dialog = new OpenFileDialog();
             dialog.Title = "Import settings";
@@ -183,39 +183,9 @@ namespace PlusLayerCreator.Configure
 
             if (dialog.FileName != string.Empty)
             {
-                var ser = new DataContractJsonSerializer(typeof(Configuration));
-                var stream = new FileStream(dialog.FileName, FileMode.Open);
-                var configuration = ser.ReadObject(stream) as Configuration;
-                stream.Close();
-                var properties = typeof(Configuration).GetProperties();
-                foreach (var property in properties)
-                    if (property.PropertyType == typeof(IList<ConfigurationItem>))
-                    {
-                        var dataItems =
-                            property.GetValue(configuration) as IList<ConfigurationItem>;
-                        DataLayout.Clear();
-                        if (dataItems != null)
-                            foreach (var plusDataItem in dataItems)
-                                DataLayout.Add(plusDataItem);
-                    }
-                    else if (property.PropertyType == typeof(IList<DirectHopItem>))
-                    {
-                        var directHops =
-                            property.GetValue(configuration) as IList<DirectHopItem>;
-                        DirectHops.Clear();
-                        if (directHops != null)
-                            foreach (var directHopItem in directHops)
-                                DirectHops.Add(directHopItem);
-                    }
-                    else
-                    {
-                        var propertyInfo = GetType().GetProperty(property.Name);
-                        if (propertyInfo != null)
-                            propertyInfo.SetValue(this, property.GetValue(configuration));
-                        else
-                            throw new Exception("Property not found.");
-                    }
-            }
+	            Settings settings = new Settings();
+	            WriteConfiguration(settings.Import(dialog.FileName));
+			}
         }
 
         #endregion Import/Export
@@ -546,10 +516,10 @@ namespace PlusLayerCreator.Configure
 
         private Configuration GetConfiguration()
         {
-            return new Configuration
+            Configuration configuration = new Configuration
             {
-                InputPath = InputPath,
-                OutputPath = OutputPath,
+                InputPath = _inputPath,
+                OutputPath = _outputPath,
                 IsCreateDto = _isCreateDto,
                 IsCreateDtoFactory = _isCreateDtoFactory,
                 IsCreateGateway = _isCreateGateway,
@@ -566,12 +536,38 @@ namespace PlusLayerCreator.Configure
                 DialogTranslationGerman = _dialogTranslationGerman,
                 DialogTranslationEnglish = _dialogTranslationEnglish,
                 ControllerHandle = _controllerHandle,
-                DataLayout = _dataLayout.ToList(),
-                DirectHops = _directHops.ToList()
-            };
+                DataLayout = _dataLayout,
+                DirectHops = _directHops
+			};
+
+	        return configuration;
         }
 
-        private void GetTemplatesFromDisk()
+        private void WriteConfiguration(Configuration configuration)
+        {
+			InputPath = configuration.InputPath;
+	        OutputPath = configuration.OutputPath;
+	        IsCreateDto = configuration.IsCreateDto;
+	        IsCreateDtoFactory = configuration.IsCreateDtoFactory;
+	        IsCreateGateway = configuration.IsCreateGateway;
+	        IsCreateBusinessService = configuration.IsCreateBusinessService;
+	        IsUseBusinessServiceWithoutBo = configuration.IsUseBusinessServiceWithoutBo;
+	        IsCreateDataItem = configuration.IsCreateDataItem;
+	        IsCreateDataItemFactory = configuration.IsCreateDataItemFactory;
+	        IsCreateRepositoryDtoFactory = configuration.IsCreateRepositoryDtoFactory;
+	        IsCreateRepository = configuration.IsCreateRepository;
+	        IsCreateUi = configuration.IsCreateUi;
+	        IsCreateUiFilter = configuration.IsCreateUiFilter;
+	        Product = configuration.Product;
+	        DialogName = configuration.DialogName;
+	        DialogTranslationGerman = configuration.DialogTranslationGerman;
+	        DialogTranslationEnglish = configuration.DialogTranslationEnglish;
+	        ControllerHandle = configuration.ControllerHandle;
+	        DataLayout = configuration.DataLayout;
+	        DirectHops = configuration.DirectHops;
+		}
+
+		private void GetTemplatesFromDisk()
         {
             Helpers.Configuration = GetConfiguration();
 
@@ -602,7 +598,7 @@ namespace PlusLayerCreator.Configure
         public DelegateCommand ExportSettingsCommand { get; set; }
 
         public DelegateCommand AddItemCommand { get; set; }
-public DelegateCommand AddDirectHopCommand { get; set; }
+		public DelegateCommand AddDirectHopCommand { get; set; }
 
         public DelegateCommand SortItemUpCommand { get; set; }
 
@@ -612,7 +608,7 @@ public DelegateCommand AddDirectHopCommand { get; set; }
         public DelegateCommand AddVersionCommand { get; set; }
 
         public DelegateCommand DeleteItemCommand { get; set; }
-public DelegateCommand DeleteDirectHopCommand { get; set; }
+		public DelegateCommand DeleteDirectHopCommand { get; set; }
 
         public DelegateCommand AddItemPropertyCommand { get; set; }
 
@@ -667,12 +663,6 @@ public DelegateCommand DeleteDirectHopCommand { get; set; }
                     RaiseCanExecuteChanged();
                 }
             }
-        }
-
-        public CollectionView PropertyCollection
-        {
-            get => _propertyCollection;
-            set => SetProperty(ref _propertyCollection, value);
         }
 
         public ConfigurationProperty SelectedPropertyItem
@@ -816,8 +806,8 @@ public DelegateCommand DeleteDirectHopCommand { get; set; }
 
         public string InputPath
         {
-            get => _inputhPath;
-            set => SetProperty(ref _inputhPath, value);
+            get => _inputPath;
+            set => SetProperty(ref _inputPath, value);
         }
 
         public string OutputPath

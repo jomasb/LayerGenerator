@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PlusLayerCreator.Items;
 
@@ -142,7 +143,7 @@ namespace PlusLayerCreator.Tests.Helpers
 			{
 				DialogName = "AdminOfAbc",
 				Product = "Tools",
-				DataLayout = new List<ConfigurationItem>()
+				DataLayout = new ObservableCollection<ConfigurationItem>()
 			};
 
 			PlusLayerCreator.Helpers.Configuration.DataLayout.Add(parent);
@@ -176,7 +177,7 @@ namespace PlusLayerCreator.Tests.Helpers
 			{
 				DialogName = "AdminOfAbc",
 				Product = "Tools",
-				DataLayout = new List<ConfigurationItem>()
+				DataLayout = new ObservableCollection<ConfigurationItem>()
 			};
 
 			PlusLayerCreator.Helpers.Configuration.DataLayout.Add(parent);
@@ -224,7 +225,7 @@ namespace PlusLayerCreator.Tests.Helpers
 			{
 				DialogName = "AdminOfAbc",
 				Product = "Tools",
-				DataLayout = new List<ConfigurationItem>()
+				DataLayout = new ObservableCollection<ConfigurationItem>()
 			};
 
 			PlusLayerCreator.Helpers.Configuration.DataLayout.Add(filterItem1);

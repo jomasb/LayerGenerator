@@ -111,7 +111,7 @@
 
 				</plus:PlusFormPanel>
 			</plus:PlusExpander>
-			<plus:PlusExpander Header="Server" IsExpanded="False">
+			<plus:PlusExpander Header="Server" IsExpanded="True">
 				<plus:PlusFormPanel>
 					<Grid>
 						<Grid.RowDefinitions>
@@ -156,13 +156,15 @@
 						</plus:PlusFormRow>
 						<plus:PlusFormRow Grid.Row="3"
 						                  Grid.Column="0"
+						                  IsEnabled="False"
 						                  Label="RepRplRead">
-							<plus:PlusTextBox Text="{Binding DataItem.RepRplRead, UpdateSourceTrigger=PropertyChanged}" />
+							<plus:PlusTextBox Text="{Binding DataItem.ReqRplRead, UpdateSourceTrigger=PropertyChanged}" />
 						</plus:PlusFormRow>
 						<plus:PlusFormRow Grid.Row="3"
 						                  Grid.Column="2"
+						                  IsEnabled="False"
 						                  Label="RepRplWrite">
-							<plus:PlusTextBox IsEnabled="{Binding DataItem.IsPreFilterItem, Converter={StaticResource InvertBoolConverter}}" Text="{Binding DataItem.RepRplWrite, UpdateSourceTrigger=PropertyChanged}" />
+							<plus:PlusTextBox Text="{Binding DataItem.ReqRplWrite, UpdateSourceTrigger=PropertyChanged}" />
 						</plus:PlusFormRow>
 						<plus:PlusFormRow Grid.Row="4"
 						                  Grid.Column="0"
@@ -174,7 +176,7 @@
 						                  Grid.Column="2"
 						                  IsEnabled="False"
 						                  Label="TransactionCodeWrite">
-							<plus:PlusTextBox IsEnabled="{Binding DataItem.IsPreFilterItem, Converter={StaticResource InvertBoolConverter}}" Text="{Binding DataItem.TransactionCodeWrite, UpdateSourceTrigger=PropertyChanged}" />
+							<plus:PlusTextBox Text="{Binding DataItem.TransactionCodeWrite, UpdateSourceTrigger=PropertyChanged}" />
 						</plus:PlusFormRow>
 					</Grid>
 				</plus:PlusFormPanel>

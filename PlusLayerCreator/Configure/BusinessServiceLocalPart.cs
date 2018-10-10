@@ -211,7 +211,7 @@ namespace PlusLayerCreator.Configure
 						.DoReplacesClient(dataItem) + "\r\n\r\n").ReplaceSpecialContent(new[]
 				{
 					dataItem.Server + "Server.Singleton.AddTransaction" + dataItem.TransactionCodeWrite,
-					dataItem.Server + dataItem.RepRplWrite + "." + tabAnz
+					dataItem.Server + dataItem.ReqRplWrite + "." + tabAnz
 				});
 			}
 
@@ -222,7 +222,7 @@ namespace PlusLayerCreator.Configure
 							.DoReplacesClient(dataItem) + "\r\n\r\n").ReplaceSpecialContent(new[]
 					{
 						dataItem.Server + "Server.Singleton.AddTransaction" + dataItem.TransactionCodeWrite,
-						dataItem.Server + dataItem.RepRplWrite + "." + tabAnz
+						dataItem.Server + dataItem.ReqRplWrite + "." + tabAnz
 					});
 			}
 				
@@ -238,10 +238,10 @@ namespace PlusLayerCreator.Configure
 		    string writePart = dataItem.CanEdit ? GetWritePart(dataItem) : string.Empty;
 		    string fillPart = GetFillPart(dataItem);
 			
-		    interfacePart += ", I" + dataItem.Server + dataItem.RepRplRead + "BusinessObject";
+		    interfacePart += ", I" + dataItem.Server + dataItem.ReqRplRead + "BusinessObject";
 		    if (dataItem.CanEdit)
 		    {
-				interfacePart += ", I" + dataItem.Server + dataItem.RepRplWrite + "BusinessObject";
+				interfacePart += ", I" + dataItem.Server + dataItem.ReqRplWrite + "BusinessObject";
 			}
 			
 			Helpers.CreateFileFromPath(_configuration.InputPath + @"Service\Tandem\Converter.cs",
@@ -253,7 +253,7 @@ namespace PlusLayerCreator.Configure
 		{
 			string getPart = _converterReadReqRplPart
 				.Replace("$Server$", dataItem.Server)
-			    .Replace("$ReqRpl$", dataItem.RepRplRead)
+			    .Replace("$ReqRpl$", dataItem.ReqRplRead)
 				.Replace("$Transcode$", dataItem.TransactionCodeRead)
 			    .Replace("$TabAnz$", GetTabAnz(dataItem))
 				.DoReplacesClient(dataItem);
@@ -264,7 +264,7 @@ namespace PlusLayerCreator.Configure
 	    {
 		    string writePart = _converterWriteReqRplPart
 			    .Replace("$Server$", dataItem.Server)
-			    .Replace("$ReqRpl$", dataItem.RepRplWrite)
+			    .Replace("$ReqRpl$", dataItem.ReqRplWrite)
 			    .Replace("$Transcode$", dataItem.TransactionCodeWrite)
 			    .Replace("$TabAnz$", GetTabAnz(dataItem))
 			    .Replace("$MaxTimes$", GetMaxTimes(dataItem))
@@ -296,11 +296,11 @@ namespace PlusLayerCreator.Configure
 				}
 			}
 
-		    string fillFromMessage1 = _converterFillFromMessage.DoReplacesClient(dataItem).Replace("$ReqRpl$", dataItem.RepRplRead)
+		    string fillFromMessage1 = _converterFillFromMessage.DoReplacesClient(dataItem).Replace("$ReqRpl$", dataItem.ReqRplRead)
 				.ReplaceSpecialContent(new[] { messageToDtoContent });
-		    string fillFromMessage2 = _converterFillFromMessage.DoReplacesClient(dataItem).Replace("$ReqRpl$", dataItem.RepRplWrite)
+		    string fillFromMessage2 = _converterFillFromMessage.DoReplacesClient(dataItem).Replace("$ReqRpl$", dataItem.ReqRplWrite)
 				.ReplaceSpecialContent(new[] { messageToDtoContent });
-			string fillFromDto = _converterFillFromDto.DoReplacesClient(dataItem).Replace("$ReqRpl$", dataItem.RepRplWrite)
+			string fillFromDto = _converterFillFromDto.DoReplacesClient(dataItem).Replace("$ReqRpl$", dataItem.ReqRplWrite)
 				.ReplaceSpecialContent(new[] {dtoToMessageContent});
 
 			return fillFromMessage1 + "\r\n\r\n" + fillFromMessage2 + "\r\n\r\n" + fillFromDto;

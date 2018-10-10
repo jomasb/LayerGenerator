@@ -134,6 +134,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ItemFactory.cs" />
+    <Compile Include="Settings.cs" />
     <Page Include="Configure\ConfigureView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -209,6 +211,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\ConfigurationDto.cs" />
+    <Compile Include="Model\ConfigurationItemDto.cs" />
+    <Compile Include="Model\ConfigurationPropertyDto.cs" />
+    <Compile Include="Model\DirectHopItemDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
